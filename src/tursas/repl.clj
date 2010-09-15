@@ -49,12 +49,11 @@
        '("Hash type spin default 1 min 1 max 32"
          "UCI_EngineAbout type string default Tursas by Timo Myyrä")))
 
-(defn- print-usage
+(defn- print-uci-usage
   "Prints the available commands of the repl."
   []
   (io! (string/map-str println
                        '("Available UCI commands are:"
-                         "uci - Sets engine to UCI mode."
                          "debug [ on | off ] - print debug messages"
                          "isready - Prompts the engine if its ready"
                          "setoption name <id> [value <x>]"
@@ -74,15 +73,74 @@
                          "   infinite - search until 'stop' command is sent"
                          " stop - stop calculating as soon as possible"
                          " ponderhit - the user has played the expected move."
-                         " quit - quit the program as soon as possible"
-                         ""
-                         "Available XBoard commands:"
-                         ""
-                         "Available general commands:"
+                         " quit - quit the program as soon as possible"))))
+
+(defn- print-xboard-usage
+  "Prints the available commands of the repl."
+  []
+  (io! (string/map-str println
+                       '("Available XBoard commands are:"
+                         "protover N - change engine to use protocol version N"
+                         "accepted - Accept last feature"
+                         "reject - Reject last feature"
+                         "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
+                         "quit - Quit the engine"
+                         "random - Tell engine to add little random elements"
+                         "force - Disable engine AI"
+                         "go - Enable engine AI"
+                         ;;"playother - Tell AI to switch sides"
+                         ;;"white - Tell white to move, engine to play black [obsolete]"
+                         ;;"black - Tell black to move, engine to play white [obsolete]"
+                         "level MPS BASE INC - set time controls"
+                         "st TIME - set time controls"
+                         "sd DEPTH - set search depth to DEPTH"
+                         "nps NODE_RATE - search only NODE_RATE nodes"
+                         ;;"time N - set the engine clock to N centiseconds"
+                         ;;"otim N - set the opponents clock"
+                         "usermove MOVE - make given MOVE if legal"
+                         "? - Tell Engine to stop thinking and make its move now"
+                         "ping N - Pings the engine for pong reply"
+                         ;;"draw - offer draw to engine"
+                         "result RESULT {COMMENTS} - give the game RESULT to engine"
+                         "setboard FEN - Set the game state to given FEN."
+                         ;;"edit - enable edit mode [obsolete]"
+                         ;;". - exit edit mode"
+                         "hint - prompt move hint from engine"
+                         "bk - use book"
+                         "undo - tell engine to undo last move"
+                         "remove - tell engine to undo last two moves"
+                         "hard - tell engine to ponder during players turn"
+                         "easy - tell engine to ponder only during its turn"
+                         "post - tell engine to send ponder output"
+                         "nopost - tell engine not to send ponder output"
+                         ;;"analyse - tell engine to engage analyse mode"
+                         "name X - tell engine its opponents name"
+                         "rating - ask engine its rating"
+                         ;;"ics - tell engine its engaging in ICS game"
+                         "computer - tell engine that its playing against cpu"
+                         ;;"pause - pause all actions"
+                         ;;"resume - resume all paused actions"
+                         ;;"memory N - specify how much engine can use memory"
+                         ;;"cores N - tell engine how many cpu cores it can use"
+                         ;;"egtpath PATH - tell engine to use end-game tables from PATH"
+                         "option NAME[=VALUE] - tell engine to use new option"))))
+
+(defn- print-usage
+  "Prints the available commands of the repl."
+  []
+  (io! (string/map-str println
+                       '("Available general commands:"
                          "help - display this help"
                          "load - load the last saved game from file"
                          "save - store the current game to file"
-                         "bd - display the board on the screen"))))
+                         "bd - display the board on the screen"
+                         "uci - enable uci mode"
+                         "xboard - ebable xboard mode"
+                         ""))
+       (when (= @active-repl "uci")
+         (print-uci-usage))
+       (when (= @active-repl "xboard")
+         (print-xboard-usage))))
 
 (defn- set-option
   "Sets the option given as command"
