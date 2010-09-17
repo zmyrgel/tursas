@@ -174,26 +174,27 @@
   false)
 
 (defn black?
-  "Checks if piece in given INDEX is black."
-  [state index]
-  (< (nth state index) 0))
+  "Checks if given BOARD INDEX contains a black piece."
+  [board index]
+  (= (mod (get board index) 2) BLACK))
 
 (defn white?
-  "Checks if piece in given INDEX is black."
-  [state index]
-  (> (nth state index) 0))
+  "Checks if given BOARD INDEX contains a white piece."
+  [board index]
+  (= (mod (get board index) 2) WHITE))
 
 (defn slide-in-direction
   "Returns list of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
   [state index direction]
-  (let [friendly? (if (black? state index) black? white?)]
+  (let* [board (:board state)
+         friendly? (if (black? board index) black? white?)]
     (loop [target-index (+ index direction)
            moves ()]
       (if (or (not (board-square? target-index))
-              (friendly? state target-index))
+              (friendly? board target-index))
         moves
-        (if (zero? (nth state target-index))
+        (if (empty-square? (get board target-index))
           (recur (+ target-index direction)
                  (cons target-index moves))
           (cons target-index moves))))))
