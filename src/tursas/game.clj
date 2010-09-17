@@ -24,6 +24,7 @@
   "Sets up the chess game to given state."
   [state])
 
+;; XXX: NPE when game-state == empty
 (defn display-board
   "Displays the current chess board state in ASCII."
   []
@@ -74,9 +75,88 @@
   "Tells the engine that GUI rejects given feature."
   [])
 
+(defn expand-row
+  "Expands numbers to spaces for given FEN notation ROW."
+  [row]
+  (string/map-str #(if (and (>= (int %) 49)
+                            (<= (int %) 56))
+                     (string/repeat (- (int %) 48)
+                                    \space)
+                     %)
+                  row))
+(defn- get-piece
+  "Returns letter representing game piece in given LOCATION on the BOARD."
+  [board location]
+  (let [row (- 8 (get location 1))
+        col (- (int (get location 0)) 97)]
+    (get (get (map expand-row board) row) col)))
+
+(defn- available-moves-for
+  "Lists all available moves for PIECE"
+  [piece from])
+
+(defn captures?
+  "Placeholder"
+  [to]
+  true)
+
+(defn castling?
+  "Placeholder"
+  [move state]
+  true)
+
+(defn en-passant?
+  "Placeholder"
+  [move]
+  true)
+
+(defn check?
+  "Placeholder"
+  [move state]
+  true)
+
+(defn- legal-move?
+  "Predicate to see if given MOVE is legal in STATE"
+  [move state]
+  (let* [from (str (get move 0) (get move 1))
+         to (str (get move 2) (get move 3))
+         promotion (str (get move 4))
+         fen-board (nth state 0)
+         side (nth state 1)
+         castling (nth state 2)
+         en-passant (nth state 3)
+         half-moves (nth state 4)
+         full-moves (nth state 5)
+         piece (get-piece fen-board from)]
+        (if (contains? (available-moves-for piece from) to)
+          true
+          false)))
+
+(defn- make-fen
+  "Returns new FEN string after MOVE is applied to given STATE."
+  [move state]
+    (let* [captures (captures? move)
+           castling (castling? move state)
+           en-passant (en-passant? move)
+           check (check? move state)]
+          (make-fen move state captures castling en-passant check)))
+
 (defn xboard-make-move
   "Tells the XBoard to make MOVE."
-  [move])
+  [move]
+  (let* [state (re-seq #"\S+" (first @game-state))]
+        (if (legal-move? move state)
+          (make-fen move state)
+          nil)))
+
+(defn valid-coordinate-string?
+  [coordinate]
+  (empty? (filter #(if (= % coordinate) true false)
+                  (for [x (range 8) y (range 8)] (str (get "abcdefgh" x) (inc y))))))
+
+(defn fen->0x88
+  "Convert FEN to 0x88 vector."
+  [fen-board])
 
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
@@ -103,7 +183,7 @@ and once done, respond with pong"
 
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
-  [&n]
+  [& n]
   (dosync (ref-set game-state (rest @game-state))))
 
 (defn xboard-bk
@@ -112,10 +192,34 @@ and once done, respond with pong"
 
 (defn xboard-send-rating
   "Prompts the Engine to send its rating."
-  [])
+  []
+  (io! (println "10")))
 
 (defn xboard-parse-option
   "Wrapper to parse options from string and set them."
   [options])
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
+
+(defn piece-value
+  [piece]
+  (case piece
+        \p -1
+        \n -3
+        \b -3
+        \r -5
+        \q -9
+        \k -999
+        \P 1
+        \N 3
+        \B 3
+        \R 5
+        \Q 9
+        \K 999
+        0))
+
+(defn get-material-diff
+  "Calculates material difference from FEN"
+  [fen]
+  (reduce + (map piece-value fen)))
+
