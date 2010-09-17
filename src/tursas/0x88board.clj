@@ -252,44 +252,87 @@
     (map #(list-moves-for-piece state %) (all-piece-indexes-for state BLACK))
     (map #(list-moves-for-piece state %) (all-piece-indexes-for state WHITE))))
 
-;; 39 -> h6
+;; 39 -> 0x27 -> h3
 (defn index->algebraic
   "Converts given index to algebraic representation."
-  [index])
+  [index]
+
+  )
 
 (defn algebraic->index
   "Converts given algebraic representation to board index value."
   [algebraic]
   (let [file (- (int (nth algebraic 0)) 97)
-        rank (Character/digit (nth algebraic 1) 10)]
+        rank (- (int (nth algebraic 1)) 48)]
     (+ (* (- 8 rank) 16) file)))
 
 (defn occupied?
   "Checks if given INDEX is occupied on given STATE."
   [state index]
-  (if (= (get state index) 0)
-    false
-    true))
+  (not (= (get state index) 0)))
 
 (defn clear-en-passant
   "Clears the en passant possibility from STATE."
   [state])
 
-(defn init-game-state
+(defn init-game-board
   "Generates new 128 element vector of bytes
-   and places chess piece representation to it.
-   9's on state represent castling possibilities.
-   Half moves since pawn movement or capture are stored
-   in index 4A.
-   En Passant moves are marked in the outside state to
-   indexes in range 0x28 to 0x2F and 0x58 to 0x5F."
+   and places chess piece representation to it."
   []
   (into (vector-of :byte)
-        (vector -2 -3 -4 -5 -6 -4 -3 -2 9 0 0 0 0 0 0 9
-                -1 -1 -1 -1 -1 -1 -1 -1 0 0 0 0 0 0 0 0
-                0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-                0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-                0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-                0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-                1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
-                2 3 4 5 6 4 3 2 9 0 0 0 0 0 0 9)))
+        (vec (replicate 128 -1))))
+
+(defn clear-square
+  "Clears the given square INDEX on the game state."
+  [board index]
+  (assoc board index -1))
+
+(defn fill-square
+  "Return new STATE with given PIECE of SIDE added to given STATE's INDEX."
+  [board index piece-value]
+  (assoc board index piece-value))
+
+(defn parse-fen-board
+  "Parses board information from FEN-BOARD field."
+  [fen-board]
+  (loop [board (init-game-board)
+         row 7
+         col 0
+         fen fen-board]
+    (if (empty? fen)
+      board
+      (cond (.contains "KQBNRPkqbnrp" (str (first fen)))
+            (recur (fill-square board
+                                (+ (* row 16) col)
+                                (piece-char->value (first fen)))
+                   row
+                   (inc col)
+                   (rest fen))
+            (= \/ (first fen))
+            (recur board
+                   (dec row)
+                   0
+                   (rest fen))
+            (.contains "12345678" (str (first fen)))
+            (recur board
+                   row
+                   (+ col (- (int (first fen)) 48))
+                   (rest fen))))))
+
+(defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
+(def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+
+(defn fen->0x88
+  "Converts FEN string to 0x88 board representation."
+  [fen]
+  (let [fen-list (re-seq #"\S+" fen)]
+    (when (= (count fen-list) 6)
+      (StateWith0x88. (parse-fen-board (first fen-list))         ;; board
+                      (if (= (second fen-list) "w") WHITE BLACK) ;; turn
+                      (nth fen-list 2)                           ;; castling
+                      (nth fen-list 3)                           ;; en-passant
+                      (Integer/parseInt (nth fen-list 4))        ;; half turns
+                      (Integer/parseInt (nth fen-list 5))))))    ;; full turns
+
+
+
