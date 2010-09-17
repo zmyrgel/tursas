@@ -14,8 +14,16 @@
 (def SE -15)
 
 ;; sides
-(def BLACK 0)
-(def WHITE 1)
+(def WHITE 0)
+(def BLACK 1)
+
+(def EMPTY -1)
+(def PAWN 0)
+(def ROOK 2)
+(def KNIGHT 4)
+(def BISHOP 6)
+(def QUEEN 8)
+(def KING 10)
 
 ;; sliding pieces
 (def rook-directions #{NORTH SOUTH EAST WEST})
