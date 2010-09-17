@@ -17,6 +17,7 @@
 (def WHITE 0)
 (def BLACK 1)
 
+;; board contents, add side to piece values
 (def EMPTY -1)
 (def PAWN 0)
 (def ROOK 2)
@@ -24,6 +25,15 @@
 (def BISHOP 6)
 (def QUEEN 8)
 (def KING 10)
+
+;; piece material values
+;; based on Shannon's work
+(def PAWN-VALUE 1)
+(def ROOK-VALUE 3)
+(def KNIGHT-VALUE 3)
+(def ROOK-VALUE 5)
+(def QUEEN-VALUE 9)
+(def KING-VALUE 999)
 
 ;; sliding pieces
 (def rook-directions #{NORTH SOUTH EAST WEST})
@@ -70,36 +80,36 @@
   "Gives pieces character numerical representation from its CHAR."
   [char]
   (case char
-        \P 0
-        \p 1
-        \R 2
-        \r 3
-        \N 4
-        \n 5
-        \B 6
-        \b 7
-        \Q 8
-        \q 9
-        \K 10
-        \k 11
-        -1))
+        \P (+ PAWN WHITE)
+        \p (+ PAWN BLACK)
+        \R (+ ROOK WHITE)
+        \r (+ ROOK BLACK)
+        \N (+ KNIGHT WHITE)
+        \n (+ KNIGHT BLACK)
+        \B (+ BISHOP WHITE)
+        \b (+ BISHOP BLACK)
+        \Q (+ QUEEN WHITE)
+        \q (+ QUEEN BLACK)
+        \K (+ KING WHITE)
+        \k (+ KING BLACK)
+        EMPTY))
 
 (defn piece-value->material-value
   "Gives material value for PIECE."
   [piece]
   (case piece
-        \p -1
-        \n -3
-        \b -3
-        \r -5
-        \q -9
-        \k -999
-        \P 1
-        \N 3
-        \B 3
-        \R 5
-        \Q 9
-        \K 999
+        \p (- PAWN-VALUE)
+        \n (- KNIGHT-VALUE)
+        \b (- BISHOP-VALUE)
+        \r (- ROOK-VALUE)
+        \q (- QUEEN-VALUE)
+        \k (- KING-VALUE)
+        \P PAWN-VALUE
+        \N KNIGHT-VALUE
+        \B BISHOP-VALUE
+        \R ROOK-VALUE
+        \Q QUEEN-VALUE
+        \K KING-VALUE
         0))
 
 (defn intersect-rank-diag
