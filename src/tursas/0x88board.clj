@@ -39,9 +39,7 @@
 (defn board-square?
   "Does the given INDEX represent a square on the board?"
   [^Byte index]
-  (if (zero? (bit-and index 0x88))
-    true
-    false))
+  (zero? (bit-and index 0x88)))
 
 (defn column
   "Get the board column of the given square INDEX."
@@ -56,54 +54,37 @@
 (defn same-column?
   "Determines if both given square indexes X and Y are on the same column."
   [x y]
-  (if (= (column x) (column y))
-    true
-    false))
+  (= (column x) (column y)))
 
 (defn same-row?
   "Determines if both given square indexes X and Y are on the same row."
   [x y]
-  (if (= (row x) (row y))
-    true
-    false))
+  (= (row x) (row y)))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
   [value]
-  (case value
-        -1 \p
-        -2 \r
-        -3 \n
-        -4 \b
-        -5 \q
-        -6 \k
-        1 \P
-        2 \N
-        3 \B
-        4 \R
-        5 \Q
-        6 \K
-        nil))
+  (nth "pPRrNnBbQqKk" value))
 
 (defn piece-char->value
   "Gives pieces character numerical representation from its CHAR."
   [char]
   (case char
-        \p -1
-        \r -2
-        \n -3
-        \b -4
-        \q -5
-        \k -6
-        \P 1
-        \N 2
-        \B 3
-        \R 4
-        \Q 5
-        \K 6
-        nil))
+        \P 0
+        \p 1
+        \R 2
+        \r 3
+        \N 4
+        \n 5
+        \B 6
+        \b 7
+        \Q 8
+        \q 9
+        \K 10
+        \k 11
+        -1))
 
-(defn piece-material-value
+(defn piece-value->material-value
   "Gives material value for PIECE."
   [piece]
   (case piece
@@ -180,16 +161,12 @@
 (defn black?
   "Checks if piece in given INDEX is black."
   [state index]
-  (if (< (nth state index) 0)
-    true
-    false))
+  (< (nth state index) 0))
 
 (defn white?
   "Checks if piece in given INDEX is black."
   [state index]
-  (if (> (nth state index) 0)
-    true
-    false))
+  (> (nth state index) 0))
 
 (defn slide-in-direction
   "Returns list of possible moves by sliding piece
