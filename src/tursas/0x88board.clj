@@ -13,6 +13,10 @@
 (def NW 15)
 (def SE -15)
 
+;; sides
+(def BLACK 0)
+(def WHITE 1)
+
 ;; sliding pieces
 (def rook-directions #{NORTH SOUTH EAST WEST})
 (def bishop-directions #{NW,SW,NE,SE})
@@ -162,99 +166,106 @@
 
 (defn move-causes-check?
   "Checks if moving the piece causes king to be threatened."
-  [board index]
+  [state index]
   false)
 
 (defn black?
   "Checks if piece in given INDEX is black."
-  [board index]
-  (if (< (nth board index) 0)
+  [state index]
+  (if (< (nth state index) 0)
     true
     false))
 
 (defn white?
   "Checks if piece in given INDEX is black."
-  [board index]
-  (if (< (nth board index) 0)
+  [state index]
+  (if (> (nth state index) 0)
     true
     false))
 
-(defn all-pieces-for
-  "Returns a list of all indexes containing pieces of given SIDE."
-  [board side]
-  (if (= side "black")
-    (filter #(black? board %) (range 128))
-    (filter #(white? board %) (range 128))))
-
 (defn slide-in-direction
-  "Returns list of possible moves by sliding from BOARD INDEX to DIRECTION."
-  [board index direction]
-  (let [friendly? (if (black? board index) black? white?)]
+  "Returns list of possible moves by sliding piece
+   from INDEX to DIRECTION in given STATE."
+  [state index direction]
+  (let [friendly? (if (black? state index) black? white?)]
     (loop [target-index (+ index direction)
            moves ()]
       (if (or (not (board-square? target-index))
-              (friendly? board target-index))
+              (friendly? state target-index))
         moves
-        (if (zero? (nth board target-index))
+        (if (zero? (nth state target-index))
           (recur (+ target-index direction)
                  (cons target-index moves))
           (cons target-index moves))))))
 
-(defn move-in-place
-  "Moves piece on BOARD INDEX to given PLACE if possible."
-  [board index place]
-  (let [friendly? (if (black? board index) black? white?)]
-    (if (or (not (board-square? place))
-            (friendly? board place))
-      ()
+(defn move-to-place
+  "Return index of possible move to given PLACE in given STATE."
+  [state index place]
+  (let [friendly? (if (black? state index) black? white?)]
+    (when (and (board-square? place)
+               (not (friendly? state place)))
       place)))
 
 (defn list-pawn-moves
-  "List available pawn moves from BOARD INDEX."
-  [board index]
+  "List available pawn moves from INDEX in given STATE."
+  [state index]
   ;; XXX: add check for promotion
   (let* [moves ()
-         side (if (black? board index) "b" "w")
-         friendly? (if (= side "b") black? white?)
+         side (if (black? state index) BLACK WHITE)
+         friendly? (if (= side BLACK) black? white?)
          ;; possible capture
-         potential-captures (if (= side "b")
+         potential-captures (if (= side BLACK)
                               #{(+ SW index) (+ SE index)}
                               #{(+ NW index) (+ NE index)})
          ;; normal movement
-         potential-move (+ index (if (= side "b")
+         potential-move (+ index (if (= side BLACK)
                                    SOUTH
                                    NORTH))
          ;; check if can move two squares
-         move-twice? (or (and (= side "b")
+         move-twice? (or (and (= side BLACK)
                               (same-row? index 96))
-                         (and (= side "w")
+                         (and (= side WHITE)
                               (same-row? index 16)))]
-
         (when (and (board-square? potential-move)
-                   (zero? (nth board potential-move)))
+                   (zero? (nth state potential-move)))
             (cons potential-move moves))
         (when (and move-twice?
                  (board-square? (+ potential-move potential-move))
-                 (zero? (nth board (+ potential-move potential-move))))
+                 (zero? (nth state (+ potential-move potential-move))))
           (cons (+ potential-move potential-move) moves))
         (map #(when (and (board-square? %)
-                         (not (friendly? board %))) (cons % moves))
+                         (not (friendly? state %))) (cons % moves))
              potential-captures)
         moves))
 
 (defn list-moves-for-piece
-  "Generates all available moves for rook in INDEX position."
-  [board index piece]
-      (when (not (move-causes-check? board index))
+  "Generates all available moves for piece at INDEX in given STATE."
+  [state index]
+      (when (not (move-causes-check? state index))
         (flatten
-         (case piece
-               \r (map #(slide-in-direction board index %) rook-directions)
-               \b (map #(slide-in-direction board index %) bishop-directions)
-               \q (map #(slide-in-direction board index %) queen-directions)
-               \k (map #(move-in-place board index %) king-movement) ;; check if king is under threat
-               \n (map #(move-in-place board index %) knight-movement)
-               \p (list-pawn-moves board index)
+         (case (piece-value->char (nth state index))
+               \r (map #(slide-in-direction state index %) rook-directions)
+               \b (map #(slide-in-direction state index %) bishop-directions)
+               \q (map #(slide-in-direction state index %) queen-directions)
+               \k (map #(move-to-place state index (+ index %)) king-movement) ;; check if king is under threat
+               \n (map #(move-to-place state index (+ index %)) knight-movement)
+               \p (list-pawn-moves state index)
                nil))))
+
+(defn all-piece-indexes-for
+  "Gets a list of all board indexes containing
+   SIDE's pieces in given STATE."
+  [state side]
+  (if (= side BLACK)
+    (filter #(black? state %) (range 128))
+    (filter #(white? state %) (range 128))))
+
+(defn all-moves-for
+  "Returns all available moves for SIDE"
+  [state side]
+    (if (= side BLACK)
+    (map #(list-moves-for-piece state %) (all-piece-indexes-for state BLACK))
+    (map #(list-moves-for-piece state %) (all-piece-indexes-for state WHITE))))
 
 ;; 39 -> h6
 (defn index->algebraic
@@ -269,23 +280,23 @@
     (+ (* (- 8 rank) 16) file)))
 
 (defn occupied?
-  "Checks if given index is occupied on the chessboard."
-  [chessboard index]
-  (if (= (get chessboard index) 0)
+  "Checks if given INDEX is occupied on given STATE."
+  [state index]
+  (if (= (get state index) 0)
     false
     true))
 
 (defn clear-en-passant
-  "Clears the en passant possibility from BOARD."
-  [board])
+  "Clears the en passant possibility from STATE."
+  [state])
 
-(defn initialize-chessboard
+(defn init-game-state
   "Generates new 128 element vector of bytes
    and places chess piece representation to it.
-   9's on board represent castling possibilities.
+   9's on state represent castling possibilities.
    Half moves since pawn movement or capture are stored
    in index 4A.
-   En Passant moves are marked in the outside board to
+   En Passant moves are marked in the outside state to
    indexes in range 0x28 to 0x2F and 0x58 to 0x5F."
   []
   (into (vector-of :byte)
