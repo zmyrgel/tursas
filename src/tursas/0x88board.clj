@@ -1,32 +1,11 @@
 (ns tursas.0x88board
-  (:use [tursas.repl])
-  (:require clojure.set :as set))
-
-;; row identifiers
-(def ROW-1 (bit-shift-righf *A1* 4))
-(def ROW-2 (bit-shift-righf *A2* 4))
-(def ROW-3 (bit-shift-righf *A3* 4))
-(def ROW-4 (bit-shift-righf *A4* 4))
-(def ROW-5 (bit-shift-righf *A5* 4))
-(def ROW-6 (bit-shift-righf *A6* 4))
-(def ROW-7 (bit-shift-righf *A7* 4))
-(def ROW-8 (bit-shift-righf *A8* 4))
-
-;; column identifiers
-(def COL-A (bit-and *A1* 7))
-(def COL-B (bit-and *B1* 7))
-(def COL-C (bit-and *C1* 7))
-(def COL-D (bit-and *D1* 7))
-(def COL-E (bit-and *E1* 7))
-(def COL-F (bit-and *F1* 7))
-(def COL-G (bit-and *G1* 7))
-(def COL-H (bit-and *H1* 7))
+  (:use [clojure.set :only [union]]))
 
 ;; direction vectors
 (def NORTH 16)
-(def NN (+ *NORTH* *NORTH*))
+(def NN (+ NORTH NORTH))
 (def SOUTH -16)
-(def SS (+ *SOUTH* *SOUTH*))
+(def SS (+ SOUTH SOUTH))
 (def EAST 1)
 (def WEST -1)
 (def NE 17)
@@ -37,7 +16,7 @@
 ;; sliding pieces
 (def rook-directions #{NORTH SOUTH EAST WEST})
 (def bishop-directions #{NW,SW,NE,SE})
-(def queen-directions (set/union rook-directions bishop-directions))
+(def queen-directions (union rook-directions bishop-directions))
 
 ;; moving pieces
 (def king-movement queen-directions)
