@@ -51,6 +51,11 @@
   [^Byte index]
   (zero? (bit-and index 0x88)))
 
+(defn empty-square?
+  "Checks if given INDEX on BOARD is empty."
+  [board index]
+  (= (get board index) -1))
+
 (defn column
   "Get the board column of the given square INDEX."
   [index]
