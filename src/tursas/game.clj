@@ -1,4 +1,5 @@
 (ns tursas.game
+  (:use [tursas.0x88board])
   (:require [clojure.contrib.string :as string]))
 
 (def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
