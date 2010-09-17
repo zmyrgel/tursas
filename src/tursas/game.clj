@@ -1,7 +1,7 @@
 (ns tursas.game
   (:require [clojure.contrib.string :as string]))
 
-;; "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+(def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def game-state (ref ()))
 (def uci-engine-options (ref {:debug false}))
 (def xboard-engine-options (ref {:debug false :protocol 2}))
