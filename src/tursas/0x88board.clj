@@ -79,7 +79,7 @@
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
   [value]
-  (nth "pPRrNnBbQqKk" value))
+  (nth "PpRrNnBbQqKk" value))
 
 (defn piece-char->value
   "Gives pieces character numerical representation from its CHAR."
