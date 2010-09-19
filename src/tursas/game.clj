@@ -202,23 +202,6 @@ and once done, respond with pong"
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
 
-(defn piece-value
-  [piece]
-  (case piece
-        \p -1
-        \n -3
-        \b -3
-        \r -5
-        \q -9
-        \k -999
-        \P 1
-        \N 3
-        \B 3
-        \R 5
-        \Q 9
-        \K 999
-        0))
-
 (defn get-material-diff
   "Calculates material difference from FEN"
   [fen]
