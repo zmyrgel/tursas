@@ -316,7 +316,7 @@
   [board index piece-value]
   (assoc board index piece-value))
 
-(defn parse-fen-board
+(defn fen-board->0x88board
   "Parses board information from FEN-BOARD field."
   [fen-board]
   (loop [board (init-game-board)
@@ -346,12 +346,14 @@
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
 (def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
+(defrecord PieceMove [to from en-passant promotion check])
+
 (defn fen->0x88
   "Converts FEN string to 0x88 board representation."
   [fen]
   (let [fen-list (re-seq #"\S+" fen)]
     (when (= (count fen-list) 6)
-      (StateWith0x88. (parse-fen-board (first fen-list))         ;; board
+      (StateWith0x88. (fen-board->0x88board (first fen-list))    ;; board
                       (if (= (second fen-list) "w") WHITE BLACK) ;; turn
                       (nth fen-list 2)                           ;; castling
                       (nth fen-list 3)                           ;; en-passant
