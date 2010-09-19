@@ -176,12 +176,16 @@
 (defn black?
   "Checks if given BOARD INDEX contains a black piece."
   [board index]
-  (= (mod (get board index) 2) BLACK))
+  (and (board-index? index)
+       (>= (get board index) 0)
+       (= (mod (get board index) 2) BLACK)))
 
 (defn white?
   "Checks if given BOARD INDEX contains a white piece."
   [board index]
-  (= (mod (get board index) 2) WHITE))
+  (and (board-index? index)
+       (>= (get board index) 0)
+       (= (mod (get board index) 2) WHITE)))
 
 (defn slide-in-direction
   "Returns list of possible moves by sliding piece
