@@ -354,5 +354,39 @@
                       (Integer/parseInt (nth fen-list 4))        ;; half turns
                       (Integer/parseInt (nth fen-list 5))))))    ;; full turns
 
+(defn board->fen-board
+  "Convert the given state's BOARD to fen board field."
+  [board]
+  (loop [index 128
+         fen ""
+         empty-count 0]
+    (if (= index -1)
+      fen
+      (if (not (board-index? index))
+        (recur (dec index)
+               (str fen (if (> empty-count 0) empty-count ""))
+               0)
+        (let [fen (str fen (if (and (> index 0)
+                                    (= (mod index 16) 0))
+                             "/" ""))]
+          (if (= (get board index) -1)
+            (recur (dec index)
+                   fen
+                   (inc empty-count))
+            (recur (dec index)
+                   (str fen
+                        (if (> empty-count 0) empty-count "")
+                        (piece-value->char (get board index)))
+                   0)))))))
+
+(defn state->fen
+  "Makes a given STATE to FEN."
+  [state]
+  (str (board->fen-board (:board state)) " "
+       (if (= (:turn state) WHITE) "w" "b") " "
+       (:castling state) " "
+       (:en-passant state) " "
+       (:half-turns state) " "
+       (:full-turns state)))
 
 
