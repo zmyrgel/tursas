@@ -46,7 +46,7 @@
 (def white-pawn-movement #{NE,NW,NORTH})
 (def knight-movement #{-33, -31, -18, -14, 14, 18, 31, 33})
 
-(defn board-square?
+(defn board-index?
   "Does the given INDEX represent a square on the board?"
   [^Byte index]
   (zero? (bit-and index 0x88)))
@@ -191,7 +191,7 @@
          friendly? (if (black? board index) black? white?)]
     (loop [target-index (+ index direction)
            moves ()]
-      (if (or (not (board-square? target-index))
+      (if (or (not (board-index? target-index))
               (friendly? board target-index))
         moves
         (if (empty-square? (get board target-index))
@@ -204,7 +204,7 @@
   [state index place]
   (let* [board (:board state)
         friendly? (if (black? board index) black? white?)]
-    (when (and (board-square? place)
+    (when (and (board-index? place)
                (not (friendly? board place)))
       place)))
 
@@ -230,14 +230,14 @@
                               (same-row? index 96))
                          (and (= side WHITE)
                               (same-row? index 16)))]
-        (when (and (board-square? potential-move)
+        (when (and (board-index? potential-move)
                    (zero? (get board potential-move)))
             (cons potential-move moves))
         (when (and move-twice?
-                 (board-square? (+ potential-move potential-move))
+                 (board-index? (+ potential-move potential-move))
                  (empty-square? (get board (+ potential-move potential-move))))
           (cons (+ potential-move potential-move) moves))
-        (map #(when (and (board-square? %)
+        (map #(when (and (board-index? %)
                          (not (friendly? board %))) (cons % moves))
              potential-captures)
         moves))
