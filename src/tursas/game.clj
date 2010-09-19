@@ -25,11 +25,10 @@
   "Sets up the chess game to given state."
   [state])
 
-;; XXX: NPE when game-state == empty
 (defn display-board
-  "Displays the current chess board state in ASCII."
-  []
-  (let [fen-list (re-seq #"\S+" (first @game-state))]
+  "Displays the given FEN in ASCII."
+  [fen]
+  (let [fen-list (re-seq #"\S+" fen)]
     (loop [i 8
            pieces (re-seq #"\w+" (first fen-list))
            turn (second fen-list)]
