@@ -357,27 +357,44 @@
 (defn board->fen-board
   "Convert the given state's BOARD to fen board field."
   [board]
-  (loop [index 128
+  (loop [index 119 ;; start loop from H8 backwards
          fen ""
-         empty-count 0]
-    (if (= index -1)
-      fen
-      (if (not (board-index? index))
-        (recur (dec index)
-               (str fen (if (> empty-count 0) empty-count ""))
-               0)
-        (let [fen (str fen (if (and (> index 0)
-                                    (= (mod index 16) 0))
-                             "/" ""))]
-          (if (= (get board index) -1)
+         empty 0
+         add-slash false]
+    (let [last-place (zero? (mod index 16))]
+      (cond (= index -1)
+            fen
+            (not (board-index? index))
             (recur (dec index)
                    fen
-                   (inc empty-count))
+                   0
+                   true)
+            add-slash
+            (recur index
+                   (str fen "/")
+                   0
+                   false)
+            last-place
             (recur (dec index)
-                   (str fen
-                        (if (> empty-count 0) empty-count "")
-                        (piece-value->char (get board index)))
-                   0)))))))
+                   (if (= (get board index) EMPTY)
+                     (str fen (inc empty))
+                     (str fen
+                          (if (> empty 0) empty "")
+                          (piece-value->char (get board index))))
+                   0
+                   false)
+            (= (get board index) EMPTY)
+            (recur (dec index)
+                   fen
+                   (inc empty)
+                   false)
+            :else
+                 (recur (dec index)
+                        (str fen
+                             (if (> empty 0) empty "")
+                             (piece-value->char (get board index)))
+                         0
+                         false)))))
 
 (defn state->fen
   "Makes a given STATE to FEN."
@@ -386,7 +403,7 @@
        (if (= (:turn state) WHITE) "w" "b") " "
        (:castling state) " "
        (:en-passant state) " "
-       (:half-turns state) " "
-       (:full-turns state)))
+       (:half-moves state) " "
+       (:full-moves state)))
 
 
