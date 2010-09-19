@@ -29,7 +29,7 @@
 ;; piece material values
 ;; based on Shannon's work
 (def PAWN-VALUE 1)
-(def ROOK-VALUE 3)
+(def BISHOP-VALUE 3)
 (def KNIGHT-VALUE 3)
 (def ROOK-VALUE 5)
 (def QUEEN-VALUE 9)
