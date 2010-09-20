@@ -46,6 +46,13 @@
 (def white-pawn-movement #{NE,NW,NORTH})
 (def knight-movement #{-33, -31, -18, -14, 14, 18, 31, 33})
 
+;;(def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+
+;; New types
+(defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
+(defrecord Move [from to])
+
+;; Predicates
 (defn board-index?
   "Does the given INDEX represent a square on the board?"
   [^Byte index]
