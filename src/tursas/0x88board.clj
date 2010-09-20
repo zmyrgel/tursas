@@ -61,7 +61,7 @@
 (defn empty-square?
   "Checks if given INDEX on BOARD is empty."
   [board index]
-  (= (get board index) -1))
+  (= (get board index) EMPTY))
 
 (defn column
   "Get the board column of the given square INDEX."
