@@ -154,10 +154,6 @@
   (empty? (filter #(if (= % coordinate) true false)
                   (for [x (range 8) y (range 8)] (str (get "abcdefgh" x) (inc y))))))
 
-(defn fen->0x88
-  "Convert FEN to 0x88 vector."
-  [fen-board])
-
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
@@ -201,8 +197,8 @@ and once done, respond with pong"
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
 
-(defn get-material-diff
-  "Calculates material difference from FEN"
-  [fen]
-  (reduce + (map piece-value fen)))
+;;(defn get-material-diff
+;; "Calculates material difference from FEN"
+;;  [fen]
+;;  (reduce + (map piece-value fen)))
 
