@@ -83,6 +83,36 @@
   [x y]
   (= (row x) (row y)))
 
+(defn occupied?
+  "Checks if given INDEX is occupied on the BOARD."
+  [board index]
+  (not (= (get board index) EMPTY)))
+
+(defn black?
+  "Checks if given BOARD INDEX contains a black piece."
+  [board index]
+  (and (board-index? index)
+       (>= (get board index) 0)
+       (= (mod (get board index) 2) BLACK)))
+
+(defn white?
+  "Checks if given BOARD INDEX contains a white piece."
+  [board index]
+  (and (board-index? index)
+       (>= (get board index) 0)
+       (= (mod (get board index) 2) WHITE)))
+
+(defn move-causes-check?
+  "Checks if moving the piece in INDEX causes king to be threatened in STATE.
+   The piece movement can cause this if it was blocking a sliding piece."
+  [state index]
+  (let [side (if (white? (:board state) index) WHITE BLACK)]
+
+    )
+  false)
+
+;; Public functions
+
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
   [value]
@@ -124,7 +154,8 @@
         \K KING-VALUE
         0))
 
-(defn intersect-rank-diag
+;; Private functions
+(defn- intersect-rank-diag
   " return: intersection square index (if any)
             of rank of square index A
             with diagonal of square index B
@@ -136,7 +167,7 @@
     (bit-or (+ (bit-and (bit-shift-right s88 1) 56) (bit-and s88 7))
                   (- (bit-shift-right (bit-and s88 0x88) 31)))))
 
-(defn intersect-file-diag
+(defn- intersect-file-diag
   " return: intersection square index (if any)
             of file of square index A
             with diagonal of square index B
@@ -149,7 +180,7 @@
                (bit-and s88 7))
             (- (bit-shift-right (bit-and s88 0x88) 31)))))
 
-(defn intersect-rank-anti
+(defn- intersect-rank-anti
   " return: intersection square index (if any)
             of rank of square index A
             with anti-diagonal of square index B
@@ -162,7 +193,7 @@
                (bit-and s88 7))
             (bit-shift-right (- (bit-and s88 0x88)) 31))))
 
-(defn intersect-file-anti
+(defn- intersect-file-anti
   " return: intersection square index (if any)
             of file of square index A
             with anti-diagonal of square index B
