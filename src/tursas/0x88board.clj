@@ -156,6 +156,19 @@
         0))
 
 ;; Private functions
+
+;; 39 -> 0x27 -> h3
+(defn index->algebraic
+  "Converts given index to algebraic representation."
+  [index])
+
+(defn algebraic->index
+  "Converts given algebraic representation to board index value."
+  [algebraic]
+  (let [file (- (int (nth algebraic 0)) 97)
+        rank (- (int (nth algebraic 1)) 48)]
+    (+ (* (- 8 rank) 16) file)))
+
 (defn- intersect-rank-diag
   " return: intersection square index (if any)
             of rank of square index A
@@ -258,25 +271,32 @@
          ;; possible capture
          captures (if (= side BLACK)
                     (list (+ SW index) (+ SE index))
-                    (list (+ NW index) (+ NE index)))]
+                    (list (+ NW index) (+ NE index)))
+         en-passant-index (if (= (:en-passant state) "-")
+                            -1
+                            (algebraic->index (:en-passant state)))]
 
         ;; check capture points
         (conj moves
-               (if (and (board-index? (first captures))
-                        (not (friendly? board (first captures)))
-                        (occupied? board (first captures)))
+               (if (or (and (board-index? (first captures))
+                            (= en-passant-index (first captures)))
+                       (and (board-index? (first captures))
+                            (occupied? board (first captures))
+                            (not (friendly? board (first captures)))))
                  (list (Move. index (first captures)))
                  ())
-               (if (and (board-index? (second captures))
-                        (not (friendly? board (second captures)))
-                        (occupied? board (second captures)))
+               (if (or (and (board-index? (second captures))
+                            (= en-passant-index (second captures)))
+                       (and (board-index? (second captures))
+                            (occupied? board (second captures))
+                            (not (friendly? board (second captures)))))
                  (list (Move. index (second captures)))
                  ()))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
-  (when (not (move-causes-check? state index))
+  (if (not (move-causes-check? state index))
     (case (piece-value->char (get (:board state) index))
           \r (map #(slide-in-direction state index %) rook-directions)
           \b (map #(slide-in-direction state index %) bishop-directions)
@@ -300,18 +320,6 @@
   (let [board (:board state)]
     (flatten (map #(list-moves-for-piece state %)
                   (all-piece-indexes-for board side)))))
-
-;; 39 -> 0x27 -> h3
-(defn index->algebraic
-  "Converts given index to algebraic representation."
-  [index])
-
-(defn algebraic->index
-  "Converts given algebraic representation to board index value."
-  [algebraic]
-  (let [file (- (int (nth algebraic 0)) 97)
-        rank (- (int (nth algebraic 1)) 48)]
-    (+ (* (- 8 rank) 16) file)))
 
 (defn clear-en-passant
   "Clears the en passant possibility from STATE."
