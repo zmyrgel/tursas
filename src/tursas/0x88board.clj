@@ -304,7 +304,8 @@
           \k (map #(move-to-place state index (+ index %)) king-movement) ;; check if king is under threat
           \n (map #(move-to-place state index (+ index %)) knight-movement)
           \p (list-pawn-moves state index)
-          ())))
+          ())
+    ()))
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
