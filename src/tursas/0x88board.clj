@@ -277,21 +277,13 @@
                             (algebraic->index (:en-passant state)))]
 
         ;; check capture points
-        (conj moves
-               (if (or (and (board-index? (first captures))
-                            (= en-passant-index (first captures)))
-                       (and (board-index? (first captures))
-                            (occupied? board (first captures))
-                            (not (friendly? board (first captures)))))
-                 (list (Move. index (first captures)))
-                 ())
-               (if (or (and (board-index? (second captures))
-                            (= en-passant-index (second captures)))
-                       (and (board-index? (second captures))
-                            (occupied? board (second captures))
-                            (not (friendly? board (second captures)))))
-                 (list (Move. index (second captures)))
-                 ()))))
+        (flatten (conj moves (map #(if (or (and (board-index? %)
+                           (= en-passant-index %))
+                      (and (board-index? %)
+                           (occupied? board %)
+                           (not (friendly? board %))))
+                (list (Move. index %))
+                ()) captures)))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
