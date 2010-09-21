@@ -328,7 +328,7 @@
 (defn clear-square
   "Clears the given square INDEX on the game state."
   [board index]
-  (assoc board index -1))
+  (assoc board index EMPTY))
 
 (defn fill-square
   "Return new STATE with given PIECE of SIDE added to given STATE's INDEX."
