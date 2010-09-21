@@ -278,12 +278,12 @@
 
         ;; check capture points
         (flatten (conj moves (map #(if (or (and (board-index? %)
-                           (= en-passant-index %))
-                      (and (board-index? %)
-                           (occupied? board %)
-                           (not (friendly? board %))))
-                (list (Move. index %))
-                ()) captures)))))
+                                                (= en-passant-index %))
+                                           (and (board-index? %)
+                                                (occupied? board %)
+                                                (not (friendly? board %))))
+                                     (list (Move. index %))
+                                     ()) captures)))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
