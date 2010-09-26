@@ -1,5 +1,4 @@
-(ns tursas.0x88board
-  (:use [clojure.set :only [union]]))
+(ns tursas.0x88board)
 
 ;; direction vectors
 (def NORTH 16)
@@ -36,21 +35,22 @@
 (def KING-VALUE 999)
 
 ;; sliding pieces
-(def rook-directions #{NORTH SOUTH EAST WEST})
-(def bishop-directions #{NW,SW,NE,SE})
-(def queen-directions (union rook-directions bishop-directions))
+(def rook-directions '(NORTH SOUTH EAST WEST))
+(def bishop-directions '(NW,SW,NE,SE))
+(def queen-directions (concat rook-directions bishop-directions))
 
 ;; moving pieces
 (def king-movement queen-directions)
-(def black-pawn-movement #{SE,SW,SOUTH})
-(def white-pawn-movement #{NE,NW,NORTH})
-(def knight-movement #{-33, -31, -18, -14, 14, 18, 31, 33})
+(def black-pawn-movement '(SE,SW,SOUTH))
+(def white-pawn-movement '(NE,NW,NORTH))
+(def knight-movement '(-33, -31, -18, -14, 14, 18, 31, 33))
 
 ;;(def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def middle-state "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")
 
 ;; New types
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
+
 (defrecord Move [from to])
 
 ;; Predicates
