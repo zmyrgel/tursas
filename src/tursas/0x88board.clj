@@ -169,57 +169,6 @@
         rank (- (int (nth algebraic 1)) 48)]
     (+ (* (- 8 rank) 16) file)))
 
-(defn- intersect-rank-diag
-  " return: intersection square index (if any)
-            of rank of square index A
-            with diagonal of square index B
-            -1 if no intersection exists"
-  [a b]
-  (let [s88 (+ (- (* (bit-shift-right a 3) 17)
-                  (bit-shift-right b 3))
-               (bit-and b 7))]
-    (bit-or (+ (bit-and (bit-shift-right s88 1) 56) (bit-and s88 7))
-                  (- (bit-shift-right (bit-and s88 0x88) 31)))))
-
-(defn- intersect-file-diag
-  " return: intersection square index (if any)
-            of file of square index A
-            with diagonal of square index B
-            -1 if no intersection exists"
-  [a b]
-  (let [s88 (- (+ (* (bit-shift-right a 7) 17)
-                  (* (bit-and b 56) 2))
-               (* (bit-and b 7) 16))]
-    (bit-or (+ (bit-and (bit-shift-right s88 1) 56)
-               (bit-and s88 7))
-            (- (bit-shift-right (bit-and s88 0x88) 31)))))
-
-(defn- intersect-rank-anti
-  " return: intersection square index (if any)
-            of rank of square index A
-            with anti-diagonal of square index B
-            -1 if no intersection exists"
-  [a b]
-  (let [s88 (+ (- (* (bit-shift-right a 3) 17)
-                  (bit-shift-right b 3))
-               (bit-and b 7))]
-    (bit-or (+ (bit-and (bit-shift-right s88 1) 56)
-               (bit-and s88 7))
-            (bit-shift-right (- (bit-and s88 0x88)) 31))))
-
-(defn- intersect-file-anti
-  " return: intersection square index (if any)
-            of file of square index A
-            with anti-diagonal of square index B
-            -1 if no intersection exists"
-  [a b]
-  (let [s88 (- (+ (* (bit-and b 56) 2)
-                  (* (bit-and b 7) 16))
-               (* (bit-and a 7) 15))]
-    (bit-or (+ (bit-and (bit-shift-right s88 1) 56)
-               (bit-and s88 7))
-            (bit-and (- (bit-and s88 0x88)) 31))))
-
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
