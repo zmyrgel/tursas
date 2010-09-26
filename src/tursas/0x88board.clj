@@ -426,4 +426,9 @@
        (:half-moves state) " "
        (:full-moves state)))
 
-
+(defn evaluate-state
+  "Evaluates given game STATE."
+  [state]
+  (reduce + (map #(if (board-index? %)
+                    (piece-char->value (get (:board state) %))
+                    0) (range 128))))
