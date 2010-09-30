@@ -194,6 +194,14 @@
       (list (Move. index place))
       ())))
 
+(defn- list-king-moves
+  "Resolves all available moves for king in given INDEX of STATE."
+  [state index]
+  (let [normal-moves (flatten (map #(move-to-place state index
+                                                   (+ index %)) king-movement))
+        castling (+ 1)]
+    normal-moves))
+
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [state index]
