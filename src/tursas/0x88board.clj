@@ -104,14 +104,10 @@
        (>= (get board index) 0)
        (= (mod (get board index) 2) WHITE)))
 
-(defn move-causes-check?
-  "Checks if moving the piece in INDEX causes king to be threatened in STATE.
-   The piece movement can cause this if it was blocking a sliding piece."
-  [state index]
-  (let [side (if (white? (:board state) index) WHITE BLACK)]
-
-    )
-  false)
+(defn opponent
+  "Returns the side of the opponent of the given STATE."
+  [state]
+  (if (= (:turn state) "w") WHITE BLACK))
 
 ;; Public functions
 
