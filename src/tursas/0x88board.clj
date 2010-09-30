@@ -1,4 +1,5 @@
-(ns tursas.0x88board)
+(ns tursas.0x88board
+  (:use [clojure.contrib.math :only [abs]]))
 
 ;; direction vectors
 (def NORTH 16)
