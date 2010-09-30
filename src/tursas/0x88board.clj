@@ -157,11 +157,13 @@
         0))
 
 ;; Private functions
-
-;; 39 -> 0x27 -> h3
 (defn index->algebraic
   "Converts given index to algebraic representation."
-  [index])
+  [index]
+  (let* [coord (format "%x" index)
+         num (+ (- (int (nth coord 0)) 48) 1)
+         alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
+        (str alpha num)))
 
 (defn algebraic->index
   "Converts given algebraic representation to board index value."
