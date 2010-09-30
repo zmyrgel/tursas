@@ -152,7 +152,8 @@
 (defn valid-coordinate-string?
   [coordinate]
   (empty? (filter #(if (= % coordinate) true false)
-                  (for [x (range 8) y (range 8)] (str (get "abcdefgh" x) (inc y))))))
+                  (for [x (range 8) y (range 8)]
+                    (str (get "abcdefgh" x) (inc y))))))
 
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
