@@ -257,16 +257,68 @@
     (filter #(black? board %) (range 128))
     (filter #(white? board %) (range 128))))
 
+(defn- king-index
+  "Gets the kings index in STATE for SIDE."
+  [state side]
+  (let [board (:board state)
+        king (if (= side BLACK)
+               (piece-char->value \k)
+               (piece-char->value \K))]
+    (first (filter #(= (get board %) king) (range 128)))))
+
+(defn index-under-threat?
+  "Checks if given INDEX in STATE is under threath of enemy."
+  [state index]
+  (let* [opponent (opponent state)
+         moves (map :to (flatten (map #(list-moves-for-piece state %)
+                                      (all-piece-indexes-for (:board state) opponent))))]
+        (not (nil? (some index moves)))))
+
+(defn in-check?
+  "Checks given STATE has king in check."
+  [state]
+  (let* [side (if (= (:turn state) "w") WHITE BLACK)]
+        (index-under-threat? state (king-index state side))))
+
+(defn commit-move
+  "Commits given MOVE in STATE and return the new state."
+  [state move]
+  (let* [side (if (black? (:board state) (:from move)) BLACK WHITE)
+         moving-piece (get (:board state) (:from move))
+         en-passant (if (and (or (= moving-piece 0)
+                                 (= moving-piece 1))
+                             (= (abs (- (:to move) (:from move))) 0x20))
+                      (index->algebraic (/ (+ (:to move) (:from move)) 2))
+                      "-")
+         castling (if (and (or (= moving-piece (+ KING WHITE))
+                               (= moving-piece (+ KING BLACK)))
+                           (= (abs (- (:to move) (:from move)) 0x2)))
+                    "castling done"
+                    "no castling")
+         turn (if (= side BLACK) "w" "b")
+         half-moves (+ 1) ;; add half moves
+         full-moves (if (= side BLACK)
+                      (+ (:full-moves state) 1)
+                      (:full-moves state))
+
+         board (fill-square
+                (clear-square (:board state) (:from move))
+                (:to move))]
+
+        (StateWith0x88. board turn en-passant castling half-moves full-moves)))
+
 (defn all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (let [board (:board state)]
-    (flatten (map #(list-moves-for-piece state %)
-                  (all-piece-indexes-for board side)))))
+  (let [all-moves (flatten (map #(list-moves-for-piece state %)
+                                (all-piece-indexes-for (:board state) side)))]
+    all-moves))
+;;(filter #(in-check? (commit-move state %)) all-moves)
 
 (defn clear-en-passant
-  "Clears the en passant possibility from STATE."
-  [state])
+  "Makes a new state without an en passant move from given STATE."
+  [state]
+  (assoc state :en-passant "-"))
 
 (defn init-game-board
   "Generates new 128 element vector of bytes
