@@ -372,12 +372,12 @@
   [fen]
   (let [fen-list (re-seq #"\S+" fen)]
     (when (= (count fen-list) 6)
-      (StateWith0x88. (fen-board->0x88board (first fen-list))    ;; board
-                      (if (= (second fen-list) "w") WHITE BLACK) ;; turn
-                      (nth fen-list 2)                           ;; castling
-                      (nth fen-list 3)                           ;; en-passant
-                      (Integer/parseInt (nth fen-list 4))        ;; half turns
-                      (Integer/parseInt (nth fen-list 5))))))    ;; full turns
+      (StateWith0x88. (fen-board->0x88board (first fen-list))
+                      (if (= (second fen-list) "w") WHITE BLACK)
+                      (nth fen-list 2)
+                      (nth fen-list 3)
+                      (Integer/parseInt (nth fen-list 4))
+                      (Integer/parseInt (nth fen-list 5))))))
 
 (defn board->fen-board
   "Convert the given state's BOARD to fen board field."
