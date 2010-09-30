@@ -429,7 +429,8 @@
        (:full-moves state)))
 
 (defn evaluate-state
-  "Evaluates given game STATE."
+  "Evaluates given game STATE.
+   Simply calculates the material balance of the board."
   [state]
   (reduce + (map #(if (board-index? %)
                     (piece-char->value (get (:board state) %))
