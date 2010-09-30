@@ -109,7 +109,28 @@
   [state]
   (if (= (:turn state) "w") WHITE BLACK))
 
-;; Public functions
+;; Public function
+(defn clear-en-passant
+  "Makes a new state without an en passant move from given STATE."
+  [state]
+  (assoc state :en-passant "-"))
+
+(defn init-game-board
+  "Generates new 128 element vector of bytes
+   and places chess piece representation to it."
+  []
+  (into (vector-of :byte)
+        (vec (replicate 128 -1))))
+
+(defn clear-square
+  "Clears the given square INDEX on the game state."
+  [board index]
+  (assoc board index EMPTY))
+
+(defn fill-square
+  "Return new STATE with given PIECE of SIDE added to given STATE's INDEX."
+  [board index piece-value]
+  (assoc board index piece-value))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
@@ -318,28 +339,6 @@
                                 (all-piece-indexes-for (:board state) side)))]
     all-moves))
 ;;(filter #(in-check? (commit-move state %)) all-moves)
-
-(defn clear-en-passant
-  "Makes a new state without an en passant move from given STATE."
-  [state]
-  (assoc state :en-passant "-"))
-
-(defn init-game-board
-  "Generates new 128 element vector of bytes
-   and places chess piece representation to it."
-  []
-  (into (vector-of :byte)
-        (vec (replicate 128 -1))))
-
-(defn clear-square
-  "Clears the given square INDEX on the game state."
-  [board index]
-  (assoc board index EMPTY))
-
-(defn fill-square
-  "Return new STATE with given PIECE of SIDE added to given STATE's INDEX."
-  [board index piece-value]
-  (assoc board index piece-value))
 
 (defn fen-board->0x88board
   "Parses board information from FEN-BOARD field."
