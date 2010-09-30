@@ -243,7 +243,7 @@
                           (empty-square? board (+ move-index step)))
                    (list (Move. index move-index) (Move. index (+ move-index step)))
                    (list (Move. index move-index)))
-                 ())
+                 '())
 
          ;; possible capture
          captures (if (= side BLACK)
@@ -260,7 +260,7 @@
                                                 (occupied? board %)
                                                 (not (friendly? board %))))
                                      (list (Move. index %))
-                                     ()) captures)))))
+                                     '()) captures)))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
@@ -272,7 +272,7 @@
         \n (map #(move-to-place state index (+ index %)) knight-movement)
         \p (list-pawn-moves state index)
         \k (list-king-moves state index)
-        ()))
+        '()))
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
