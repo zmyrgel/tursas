@@ -215,18 +215,40 @@
       (list (Move. index place))
       ())))
 
+(defn- legal-castling?
+  [state index increment]
+  (loop [index (+ index increment)
+         king-squares 2]
+    (cond (> king-squares 0)
+          (if (or (occupied? (:board state) index)
+                  (index-under-threat? state index))
+            false
+            (recur (+ index increment) (- king-squares 1)))
+          :else (if (occupied? index)
+                  false
+                  (or (= (get (:board state) (+ index increment)) ROOK)
+                      (= (get (:board state) (+ index increment)) (+ ROOK BLACK)))))))
+
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [state index]
-  (let [normal-moves (flatten (map #(move-to-place state index
-                                                   (+ index %)) king-movement))
-        castling (+ 1)]
-    normal-moves))
+  (let* [side (if (black? (:board state) index) BLACK WHITE)
+         castling (:castling state)
+         normal-moves (flatten (map #(move-to-place state index (+ index %))
+                                   king-movement))
+         castling-king-side (some #{(if (= side BLACK) \k \K)} castling)
+         castling-queen-side (some #{(if (= side BLACK) \q \Q)} castling)
+         castling-moves-king (if (not (nil? castling-king-side))
+                               (legal-castling? state index EAST)
+                               '())
+         castling-moves-queen (if (not (nil? castling-queen-side))
+                                (legal-castling? state index WEST)
+                                '())]
+        (concat normal-moves castling-moves-king castling-moves-queen)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [state index]
-  ;; XXX: add check for promotion
   (let* [board (:board state)
          side (if (black? board index) BLACK WHITE)
          friendly? (if (= side BLACK) black? white?)
