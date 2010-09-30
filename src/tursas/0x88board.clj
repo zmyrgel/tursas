@@ -240,16 +240,14 @@
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
-  (if (not (move-causes-check? state index))
-    (case (piece-value->char (get (:board state) index))
-          \r (map #(slide-in-direction state index %) rook-directions)
-          \b (map #(slide-in-direction state index %) bishop-directions)
-          \q (map #(slide-in-direction state index %) queen-directions)
-          \k (map #(move-to-place state index (+ index %)) king-movement) ;; check if king is under threat
-          \n (map #(move-to-place state index (+ index %)) knight-movement)
-          \p (list-pawn-moves state index)
-          ())
-    ()))
+  (case (piece-value->char (get (:board state) index)) ;; toLower?
+        \r (map #(slide-in-direction state index %) rook-directions)
+        \b (map #(slide-in-direction state index %) bishop-directions)
+        \q (map #(slide-in-direction state index %) queen-directions)
+        \n (map #(move-to-place state index (+ index %)) knight-movement)
+        \p (list-pawn-moves state index)
+        \k (list-king-moves state index)
+        ()))
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
