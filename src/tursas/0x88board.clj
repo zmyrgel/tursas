@@ -213,21 +213,7 @@
     (if (and (board-index? place)
              (not (friendly? board place)))
       (list (Move. index place))
-      ())))
-
-(defn- legal-castling?
-  [state index increment]
-  (loop [index (+ index increment)
-         king-squares 2]
-    (cond (> king-squares 0)
-          (if (or (occupied? (:board state) index)
-                  (index-under-threat? state index))
-            false
-            (recur (+ index increment) (- king-squares 1)))
-          :else (if (occupied? index)
-                  false
-                  (or (= (get (:board state) (+ index increment)) ROOK)
-                      (= (get (:board state) (+ index increment)) (+ ROOK BLACK)))))))
+      '())))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
@@ -304,6 +290,28 @@
     (filter #(black? board %) (range 128))
     (filter #(white? board %) (range 128))))
 
+(defn index-under-threat?
+  "Checks if given INDEX in STATE is under threath of enemy."
+  [state index]
+  (let* [opponent (opponent state)
+         moves (map :to (flatten (map #(list-moves-for-piece state %)
+                                      (all-piece-indexes-for (:board state) opponent))))]
+        (not (nil? (some index moves)))))
+
+(defn- legal-castling?
+  [state index increment]
+  (loop [index (+ index increment)
+         king-squares 2]
+    (cond (> king-squares 0)
+          (if (or (occupied? (:board state) index)
+                  (index-under-threat? state index))
+            false
+            (recur (+ index increment) (- king-squares 1)))
+          :else (if (occupied? index)
+                  false
+                  (or (= (get (:board state) (+ index increment)) ROOK)
+                      (= (get (:board state) (+ index increment)) (+ ROOK BLACK)))))))
+
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
   [state side]
@@ -313,20 +321,13 @@
                (piece-char->value \K))]
     (first (filter #(= (get board %) king) (range 128)))))
 
-(defn index-under-threat?
-  "Checks if given INDEX in STATE is under threath of enemy."
-  [state index]
-  (let* [opponent (opponent state)
-         moves (map :to (flatten (map #(list-moves-for-piece state %)
-                                      (all-piece-indexes-for (:board state) opponent))))]
-        (not (nil? (some index moves)))))
-
 (defn in-check?
   "Checks given STATE has king in check."
   [state]
   (let* [side (if (= (:turn state) "w") WHITE BLACK)]
         (index-under-threat? state (king-index state side))))
 
+;; add pawn promotion
 (defn commit-move
   "Commits given MOVE in STATE and return the new state."
   [state move]
