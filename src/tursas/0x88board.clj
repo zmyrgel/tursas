@@ -130,12 +130,12 @@
         (vec (replicate 128 -1))))
 
 (defn clear-square
-  "Clears the given square INDEX on the game state."
+  "Clears the given square INDEX on the game BOARD."
   [board index]
   (assoc board index EMPTY))
 
 (defn fill-square
-  "Return new STATE with given PIECE of SIDE added to given STATE's INDEX."
+  "Return new board with given PIECE-VALUE added to given BOARD's INDEX."
   [board index piece-value]
   (assoc board index piece-value))
 
