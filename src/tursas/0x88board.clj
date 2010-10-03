@@ -223,6 +223,68 @@
       (list (Move. index place))
       '())))
 
+(defn- ray-to-pieces?
+  "Checks if there's ray to from INDEX to given PIECES."
+  [board index inc pieces]
+  (cond (not (board-index? index)) false
+        (empty-square? board index) (recur board (+ index inc) inc pieces)
+        :else (nil? (some #{(get board index)} pieces))))
+
+(defn index-under-threat?
+  "Checks if given INDEX in STATE is under threath of enemy."
+  [state index opponent]
+  (let* [board (:board state)]
+        (or
+         ;; check if opponent's knight can attack index
+         (nil? (some #(= (get board %)
+                         (if (= opponent WHITE)
+                           WHITE-KNIGHT
+                           BLACK-KING)) (map #(+ index %) knight-movement))))
+        ;; check if there's ray to opponents queen or
+        ;; bishop diagonally from index
+        (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                     (if (= opponent WHITE)
+                                                       [WHITE-QUEEN WHITE-BISHOP]
+                                                       [BLACK-QUEEN BLACK-BISHOP]))
+                                    [NE NW SW SE]))))
+
+        ;; check if there's ray to opponents queen or
+        ;; rook on the same column or row
+        (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                     (if (= opponent WHITE)
+                                                       [WHITE-QUEEN WHITE-ROOK]
+                                                       [BLACK-QUEEN BLACK-ROOK]))
+                                    [NORTH EAST WEST SOUTH]))))
+
+        ;; check pawns
+        (if (= opponent WHITE)
+          (or (= (get board (+ index SE)) WHITE-PAWN)
+              (= (get board (+ index SW)) WHITE-PAWN))
+          (or (= (get board (+ index NE)) BLACK-PAWN)
+              (= (get board (+ index NW)) BLACK-PAWN)))
+
+        ;; check kings if there's king next to index and
+        ;; it can attack index
+        (and (nil? (some #(= (get board %)
+                             (if (= opponent WHITE)
+                               WHITE-KING
+                               BLACK-KING)) (map #(+ index %) king-movement)))
+             (index-under-threat? state index (if (= opponent WHITE) BLACK WHITE)))))
+
+(defn- legal-castling?
+  [state index increment]
+  (loop [index (+ index increment)
+         king-squares 2]
+    (cond (> king-squares 0)
+          (if (or (occupied? (:board state) index)
+                  (index-under-threat? state index))
+            false
+            (recur (+ index increment) (- king-squares 1)))
+          :else (if (occupied? index)
+                  false
+                  (or (= (get (:board state) (+ index increment)) WHITE-ROOK)
+                      (= (get (:board state) (+ index increment)) BLACK-ROOK))))))
+
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [state index]
