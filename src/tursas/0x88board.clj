@@ -55,6 +55,7 @@
 
 (def start-state "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def middle-state "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")
+(def end-state "4k3/8/8/8/8/8/4P3/4K3 w - - 5 39")
 
 ;; New types
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
