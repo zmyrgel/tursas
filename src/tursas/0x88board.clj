@@ -360,14 +360,6 @@
     (filter #(black? board %) (range 128))
     (filter #(white? board %) (range 128))))
 
-;;(defn index-under-threat?
-;;  "Checks if given INDEX in STATE is under threath of enemy."
-;;  [state index]
-;;  (let* [opponent (opponent state)
-;;         moves (map :to (flatten (map #(list-moves-for-piece state %)
-;;                                      (all-piece-indexes-for (:board state) opponent))))]
-;;        (not (nil? (some index moves)))))
-
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
   [state side]
