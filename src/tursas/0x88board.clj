@@ -343,7 +343,7 @@
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
-  (case (piece-value->char (get (:board state) index)) ;; toLower?
+  (case (lower-case (piece-value->char (get (:board state) index)))
         \r (map #(slide-in-direction state index %) rook-directions)
         \b (map #(slide-in-direction state index %) bishop-directions)
         \q (map #(slide-in-direction state index %) queen-directions)
