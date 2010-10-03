@@ -1,5 +1,6 @@
 (ns tursas.0x88board
-  (:use [clojure.contrib.math :only [abs]]))
+  (:use [clojure.contrib.math :only [abs]])
+  (:use [clojure.contrib.string :only [lower-case]]))
 
 ;; direction vectors
 (def NORTH 16)
