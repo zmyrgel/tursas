@@ -18,14 +18,20 @@
 (def WHITE 0)
 (def BLACK 1)
 
-;; board contents, add side to piece values
+;; board contents
 (def EMPTY -1)
-(def PAWN 0)
-(def ROOK 2)
-(def KNIGHT 4)
-(def BISHOP 6)
-(def QUEEN 8)
-(def KING 10)
+(def WHITE-PAWN 0)
+(def BLACK-PAWN 1)
+(def WHITE-ROOK 2)
+(def BLACK-ROOK 3)
+(def WHITE-KNIGHT 4)
+(def BLACK-KNIGHT 5)
+(def WHITE-BISHOP 6)
+(def BLACK-BISHOP 7)
+(def WHITE-QUEEN 8)
+(def BLACK-QUEEN 9)
+(def WHITE-KING 10)
+(def BLACK-KING 11)
 
 ;; piece material values
 ;; based on Shannon's work
@@ -142,18 +148,18 @@
   "Gives pieces character numerical representation from its CHAR."
   [char]
   (case char
-        \P (+ PAWN WHITE)
-        \p (+ PAWN BLACK)
-        \R (+ ROOK WHITE)
-        \r (+ ROOK BLACK)
-        \N (+ KNIGHT WHITE)
-        \n (+ KNIGHT BLACK)
-        \B (+ BISHOP WHITE)
-        \b (+ BISHOP BLACK)
-        \Q (+ QUEEN WHITE)
-        \q (+ QUEEN BLACK)
-        \K (+ KING WHITE)
-        \k (+ KING BLACK)
+        \P WHITE-PAWN
+        \p BLACK-PAWN
+        \R WHITE-ROOK
+        \r BLACK-ROOK
+        \N WHITE-KNIGHT
+        \n BLACK-KNIGHT
+        \B WHITE-BISHOP
+        \b BLACK-BISHOP
+        \Q WHITE-QUEEN
+        \q BLACK-QUEEN
+        \K WHITE-KING
+        \k BLACK-KING
         EMPTY))
 
 (defn piece-value->material-value
