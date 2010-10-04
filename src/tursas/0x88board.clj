@@ -299,11 +299,13 @@
                                    king-movement))
          castling-king-side (some #{(if (= side BLACK) \k \K)} castling)
          castling-queen-side (some #{(if (= side BLACK) \q \Q)} castling)
-         castling-moves-king (if (not (nil? castling-king-side))
-                               (legal-castling? state index EAST)
+         castling-moves-king (if (and (not (nil? castling-king-side))
+                                      (legal-castling? state index EAST))
+                               (Move. index (* WEST 2))
                                '())
-         castling-moves-queen (if (not (nil? castling-queen-side))
-                                (legal-castling? state index WEST)
+         castling-moves-queen (if (and (not (nil? castling-queen-side))
+                                       (legal-castling? state index WEST))
+                                (Move. index (* EAST 2))
                                 '())]
         (concat normal-moves castling-moves-king castling-moves-queen)))
 
