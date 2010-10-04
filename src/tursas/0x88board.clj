@@ -419,7 +419,7 @@
                            (reduce str (re-seq #"\p{Lower}" (:castling state)))))
          castling? (and (or (= moving-piece WHITE-KING)
                             (= moving-piece BLACK-KING))
-                        (= (abs (- to-index from-index) 2)))
+                        (= (abs (- to-index from-index)) 2))
          castling-string (:castling state)
 
          half-moves (if pawn-or-capture-move? 0 (+ (:half-moves state) 1))
