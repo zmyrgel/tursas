@@ -262,27 +262,33 @@
           (or (= (get board (+ index NE)) BLACK-PAWN)
               (= (get board (+ index NW)) BLACK-PAWN)))
 
+
         ;; check kings if there's king next to index and
         ;; it can attack index
-        (and (nil? (some #(= (get board %)
-                             (if (= opponent WHITE)
-                               WHITE-KING
-                               BLACK-KING)) (map #(+ index %) king-movement)))
-             (index-under-threat? state index (if (= opponent WHITE) BLACK WHITE)))))
+        (let [side (if (= opponent WHITE) BLACK WHITE)
+              own-king (if (= side WHITE) WHITE-KING BLACK-KING)
+              enemy-king-index (filter #(= (get board  %) own-king)
+                                       (map #(+ index %) king-movement))]
+          (if (empty? enemy-king-index)
+            false
+            (index-under-threat?
+             (commit-move state (Move. enemy-king-index index))
+             index side))))))
 
 (defn- legal-castling?
   [state index increment]
-  (loop [index (+ index increment)
+  (let [side (if (= (get (:board state) index) WHITE) WHITE BLACK)]
+    (loop [index (+ index increment)
          king-squares 2]
-    (cond (> king-squares 0)
-          (if (or (occupied? (:board state) index)
-                  (index-under-threat? state index))
-            false
-            (recur (+ index increment) (- king-squares 1)))
-          :else (if (occupied? index)
-                  false
-                  (or (= (get (:board state) (+ index increment)) WHITE-ROOK)
-                      (= (get (:board state) (+ index increment)) BLACK-ROOK))))))
+      (cond (> king-squares 0)
+            (if (or (occupied? (:board state) index)
+                    (index-under-threat? state index side))
+              false
+              (recur (+ index increment) (- king-squares 1)))
+            :else (if (occupied? index)
+                    false
+                    (or (= (get (:board state) (+ index increment)) WHITE-ROOK)
+                        (= (get (:board state) (+ index increment)) BLACK-ROOK)))))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
