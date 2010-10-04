@@ -238,7 +238,7 @@
          (nil? (some #(= (get board %)
                          (if (= opponent WHITE)
                            WHITE-KNIGHT
-                           BLACK-KING)) (map #(+ index %) knight-movement))))
+                           BLACK-KING)) (map #(+ index %) knight-movement)))
         ;; check if there's ray to opponents queen or
         ;; bishop diagonally from index
         (not (nil? (some true? (map #(ray-to-pieces? board index %
