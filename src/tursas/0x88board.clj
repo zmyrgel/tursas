@@ -60,6 +60,7 @@
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
 
 (defrecord Move [from to])
+(defrecord GameTreeNode [state score children])
 
 ;; Predicates
 (defn board-index?
