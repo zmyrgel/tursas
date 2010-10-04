@@ -380,7 +380,7 @@
   "Checks given STATE has king in check."
   [state]
   (let* [side (if (= (:turn state) "w") WHITE BLACK)]
-        (index-under-threat? state (king-index state side))))
+        (index-under-threat? state (king-index state side) side)))
 
 ;; add pawn promotion
 (defn commit-move
