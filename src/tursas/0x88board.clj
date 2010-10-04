@@ -470,6 +470,11 @@
                                 (all-piece-indexes-for (:board state) side)))]
     (filter #(in-check? (commit-move state %)) all-moves)))
 
+(defn available-states-from
+  "Lists all legal child states from given game STATE."
+  [state]
+  (let [side (if (= (:turn state) "w") WHITE BLACK)]
+    (map #(commit-move state %) (all-moves-for state side))))
 
 (defn fen-board->0x88board
   "Parses board information from FEN-BOARD field."
