@@ -407,9 +407,9 @@
                              (index->algebraic (/ (+ to-index from-index) 2))
                              "-")
          promotion? (or (and (= moving-piece WHITE-PAWN)
-                             (= (row to-index 7)))
+                             (= (row to-index) 7))
                         (and (= moving-piece BLACK-PAWN)
-                             (= (row to-index 0))))
+                             (= (row to-index) 0)))
 
          ;; castling checks
          side-castling (if (= (:castling state) "-")
