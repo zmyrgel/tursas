@@ -457,8 +457,8 @@
                                        moving-piece))]
         (StateWith0x88. new-board
                         turn
-                        en-passant-string
                         castling-string
+                        en-passant-string
                         half-moves
                         full-moves)))
 
