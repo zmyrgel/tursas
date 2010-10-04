@@ -467,8 +467,8 @@
   [state side]
   (let [all-moves (flatten (map #(list-moves-for-piece state %)
                                 (all-piece-indexes-for (:board state) side)))]
-    all-moves))
-;;(filter #(in-check? (commit-move state %)) all-moves)
+    (filter #(in-check? (commit-move state %)) all-moves)))
+
 
 (defn fen-board->0x88board
   "Parses board information from FEN-BOARD field."
