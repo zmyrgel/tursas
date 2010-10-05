@@ -2,6 +2,16 @@
 
 Tursas is a simple chess engine implemented in Clojure.
 
+## Status
+
+- UCI / XBoard interface : some stubbs exist
+- Saving / Loading game state: done
+- REPL to play with: stubbs, not connected to state handling yet
+- State representation with 0x88 board: done
+- Move generation: done
+- Search algorithm: wip
+- Evaluator: simple, material balance for now
+
 ## Usage
 
 Currently this is un-usable. It is very much work in progress code.
