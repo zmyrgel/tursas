@@ -197,6 +197,85 @@
         rank (- (int (nth algebraic 1)) 48)]
     (+ (* (- 8 rank) 16) file)))
 
+(defn commit-move
+  "Commits given MOVE in STATE and return the new state."
+  [state move]
+  (let* [board (:board state)
+         to-index (:to move)
+         from-index (:from move)
+         side (if (black? board from-index)
+                BLACK
+                WHITE)
+
+         moving-piece (get board from-index)
+
+         turn (if (= side BLACK) "w" "b")
+
+         ;; pawn moves
+         pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
+                                       (= moving-piece BLACK-PAWN))
+                                   (not (= (get board to-index) EMPTY)))
+         en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
+                                        (= moving-piece BLACK-PAWN))
+                                    (= (abs (- to-index from-index)) 0x20))
+                             (index->algebraic (/ (+ to-index from-index) 2))
+                             "-")
+         promotion? (or (and (= moving-piece WHITE-PAWN)
+                             (= (row to-index) 7))
+                        (and (= moving-piece BLACK-PAWN)
+                             (= (row to-index) 0)))
+
+         ;; castling checks
+         side-castling (if (= (:castling state) "-")
+                         "-"
+                         (if (= side WHITE)
+                           (reduce str (re-seq #"\p{Upper}" (:castling state)))
+                           (reduce str (re-seq #"\p{Lower}" (:castling state)))))
+         castling? (and (or (= moving-piece WHITE-KING)
+                            (= moving-piece BLACK-KING))
+                        (= (abs (- to-index from-index)) 2))
+         castling-string (:castling state)
+
+         half-moves (if pawn-or-capture-move? 0 (+ (:half-moves state) 1))
+
+         full-moves (if (= side BLACK)
+                      (+ (:full-moves state) 1)
+                      (:full-moves state))
+
+         ;; make changes to board
+         new-board (cond
+                    promotion? (fill-square (clear-square board from-index)
+                                            to-index
+                                            (if (= side WHITE) WHITE-QUEEN BLACK-QUEEN))
+                    castling? (if (= (column to-index) 2)
+                                (if (= side WHITE)
+                                  (let* [temp-board (clear-square board from-index)
+                                         temp-board (clear-square temp-board 0)
+                                         temp-board (fill-square temp-board 3 WHITE-ROOK)]
+                                        (fill-square temp-board to-index WHITE-KING))
+                                  (let* [temp-board (clear-square board from-index)
+                                         temp-board (clear-square temp-board 112)
+                                         temp-board (fill-square temp-board 115 BLACK-ROOK)]
+                                        (fill-square temp-board to-index BLACK-KING)))
+                                (if (= side WHITE)
+                                  (let* [temp-board (clear-square board from-index)
+                                         temp-board (clear-square temp-board 7)
+                                         temp-board (fill-square temp-board 5 WHITE-ROOK)]
+                                        (fill-square temp-board to-index WHITE-KING))
+                                  (let* [temp-board (clear-square board from-index)
+                                         temp-board (clear-square temp-board 119)
+                                         temp-board (fill-square temp-board 117 BLACK-ROOK)]
+                                        (fill-square temp-board to-index BLACK-KING))))
+                    :else (fill-square (clear-square board from-index)
+                                       to-index
+                                       moving-piece))]
+        (StateWith0x88. new-board
+                        turn
+                        castling-string
+                        en-passant-string
+                        half-moves
+                        full-moves)))
+
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
@@ -382,86 +461,6 @@
   [state]
   (let* [side (if (= (:turn state) "w") WHITE BLACK)]
         (index-under-threat? state (king-index state side) side)))
-
-;; add pawn promotion
-(defn commit-move
-  "Commits given MOVE in STATE and return the new state."
-  [state move]
-  (let* [board (:board state)
-         to-index (:to move)
-         from-index (:from move)
-         side (if (black? board from-index)
-                BLACK
-                WHITE)
-
-         moving-piece (get board from-index)
-
-         turn (if (= side BLACK) "w" "b")
-
-         ;; pawn moves
-         pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
-                                       (= moving-piece BLACK-PAWN))
-                                   (not (= (get board to-index) EMPTY)))
-         en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
-                                        (= moving-piece BLACK-PAWN))
-                                    (= (abs (- to-index from-index)) 0x20))
-                             (index->algebraic (/ (+ to-index from-index) 2))
-                             "-")
-         promotion? (or (and (= moving-piece WHITE-PAWN)
-                             (= (row to-index) 7))
-                        (and (= moving-piece BLACK-PAWN)
-                             (= (row to-index) 0)))
-
-         ;; castling checks
-         side-castling (if (= (:castling state) "-")
-                         "-"
-                         (if (= side WHITE)
-                           (reduce str (re-seq #"\p{Upper}" (:castling state)))
-                           (reduce str (re-seq #"\p{Lower}" (:castling state)))))
-         castling? (and (or (= moving-piece WHITE-KING)
-                            (= moving-piece BLACK-KING))
-                        (= (abs (- to-index from-index)) 2))
-         castling-string (:castling state)
-
-         half-moves (if pawn-or-capture-move? 0 (+ (:half-moves state) 1))
-
-         full-moves (if (= side BLACK)
-                      (+ (:full-moves state) 1)
-                      (:full-moves state))
-
-         ;; make changes to board
-         new-board (cond
-                    promotion? (fill-square (clear-square board from-index)
-                                            to-index
-                                            (if (= side WHITE) WHITE-QUEEN BLACK-QUEEN))
-                    castling? (if (= (column to-index) 2)
-                                (if (= side WHITE)
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 0)
-                                         temp-board (fill-square temp-board 3 WHITE-ROOK)]
-                                        (fill-square temp-board to-index WHITE-KING))
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 112)
-                                         temp-board (fill-square temp-board 115 BLACK-ROOK)]
-                                        (fill-square temp-board to-index BLACK-KING)))
-                                (if (= side WHITE)
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 7)
-                                         temp-board (fill-square temp-board 5 WHITE-ROOK)]
-                                        (fill-square temp-board to-index WHITE-KING))
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 119)
-                                         temp-board (fill-square temp-board 117 BLACK-ROOK)]
-                                        (fill-square temp-board to-index BLACK-KING))))
-                    :else (fill-square (clear-square board from-index)
-                                       to-index
-                                       moving-piece))]
-        (StateWith0x88. new-board
-                        turn
-                        castling-string
-                        en-passant-string
-                        half-moves
-                        full-moves)))
 
 (defn all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
