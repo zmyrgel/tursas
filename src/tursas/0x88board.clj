@@ -571,5 +571,24 @@
    Simply calculates the material balance of the board."
   [state]
   (reduce + (map #(if (board-index? %)
-                    (piece-char->value (get (:board state) %))
-                    0) (range 128))))
+                    (piece-value->material-value (get (:board state) %))
+                    0)
+                 (range 128))))
+
+(defn minimax-search
+  "Search STATEs with Minimax algorithm until DEPTH and use EVAL to
+  evaluate results."
+  [state depth eval]
+  (if (= depth 0)
+    (eval state)
+    (let [children (available-states-from state)]
+      (loop [states children
+             best-state nil
+             best-value nil]
+        (if (empty? states)
+          best-value
+          (let [value (- (minimax-search (first states) (- depth 1) eval))]
+            (if (or (nil? best-value)
+                    (> value best-value))
+              (recur (rest states) (first states) value)
+              (recur (rest states) best-state best-value))))))))
