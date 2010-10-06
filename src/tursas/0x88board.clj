@@ -199,6 +199,23 @@
         rank (- (int (nth algebraic 1)) 48)]
     (+ (* (- 8 rank) 16) file)))
 
+(defn- commit-castle-move
+  "Make castling move on board."
+  [board move castling-side]
+  (let* [side (if (white? (get board (:from move))) WHITE BLACK)
+         rook (if (= side WHITE) WHITE-ROOK BLACK-ROOK)
+         king (if (= side WHITE) WHITE-KING BLACK-KING)
+         rook-from (if (= castling-side QUEEN-SIDE)
+                     (if (= side WHITE) 0 112)
+                     (if (= side WHITE) 7 119))
+         rook-to (if (= castling-side QUEEN-SIDE)
+                   (if (= side WHITE) 3 115)
+                   (if (= side WHITE) 5 117))
+         temp-board (clear-square board (:from move))
+         temp-board (clear-square temp-board rook-from)
+         temp-board (fill-square temp-board (:to move) king)]
+        (fill-square temp-board temp-board rook-to rook)))
+
 (defn commit-move
   "Commits given MOVE in STATE and return the new state."
   [state move]
@@ -249,25 +266,9 @@
                     promotion? (fill-square (clear-square board from-index)
                                             to-index
                                             (if (= side WHITE) WHITE-QUEEN BLACK-QUEEN))
-                    castling? (if (= (column to-index) 2)
-                                (if (= side WHITE)
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 0)
-                                         temp-board (fill-square temp-board 3 WHITE-ROOK)]
-                                        (fill-square temp-board to-index WHITE-KING))
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 112)
-                                         temp-board (fill-square temp-board 115 BLACK-ROOK)]
-                                        (fill-square temp-board to-index BLACK-KING)))
-                                (if (= side WHITE)
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 7)
-                                         temp-board (fill-square temp-board 5 WHITE-ROOK)]
-                                        (fill-square temp-board to-index WHITE-KING))
-                                  (let* [temp-board (clear-square board from-index)
-                                         temp-board (clear-square temp-board 119)
-                                         temp-board (fill-square temp-board 117 BLACK-ROOK)]
-                                        (fill-square temp-board to-index BLACK-KING))))
+                    castling? (commit-castle-move board
+                                                  move
+                                                  (if (= column to-index 2) QUEEN-SIDE KING-SIDE))
                     :else (fill-square (clear-square board from-index)
                                        to-index
                                        moving-piece))]
