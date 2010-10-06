@@ -603,3 +603,10 @@
                     (> value best-value))
               (recur (rest states) (first states) value)
               (recur (rest states) best-state best-value))))))))
+
+;;(defn get-move
+;;  "Let AI to seek its next move from STATE."
+;;  [state]
+;;  (let [depth 2]
+;;    (map #((cons % (minimax-search % depth evaluate-state)))
+;;         (available-states-from state))))
