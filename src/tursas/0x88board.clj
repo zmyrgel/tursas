@@ -573,10 +573,18 @@
   "Evaluates given game STATE.
    Simply calculates the material balance of the board."
   [state]
-  (reduce + (map #(if (board-index? %)
-                    (piece-value->material-value (get (:board state) %))
-                    0)
-                 (range 128))))
+  (let [game-situation (cond
+                        (< (+ (count (all-piece-indexes-for (:board state) BLACK))
+                           (count (all-piece-indexes-for (:board state) WHITE))) 15)
+                        'end-game
+                        (> (:full-moves state) 10)
+                        'middle-game
+                        :else 'opening-game)
+        material-value (reduce + (map #(if (board-index? %)
+                                         (piece-value->material-value (get (:board state) %))
+                                         0)
+                                      (range 128)))]
+    material-value))
 
 (defn minimax-search
   "Search STATEs with Minimax algorithm until DEPTH and use EVAL to
