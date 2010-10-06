@@ -17,6 +17,9 @@
 (def WHITE 0)
 (def BLACK 1)
 
+(def KING-SIDE 0)
+(def QUEEN-SIDE 1)
+
 ;; board contents
 (def EMPTY -1)
 (def WHITE-PAWN 0)
