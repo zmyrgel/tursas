@@ -56,14 +56,13 @@
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
 (def start-state "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-(def middle-state "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")
+(def middle-state "r3kbnr/pppq1ppp/n3p3/3p1b2/1PN5/B1P2N2/P2PPPPPP/R2QKBR1 b Qkq - 5 5")
 (def end-state "4k3/8/8/8/8/8/4P3/4K3 w - - 5 39")
 
 ;; New types
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
 
 (defrecord Move [from to])
-(defrecord GameTreeNode [state score children])
 
 ;; Predicates
 (defn board-index?
