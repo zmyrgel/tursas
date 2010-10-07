@@ -265,10 +265,14 @@
          new-board (cond
                     promotion? (fill-square (clear-square board from-index)
                                             to-index
-                                            (if (= side WHITE) WHITE-QUEEN BLACK-QUEEN))
+                                            (if (= side WHITE)
+                                              WHITE-QUEEN
+                                              BLACK-QUEEN))
                     castling? (commit-castle-move board
                                                   move
-                                                  (if (= column to-index 2) QUEEN-SIDE KING-SIDE))
+                                                  (if (= column to-index 2)
+                                                    QUEEN-SIDE
+                                                    KING-SIDE))
                     :else (fill-square (clear-square board from-index)
                                        to-index
                                        moving-piece))]
@@ -370,8 +374,10 @@
               (recur (+ index increment) (- king-squares 1)))
             :else (if (occupied? index)
                     false
-                    (or (= (get (:board state) (+ index increment)) WHITE-ROOK)
-                        (= (get (:board state) (+ index increment)) BLACK-ROOK)))))))
+                    (or (= (get (:board state)
+                                (+ index increment)) WHITE-ROOK)
+                        (= (get (:board state)
+                                (+ index increment)) BLACK-ROOK)))))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
@@ -409,7 +415,8 @@
                  (if (and move-twice
                           (board-index? (+ move-index step))
                           (empty-square? board (+ move-index step)))
-                   (list (Move. index move-index) (Move. index (+ move-index step)))
+                   (list (Move. index move-index)
+                         (Move. index (+ move-index step)))
                    (list (Move. index move-index)))
                  '())
 
@@ -573,17 +580,20 @@
   "Evaluates given game STATE.
    Simply calculates the material balance of the board."
   [state]
-  (let [game-situation (cond
-                        (< (+ (count (all-piece-indexes-for (:board state) BLACK))
-                           (count (all-piece-indexes-for (:board state) WHITE))) 15)
-                        'end-game
-                        (> (:full-moves state) 10)
-                        'middle-game
-                        :else 'opening-game)
-        material-value (reduce + (map #(if (board-index? %)
-                                         (piece-value->material-value (get (:board state) %))
-                                         0)
-                                      (range 128)))]
+  (let* [board (:board state)
+         game-situation (cond
+                         (< (+ (count (all-piece-indexes-for board BLACK))
+                               (count (all-piece-indexes-for board WHITE))) 15)
+                         'end-game
+                         (> (:full-moves state) 10)
+                         'middle-game
+                         :else 'opening-game)
+         material-value (reduce +
+                                (map
+                                 #(if (board-index? %)
+                                    (piece-value->material-value (get board %))
+                                    0)
+                                   (range 128)))]
     material-value))
 
 (defn minimax-search
