@@ -620,3 +620,12 @@
 ;;  (let [depth 2]
 ;;    (map #((cons % (minimax-search % depth evaluate-state)))
 ;;         (available-states-from state))))
+
+(defn- move->algebraic
+  "Converts MOVE to algebraic notation to better communicate with others."
+  [move])
+
+(defn- occured-move
+  "Given PREV-STATE and NEXT-STATE, calculate which move occurred to
+  cause state change."
+  [prev-state next-state])
