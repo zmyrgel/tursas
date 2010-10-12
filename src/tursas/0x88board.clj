@@ -37,12 +37,16 @@
 
 ;; piece material values
 ;; based on Shannon's work
-(def PAWN-VALUE 1)
-(def BISHOP-VALUE 3)
-(def KNIGHT-VALUE 3)
-(def ROOK-VALUE 5)
-(def QUEEN-VALUE 9)
-(def KING-VALUE 999)
+(def PAWN-VALUE 10)
+(def BISHOP-VALUE 30)
+(def KNIGHT-VALUE 30)
+(def ROOK-VALUE 50)
+(def QUEEN-VALUE 90)
+(def KING-VALUE 9999)
+
+(def OPENING-GAME 0)
+(def MIDDLE-GAME 1)
+(def END-GAME 2)
 
 ;; sliding pieces
 (def rook-directions (list NORTH SOUTH EAST WEST))
@@ -61,8 +65,64 @@
 
 ;; New types
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
-
 (defrecord Move [from to])
+
+(def white-pawn-table (into (vector-of :byte)
+                            [0   0   0   0   0   0   0   0
+                             50  50  50  50  50  50  50  50
+                             10  10  20  30  30  20  10  10
+                             5   5   10  27  27  10  5   5
+                             0   0   0   25  25  0   0   0
+                             5  -5  -10  0   0  -10 -5   5
+                             5   10  10 -25 -25  10  10  5
+                             0   0   0   0   0   0   0   0]))
+(def black-pawn-table (reverse white-pawn-table))
+
+(def knight-table (into (vector-of :byte)
+                        [-50 -40 -20 -30 -30 -20 -40 -50
+                         -40 -20   0   5   5   0 -20 -40
+                         -30   5  10  15  15  10   5 -30
+                         -30   0  15  20  20  15   0 -30
+                         -30   0  15  20  20  15   0 -30
+                         -30   5  10  15  15  10   5 -30
+                         -40 -20   0   5   5   0 -20 -40
+                         -50 -40 -20 -30 -30 -20 -40 -50]))
+
+(def white-bishop-table (into (vector-of :byte)
+                              [-20 -10 -10 -10 -10 -10 -10 -20
+                               -10   0   0   0   0   0   0 -10
+                               -10   0   5  10  10   5   0 -10
+                               -10   5   5  10  10   5   5 -10
+                               -10   0  10  10  10  10   0 -10
+                               -10  10  10  10  10  10  10 -10
+                               -10   5   0   0   0   0   5 -10
+                               -20 -10 -40 -10 -10 -40 -10 -20]))
+(def black-bishop-table (reverse white-bishop-table))
+
+(def white-king-table (into (vector-of :byte)
+                            [-30  -40  -40  -50  -50  -40  -40  -30
+                             -30  -40  -40  -50  -50  -40  -40  -30
+                             -30  -40  -40  -50  -50  -40  -40  -30
+                             -30  -40  -40  -50  -50  -40  -40  -30
+                             -20  -30  -30  -40  -40  -30  -30  -20
+                             -10  -20  -20  -20  -20  -20  -20  -10
+                             20   20    0    0    0    0   20   20
+                             20   30   10    0    0   10   30   20]))
+(def black-king-table (reverse white-king-table))
+
+(def white-king-table-end-game (into (vector-of :byte)
+                                     [-50 -40 -30 -20 -20 -30 -40 -50
+                                      -30 -20 -10   0   0 -10 -20 -30
+                                      -30 -10  20  30  30  20 -10 -30
+                                      -30 -10  30  40  40  30 -10 -30
+                                      -30 -10  30  40  40  30 -10 -30
+                                      -30 -10  20  30  30  20 -10 -30
+                                      -30 -30   0   0   0   0 -30 -30
+                                      -50 -30 -30 -30 -30 -30 -30 -50]))
+(def black-king-table-end-game (reverse white-king-table-end-game))
+
+;; variables
+(def *search-depth* (ref 2))
 
 ;; Predicates
 (defn board-index?
@@ -576,6 +636,24 @@
        (:half-moves state) " "
        (:full-moves state)))
 
+(defn piece-index-score
+  "Checks piece-specific index score"
+  [piece index game-situation]
+  (case piece
+        WHITE-PAWN (get white-pawn-table index)
+        BLACK-PAWN (get black-pawn-table index)
+        WHITE-KNIGHT (get knight-table index)
+        BLACK-KNIGHT (get knight-table index)
+        WHITE-BISHOP (get white-bishop-table index)
+        BLACK-BISHOP (get black-bishop-table index)
+        WHITE-KING (if (= game-situation END-GAME)
+                     (get white-king-table-end-game index)
+                     (get white-king-table index))
+        BLACK-KING (if (= game-situation END-GAME)
+                     (get black-king-table-end-game index)
+                     (get black-king-table index))
+        0))
+
 (defn evaluate-state
   "Evaluates given game STATE.
    Simply calculates the material balance of the board."
@@ -584,17 +662,19 @@
          game-situation (cond
                          (< (+ (count (all-piece-indexes-for board BLACK))
                                (count (all-piece-indexes-for board WHITE))) 15)
-                         'end-game
+                         END-GAME
                          (> (:full-moves state) 10)
-                         'middle-game
-                         :else 'opening-game)
-         material-value (reduce +
-                                (map
-                                 #(if (board-index? %)
-                                    (piece-value->material-value (get board %))
-                                    0)
-                                   (range 128)))]
-    material-value))
+                         MIDDLE-GAME
+                         :else OPENING-GAME)
+         state-score (reduce +
+                             (map
+                              #(if (board-index? %)
+                                 (let [piece (get board %)]
+                                   (+ (piece-value->material-value piece)
+                                      (piece-index-score piece % game-situation)))
+                                 0)
+                              (range 128)))]
+        state-score))
 
 (defn minimax-search
   "Search STATEs with Minimax algorithm until DEPTH and use EVAL to
@@ -614,18 +694,23 @@
               (recur (rest states) (first states) value)
               (recur (rest states) best-state best-value))))))))
 
-;;(defn get-move
-;;  "Let AI to seek its next move from STATE."
-;;  [state]
-;;  (let [depth 2]
-;;    (map #((cons % (minimax-search % depth evaluate-state)))
-;;         (available-states-from state))))
-
 (defn- move->algebraic
   "Converts MOVE to algebraic notation to better communicate with others."
   [move])
+
+(defn- algebraic->move
+  "Converts ALGEBRAIC notation to move."
+  [algebraic])
 
 (defn- occured-move
   "Given PREV-STATE and NEXT-STATE, calculate which move occurred to
   cause state change."
   [prev-state next-state])
+
+(defn get-move
+  "Let AI to seek its next move from STATE."
+  [state]
+  (let [depth @*search-depth*]
+    (map #(cons (minimax-search % depth evaluate-state) %)
+         (available-states-from state))))
+
