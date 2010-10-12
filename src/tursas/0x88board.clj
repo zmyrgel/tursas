@@ -696,11 +696,19 @@
 
 (defn- move->algebraic
   "Converts MOVE to algebraic notation to better communicate with others."
-  [move])
+  [move]
+  (let* [to-part (index->algebraic (:to move))
+         from-part (index->algebraic (:from move))]
+        (str to-part from-part)))
 
 (defn- algebraic->move
   "Converts ALGEBRAIC notation to move."
-  [algebraic])
+  [algebraic]
+  (let [from (algebraic->index (str (get algebraic 0)
+                                    (get algebraic 1)))
+        to (algebraic->index (str (get algebraic 2)
+                                  (get algebraic 3)))]
+    (Move. from to)))
 
 (defn- occured-move
   "Given PREV-STATE and NEXT-STATE, calculate which move occurred to
