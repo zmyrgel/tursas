@@ -65,7 +65,7 @@
 
 ;; New types
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
-(defrecord Move [from to])
+(defrecord Move [from to promotion])
 
 (def white-pawn-table (into (vector-of :byte)
                             [0   0   0   0   0   0   0   0
@@ -326,8 +326,8 @@
                     promotion? (fill-square (clear-square board from-index)
                                             to-index
                                             (if (= side WHITE)
-                                              WHITE-QUEEN
-                                              BLACK-QUEEN))
+                                              (piece-char->value (:promotion move))
+                                              (+ (piece-char->value (:promotion move)) 1)))
                     castling? (commit-castle-move board
                                                   move
                                                   (if (= column to-index 2)
@@ -356,8 +356,8 @@
         moves
         (if (empty-square? board (get board target-index))
           (recur (+ target-index direction)
-                 (cons  (Move. index target-index) moves))
-          (cons (Move. index target-index) moves))))))
+                 (cons  (Move. index target-index nil) moves))
+          (cons (Move. index target-index nil) moves))))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
@@ -366,7 +366,7 @@
         friendly? (if (black? board index) black? white?)]
     (if (and (board-index? place)
              (not (friendly? board place)))
-      (list (Move. index place))
+      (list (Move. index place nil))
       '())))
 
 (defn- ray-to-pieces?
@@ -419,7 +419,7 @@
           (if (empty? enemy-king-index)
             false
             (index-under-threat?
-             (commit-move state (Move. enemy-king-index index))
+             (commit-move state (Move. enemy-king-index index nil))
              index side))))))
 
 (defn- legal-castling?
@@ -450,11 +450,11 @@
          castling-queen-side (some #{(if (= side BLACK) \q \Q)} castling)
          castling-moves-king (if (and (not (nil? castling-king-side))
                                       (legal-castling? state index EAST))
-                               (Move. index (* WEST 2))
+                               (Move. index (* WEST 2) nil)
                                '())
          castling-moves-queen (if (and (not (nil? castling-queen-side))
                                        (legal-castling? state index WEST))
-                                (Move. index (* EAST 2))
+                                (Move. index (* EAST 2) nil)
                                 '())]
         (concat normal-moves castling-moves-king castling-moves-queen)))
 
@@ -475,9 +475,9 @@
                  (if (and move-twice
                           (board-index? (+ move-index step))
                           (empty-square? board (+ move-index step)))
-                   (list (Move. index move-index)
-                         (Move. index (+ move-index step)))
-                   (list (Move. index move-index)))
+                   (list (Move. index move-index nil)
+                         (Move. index (+ move-index step) nil))
+                   (list (Move. index move-index nil)))
                  '())
 
          ;; possible capture
@@ -494,7 +494,7 @@
                                            (and (board-index? %)
                                                 (occupied? board %)
                                                 (not (friendly? board %))))
-                                     (list (Move. index %))
+                                     (list (Move. index % nil))
                                      '()) captures)))))
 
 (defn- list-moves-for-piece
@@ -707,8 +707,9 @@
   (let [from (algebraic->index (str (get algebraic 0)
                                     (get algebraic 1)))
         to (algebraic->index (str (get algebraic 2)
-                                  (get algebraic 3)))]
-    (Move. from to)))
+                                  (get algebraic 3)))
+        promotion (str (get algebraic 4))]
+    (Move. from to promotion)))
 
 (defn- occured-move
   "Given PREV-STATE and NEXT-STATE, calculate which move occurred to
