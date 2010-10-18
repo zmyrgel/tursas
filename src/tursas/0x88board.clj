@@ -64,6 +64,7 @@
 (def end-state "4k3/8/8/8/8/8/4P3/4K3 w - - 5 39")
 
 ;; New types
+<<<<<<< Updated upstream
 (defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves])
 (defrecord Move [from to promotion])
 
@@ -336,7 +337,8 @@
                         castling-string
                         en-passant-string
                         half-moves
-                        full-moves)))
+                        full-moves
+                        (move->algebraic move))))
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
@@ -706,15 +708,10 @@
         promotion (str (get algebraic 4))]
     (Move. from to promotion)))
 
-(defn- occured-move
-  "Given PREV-STATE and NEXT-STATE, calculate which move occurred to
-  cause state change."
-  [prev-state next-state])
-
 (defn get-move
   "Let AI to seek its next move from STATE."
   [state]
   (let [depth @*search-depth*]
-    (map #(cons (minimax-search % depth evaluate-state) %)
-         (available-states-from state))))
+    (:leading-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
+                                     (available-states-from state)))))))
 
