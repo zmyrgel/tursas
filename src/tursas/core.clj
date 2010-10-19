@@ -1,6 +1,6 @@
 (ns tursas.core
   (:gen-class)
-  (:use [tursas.repl]))
+  (:use (tursas repl)))
 
 (defn -main
   "Starts the engine repl for input handling."
