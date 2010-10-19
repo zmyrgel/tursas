@@ -149,7 +149,7 @@
 (defn xboard-make-move
   "Tells the XBoard to make MOVE."
   [move]
-  (let* [state (re-seq #"\S+" (first @game-state))]
+  (let [state (re-seq #"\S+" (first @game-state))]
         (if (legal-move? move state)
           (make-fen move state)
           nil)))
