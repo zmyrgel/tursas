@@ -53,7 +53,8 @@
 
 (defn make-move
   "Make the given move in the active game."
-  [move])
+  [move]
+  (commit-move (algebraic->move move)))
 
 (defn undo-move
   "Undo N moves or the just the last move."
@@ -207,5 +208,6 @@ and once done, respond with pong"
 
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
+
 
 
