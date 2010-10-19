@@ -53,7 +53,8 @@
 
 (defn make-move
   "Make the given move in the active game."
-  [move])
+  [move]
+  (commit-move (algebraic->move move)))
 
 (defn undo-move
   "Undo N moves or the just the last move."
@@ -61,11 +62,16 @@
 
 (defn xboard-set-option
   "Sets XBoard engine options."
-  [option value])
+  [option value]
+  (dosync
+   (alter xboard-engine-options
+          (assoc (keyword option) value @xboard-engine-options))))
 
 (defn xboard-get-option
   "Returns the current OPTIONs value."
-  [option])
+  [option]
+  (io! (println (str
+                 ((keyword option) @xboard-engine-options)))))
 
 (defn xboard-accept-feature
   "Tells the engine that GUI accepts last feature."
@@ -144,7 +150,7 @@
 (defn xboard-make-move
   "Tells the XBoard to make MOVE."
   [move]
-  (let* [state (re-seq #"\S+" (first @game-state))]
+  (let [state (re-seq #"\S+" (first @game-state))]
         (if (legal-move? move state)
           (make-fen move state)
           nil)))
@@ -194,12 +200,14 @@ and once done, respond with pong"
 
 (defn xboard-parse-option
   "Wrapper to parse options from string and set them."
-  [options])
+  [option]
+  (let [pair (string/split #"=" option)]
+    (if (= (count pair) 1)
+      (xboard-set-option (first pair) true)
+      (xboard-set-option (first pair) (second pair)))))
+
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
 
-;;(defn get-material-diff
-;; "Calculates material difference from FEN"
-;;  [fen]
-;;  (reduce + (map piece-value fen)))
+
 
