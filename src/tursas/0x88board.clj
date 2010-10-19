@@ -689,15 +689,16 @@
               (recur (rest states) (first states) value)
               (recur (rest states) best-state best-value))))))))
 
-(defn- move->algebraic
+(defn move->algebraic
   "Converts MOVE to algebraic notation to better communicate with others."
   [move]
   (let* [to-part (index->algebraic (:to move))
          from-part (index->algebraic (:from move))]
         (str to-part from-part)))
 
-(defn- algebraic->move
-  "Converts ALGEBRAIC notation to move."
+(defn algebraic->move
+  "Converts ALGEBRAIC notation to move
+   eg. e2e4 to #(Move :to 84 :from 90 :promotion nil)"
   [algebraic]
   (let [from (algebraic->index (str (get algebraic 0)
                                     (get algebraic 1)))
