@@ -199,12 +199,13 @@ and once done, respond with pong"
 
 (defn xboard-parse-option
   "Wrapper to parse options from string and set them."
-  [options])
+  [option]
+  (let [pair (string/split #"=" option)]
+    (if (= (count pair) 1)
+      (xboard-set-option (first pair) true)
+      (xboard-set-option (first pair) (second pair)))))
+
 ;; do stuff NAME=VALUE or NAME for boolean
 ;; call xboard-set-option
 
-;;(defn get-material-diff
-;; "Calculates material difference from FEN"
-;;  [fen]
-;;  (reduce + (map piece-value fen)))
 
