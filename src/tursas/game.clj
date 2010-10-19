@@ -206,8 +206,4 @@ and once done, respond with pong"
       (xboard-set-option (first pair) true)
       (xboard-set-option (first pair) (second pair)))))
 
-;; do stuff NAME=VALUE or NAME for boolean
-;; call xboard-set-option
-
-
 
