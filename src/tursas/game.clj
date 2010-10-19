@@ -61,11 +61,16 @@
 
 (defn xboard-set-option
   "Sets XBoard engine options."
-  [option value])
+  [option value]
+  (dosync
+   (alter xboard-engine-options
+          (assoc (keyword option) value @xboard-engine-options))))
 
 (defn xboard-get-option
   "Returns the current OPTIONs value."
-  [option])
+  [option]
+  (io! (println (str
+                 ((keyword option) @xboard-engine-options)))))
 
 (defn xboard-accept-feature
   "Tells the engine that GUI accepts last feature."
