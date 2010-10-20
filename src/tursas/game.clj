@@ -1,11 +1,10 @@
 (ns tursas.game
-  (:use [tursas.0x88board])
-  (:require [clojure.contrib.string :as string]))
+  (:require [clojure.contrib.string :as string])
+  (:use (tursas search state eval)))
 
-(def default-startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+(def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def game-state (ref ()))
-(def uci-engine-options (ref {:debug false}))
-(def xboard-engine-options (ref {:debug false :protocol 2}))
+(def *search-depth* (ref 2))
 
 (defn save-game
   "Saves the current game by writing game-state to file."
@@ -42,54 +41,25 @@
         (do
           (println (str i "| "
                         (string/map-str #(if (and (>= (int %) 49)
-                                                  (<= (int %) 56))
-                                           (string/repeat (- (int %) 48)
-                                                          (str \space \-))
-                                           (str \space %))
-                                        (first pieces))))
+                                           (<= (int %) 56))
+                                    (string/repeat (- (int %) 48)
+                                            (str \space \-))
+                                    (str \space %))
+                                 (first pieces))))
           (recur (dec i)
                  (rest pieces)
                  turn))))))
 
-(defn make-move
-  "Make the given move in the active game."
-  [move]
-  (commit-move (algebraic->move move)))
-
-(defn undo-move
-  "Undo N moves or the just the last move."
-  [& n])
-
-(defn xboard-set-option
-  "Sets XBoard engine options."
-  [option value]
-  (dosync
-   (alter xboard-engine-options
-          (assoc (keyword option) value @xboard-engine-options))))
-
-(defn xboard-get-option
-  "Returns the current OPTIONs value."
-  [option]
-  (io! (println (str
-                 ((keyword option) @xboard-engine-options)))))
-
-(defn xboard-accept-feature
-  "Tells the engine that GUI accepts last feature."
-  [])
-
-(defn xboard-reject-feature
-  "Tells the engine that GUI rejects given feature."
-  [])
-
-(defn expand-row
+(defn- expand-row
   "Expands numbers to spaces for given FEN notation ROW."
   [row]
   (string/map-str #(if (and (>= (int %) 49)
-                            (<= (int %) 56))
+                     (<= (int %) 56))
                      (string/repeat (- (int %) 48)
-                                    \space)
+                             \space)
                      %)
-                  row))
+           row))
+
 (defn- get-piece
   "Returns letter representing game piece in given LOCATION on the BOARD."
   [board location]
@@ -97,70 +67,13 @@
         col (- (int (get location 0)) 97)]
     (get (get (map expand-row board) row) col)))
 
-(defn- available-moves-for
-  "Lists all available moves for PIECE"
-  [piece from])
-
-(defn captures?
-  "Placeholder"
-  [to]
-  true)
-
-(defn castling?
-  "Placeholder"
-  [move state]
-  true)
-
-(defn en-passant?
-  "Placeholder"
-  [move]
-  true)
-
-(defn check?
-  "Placeholder"
-  [move state]
-  true)
-
-(defn- legal-move?
-  "Predicate to see if given MOVE is legal in STATE"
-  [move state]
-  (let* [from (str (get move 0) (get move 1))
-         to (str (get move 2) (get move 3))
-         promotion (str (get move 4))
-         fen-board (nth state 0)
-         side (nth state 1)
-         castling (nth state 2)
-         en-passant (nth state 3)
-         half-moves (nth state 4)
-         full-moves (nth state 5)
-         piece (get-piece fen-board from)]
-        (if (contains? (available-moves-for piece from) to)
-          true
-          false)))
-
-(defn- make-fen
-  "Returns new FEN string after MOVE is applied to given STATE."
-  [move state]
-    (let* [captures (captures? move)
-           castling (castling? move state)
-           en-passant (en-passant? move)
-           check (check? move state)]
-          (make-fen move state captures castling en-passant check)))
-
-(defn xboard-make-move
-  "Tells the XBoard to make MOVE."
-  [move]
-  (let [state (re-seq #"\S+" (first @game-state))]
-        (if (legal-move? move state)
-          (make-fen move state)
-          nil)))
-
-(defn valid-coordinate-string?
+(defn- valid-coordinate-string?
   [coordinate]
   (empty? (filter #(if (= % coordinate) true false)
                   (for [x (range 8) y (range 8)]
                     (str (get "abcdefgh" x) (inc y))))))
 
+<<<<<<< HEAD
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
@@ -205,5 +118,38 @@ and once done, respond with pong"
     (if (= (count pair) 1)
       (xboard-set-option (first pair) true)
       (xboard-set-option (first pair) (second pair)))))
+
+;;;; new ;;;;
+
+(defn get-move
+  "Let AI to seek its next move from STATE."
+  [state]
+  (let [depth @*search-depth*]
+    (:leading-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
+                                     (available-states-from state)))))))
+
+;; (defn piece-value->char
+;;   "Gives piece character representation from its board VALUE."
+;;   [value]
+;;   (nth "PpRrNnBbQqKk" value))
+
+;; (defn piece-char->value
+;;   "Gives pieces character numerical representation from its CHAR."
+;;   [char]
+;;   (case char
+;;         \P WHITE-PAWN
+;;         \p BLACK-PAWN
+;;         \R WHITE-ROOK
+;;         \r BLACK-ROOK
+;;         \N WHITE-KNIGHT
+;;         \n BLACK-KNIGHT
+;;         \B WHITE-BISHOP
+;;         \b BLACK-BISHOP
+;;         \Q WHITE-QUEEN
+;;         \q BLACK-QUEEN
+;;         \K WHITE-KING
+;;         \k BLACK-KING
+;;         EMPTY))
+
 
 
