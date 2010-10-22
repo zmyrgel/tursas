@@ -16,7 +16,7 @@
   [state depth eval-fn]
   (if (= depth 0)
     (eval-fn state)
-    (loop [states (available-states-from state)
+    (loop [states (legal-states state)
            best-state nil
            best-value nil]
       (if (empty? states)
