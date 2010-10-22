@@ -210,6 +210,24 @@
               (commit-move state (Move. enemy-king-index index nil))
               index side))))))
 
+(defn- king-index
+  "Gets the kings index in STATE for SIDE."
+  [state side]
+  (let [board (:board state)
+        king (if (= side :black)
+               (piece-char->value \k)
+               (piece-char->value \K))]
+    (first (filter #(= (get board %) king) (range 128)))))
+
+(defn game-end?
+  "Predicate to check if given STATE would indicate the game has ended.
+   Mostly it checks if king has been captured, 50 move rule has come in effect
+   or if player has no moves left to make."
+  [state]
+  (or (>= (:half-moves state) 50)
+      (nil? (king-index state (if (= (:turn state) "w") :white :black)))
+      (empty? (legal-states state))))
+
 (defn- legal-castling?
   [state index increment]
   (let [side (if (= (get (:board state) index) :white) :white :black)]
@@ -304,15 +322,6 @@
   (if (= side :black)
     (filter #(black? board %) (range 128))
     (filter #(white? board %) (range 128))))
-
-(defn- king-index
-  "Gets the kings index in STATE for SIDE."
-  [state side]
-  (let [board (:board state)
-        king (if (= side :black)
-               (piece-char->value \k)
-               (piece-char->value \K))]
-    (first (filter #(= (get board %) king) (range 128)))))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
