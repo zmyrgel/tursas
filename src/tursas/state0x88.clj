@@ -114,6 +114,29 @@
         rank (- (int (nth algebraic 1)) 48)]
     (+ (* (- 8 rank) 16) file)))
 
+(defn piece-value->char
+  "Gives piece character representation from its board VALUE."
+  [value]
+  (nth "PpRrNnBbQqKk" value))
+
+(defn piece-char->value
+  "Gives pieces character numerical representation from its CHAR."
+  [char]
+  (case char
+        \P WHITE-PAWN
+        \p BLACK-PAWN
+        \R WHITE-ROOK
+        \r BLACK-ROOK
+        \N WHITE-KNIGHT
+        \n BLACK-KNIGHT
+        \B WHITE-BISHOP
+        \b BLACK-BISHOP
+        \Q WHITE-QUEEN
+        \q BLACK-QUEEN
+        \K WHITE-KING
+        \k BLACK-KING
+        EMPTY))
+
 (defn- commit-castle-move
   "Make castling move on board."
   [board move castling-side]
