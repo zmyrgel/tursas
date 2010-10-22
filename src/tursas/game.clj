@@ -73,59 +73,12 @@
                   (for [x (range 8) y (range 8)]
                     (str (get "abcdefgh" x) (inc y))))))
 
-(defn xboard-move-now
-  "Tells the Engine to stop thinking and pick move immidiately."
-  [])
-
-(defn xboard-ping
-  "Tells XBoard to wait for all the stuff to complete given before this
-and once done, respond with pong"
-  [n]
-  (println (str "pong " n)))
-
-(defn xboard-result
-  "Sets the game result to engine, for learning purposes."
-  [result])
-
-(defn xboard-set-board
-  "Tells the XBoard to set the board to given FEN string."
-  [fen]
-  (dosync (ref-set game-state (list fen))))
-
-(defn xboard-hint
-  "Tells the engine to provide a hint for good move."
-  [])
-
-(defn xboard-undo-move
-  "Undo last N moves or just the last one."
-  [& n]
-  (dosync (ref-set game-state (rest @game-state))))
-
-(defn xboard-bk
-  "Tells the XBoard to"
-  [])
-
-(defn xboard-send-rating
-  "Prompts the Engine to send its rating."
-  []
-  (io! (println "10")))
-
-(defn xboard-parse-option
-  "Wrapper to parse options from string and set them."
-  [option]
-  (let [pair (string/split #"=" option)]
-    (if (= (count pair) 1)
-      (xboard-set-option (first pair) true)
-      (xboard-set-option (first pair) (second pair)))))
-
-;;;; new ;;;;
-
 (defn get-move
   "Let AI to seek its next move from STATE."
   [state]
   (let [depth @*search-depth*]
-    (:leading-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
-                                     (available-states-from state)))))))
+    (:prev-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
+                                  (legal-states state)))))))
 
 ;; (defn piece-value->char
 ;;   "Gives piece character representation from its board VALUE."
