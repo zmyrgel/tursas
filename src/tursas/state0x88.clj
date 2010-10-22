@@ -456,7 +456,7 @@
                         en-passant-string
                         half-moves
                         full-moves
-                        (move->algebraic move))))
+                        move)))
 
 ;;;;; TYPE EXTENSION ;;;;;;
 
