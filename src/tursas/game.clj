@@ -73,7 +73,6 @@
                   (for [x (range 8) y (range 8)]
                     (str (get "abcdefgh" x) (inc y))))))
 
-<<<<<<< HEAD
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
