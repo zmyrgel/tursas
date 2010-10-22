@@ -104,6 +104,21 @@
   [board index piece-value]
   (assoc board index piece-value))
 
+(defn- index->algebraic
+  "Converts given index to algebraic representation."
+  [index]
+  (let* [coord (format "%x" index)
+         num (+ (- (int (nth coord 0)) 48) 1)
+         alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
+        (str alpha num)))
+
+(defn- algebraic->index
+  "Converts given algebraic representation to board index value."
+  [algebraic]
+  (let [file (- (int (nth algebraic 0)) 97)
+        rank (- (int (nth algebraic 1)) 48)]
+    (+ (* (- 8 rank) 16) file)))
+
 (defn- commit-castle-move
   "Make castling move on board."
   [board move castling-side]
