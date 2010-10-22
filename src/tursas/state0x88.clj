@@ -77,7 +77,6 @@
   [x y]
   (= (row x) (row y)))
 
-;; Public function
 (defn- clear-en-passant
   "Makes a new state without an en passant move from given STATE."
   [state]
