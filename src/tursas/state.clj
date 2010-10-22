@@ -4,16 +4,12 @@
   (occupied? [state index])
   (black? [state index])
   (white? [state index])
-  (opponent [state])
-  (commit-move [state move])
+  (opponent [state]) ; either :black or :white
+  (commit-move [state move]) ; new state
   (in-check? [state])
   (fen->state [fen])
   (state->fen [state])
   (pgn->state [pgn])
   (state->pgn [state])
-  (available-states-from [state])
+  (legal-states [state])
   (get-pieces [state])) ;; {:index piece-char}
-
-;;(defrecord StateWith0x88Board)
-;;(defrecord StateWithBitBoard)
-;;(defrecord StateWithVectorBoard)
