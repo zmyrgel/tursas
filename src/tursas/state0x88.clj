@@ -121,8 +121,8 @@
          rook (if (= side :white) WHITE-ROOK BLACK-ROOK)
          king (if (= side :white) WHITE-KING BLACK-KING)
          rook-from (if (= castling-side QUEEN-SIDE)
-                     (if (= side WHITE) 0 112)
-                     (if (= side WHITE) 7 119))
+                     (if (= side :white) 0 112)
+                     (if (= side :white) 7 119))
          rook-to (if (= castling-side QUEEN-SIDE)
                    (if (= side :white) 3 115)
                    (if (= side :white) 5 117))
@@ -130,7 +130,6 @@
          temp-board (clear-square temp-board rook-from)
          temp-board (fill-square temp-board (:to move) king)]
         (fill-square temp-board temp-board rook-to rook)))
-
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
@@ -468,7 +467,7 @@
   (black? [state index]
           (and (board-index? index)
                (> (get (:board state) index) EMPTY)
-               (= (mod (get (:board state) index) 2) BLACK)))
+               (= (mod (get (:board state) index) 2) :black)))
   (white? [state index]
           (and (board-index? index)
                (> (get (:board state) index) EMPTY)
