@@ -16,13 +16,7 @@
           "bd - display the board on the screen"
           "uci - enable uci mode"
           "xboard - ebable xboard mode"
-          "quit" (case (@active-repl)
-                       :general (quit)
-                       :uci (do (quit-uci-engine)
-                                (quit))
-                       :xboard (do (quit-xboard-engine)
-                                   (quit))
-                       :else (quit))
+          "quit - quite the Tursas engine"
           ""))
        (when (= @active-repl :uci)
          (print-uci-usage))
@@ -38,15 +32,19 @@
           "help" (print-usage)
           "load" (load-game (rest cmd))
           "save" (save-game (rest cmd))
-          "bd" (display-board)
-          "uci" (do (dosync (ref-set active-repl :uci))
-                    (process-uci-command cmd))
-          "xboard" (do (dosync (ref-set active-repl :xboard))
-                       (process-xboard-command cmd))
+          "bd"   (display-board)
+          "uci"  (dosync (ref-set active-repl :uci))
+          "xboard" (dosync (ref-set active-repl :xboard))
+          "quit" (case @active-repl
+                       :general (quit)
+                       :uci (do (quit-uci-engine)
+                                (quit))
+                       :xboard (do (quit-xboard-engine)
+                                   (quit))
+                       :else (quit))
           (case @active-repl
-                :general (if (not (empty? (rest cmd)))
-                           (recur (rest cmd))
-                           nil)
+                :general (when (not (empty? (rest cmd)))
+                           (recur (rest cmd)))
                 :uci (process-uci-command cmd)
                 :xboard (process-xboard-command cmd)))))
 
