@@ -14,8 +14,8 @@
 (def NW 15)
 (def SE -15)
 
-(def KING-SIDE 0)
-(def QUEEN-SIDE 1)
+(def QUEEN-SIDE 0)
+(def KING-SIDE 1)
 
 ;; board contents
 (def EMPTY -1)
@@ -151,20 +151,16 @@
 
 (defn- commit-castle-move
   "Make castling move on board."
-  [board move castling-side]
-  (let [side (if (white? (get board (:from move))) :white :black)
-        rook (if (= side :white) WHITE-ROOK BLACK-ROOK)
-        king (if (= side :white) WHITE-KING BLACK-KING)
-        rook-from (if (= castling-side QUEEN-SIDE)
-                    (if (= side :white) 0 112)
-                    (if (= side :white) 7 119))
-        rook-to (if (= castling-side QUEEN-SIDE)
-                  (if (= side :white) 3 115)
-                  (if (= side :white) 5 117))
-        temp-board (clear-square board (:from move))
-        temp-board (clear-square temp-board rook-from)
-        temp-board (fill-square temp-board (:to move) king)]
-    (fill-square temp-board temp-board rook-to rook)))
+  [player board move castling-side]
+  (let [[rook king from to]
+        (if (= player :white)
+          [WHITE-ROOK WHITE-KING [0 7] [3 5]]
+          [BLACK-ROOK BLACK-KING [112 119] [115 117]])]
+    (-> board
+        (clear-square % (:from move))
+        (clear-square % (get from castling-side))
+        (fill-square % (:to move) king)
+        (fill-square % (get to castling-side) rook))))
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
@@ -440,8 +436,7 @@
                           (Character/toUpperCase (:promotion move))
                           (Character/toLowerCase (:promotion move)))))
           (castling? moving-piece move)
-          (commit-castle-move board
-                              move
+          (commit-castle-move player board move
                               (if (= column to-index 2)
                                 QUEEN-SIDE
                                 KING-SIDE))
