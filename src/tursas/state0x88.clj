@@ -440,9 +440,8 @@
                                 QUEEN-SIDE
                                 KING-SIDE))
           :else
-          (fill-square (clear-square board from-index)
-                       to-index
-                       moving-piece))))
+          (-> (clear-square board from-index)
+              (fill-square % to-index moving-piece)))))
 
 (defn update-state
   "Return result of applying given MOVE to STATE."
