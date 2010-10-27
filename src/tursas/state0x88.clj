@@ -245,9 +245,8 @@
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
-  [state side]
-  (let [board (:board state)
-        king (if (= side :black)
+  [board player]
+  (let [king (if (= player :black)
                (piece-char->value \k)
                (piece-char->value \K))]
     (first (filter #(= (get board %) king) (range 128)))))
