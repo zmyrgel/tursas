@@ -498,22 +498,17 @@
 (extend-type StateWithHex
   State
   (occupied? [state index]
-             (not (= (get board index) EMPTY)))
+             (occupied? (:board state) index))
   (black? [state index]
-          (and (board-index? index)
-               (> (get (:board state) index) EMPTY)
-               (= (mod (get (:board state) index) 2) :black)))
+          (occupied-by? :black (:board state) index))
   (white? [state index]
-          (and (board-index? index)
-               (> (get (:board state) index) EMPTY)
-               (= (mod (get (:board state) index) 2) :white)))
+          (occupied-by? :white (:board state) index))
   (opponent [state]
-            (if (= (:turn state) "w") :white :black))
+            (if (= (:turn state) :white) :black :white))
   (commit-move [state move]
                (commit-new-move state move))
   (in-check? [state]
-             (let [side (if (= (:turn state) "w") :white :black)]
-               (index-under-threat? state (king-index state side) side)))
+             (index-under-threat? state (king-index state (:turn state)) (:turn state)))
   (fen->state [fen]
               (let [fen-list (re-seq #"\S+" fen)]
                 (when (= (count fen-list) 6)
