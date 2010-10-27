@@ -532,6 +532,5 @@
                    (:half-moves state) " "
                    (:full-moves state)))
   (legal-states [state]
-                (let [side (if (= (:turn state) "w") :white :black)]
-                  (map #(commit-move state %) (all-moves-for state side)))))
+                (map #(commit-move state %) (all-moves-for state (:turn state)))))
 
