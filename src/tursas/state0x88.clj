@@ -322,15 +322,14 @@
         captures (if (= side :black)
                    (list (+ SW index) (+ SE index))
                    (list (+ NW index) (+ NE index)))
-        en-passant-index (if (= (:en-passant state) "-")
+        en-passant-index (if (= en-passant "-")
                            -1
-                           (algebraic->index (:en-passant state)))]
+                           (algebraic->index en-passant))]
 
     ;; check capture points
     (flatten (conj moves (map #(if (or (and (board-index? %)
                                             (= en-passant-index %))
-                                       (and (board-index? %)
-                                            (occupied? board %)
+                                       (and (occupied? board %)
                                             (not (friendly? board %))))
                                  (list (Move. index % nil))
                                  '()) captures)))))
@@ -463,19 +462,19 @@
                         (= (abs (- to-index from-index)) 2))
          castling-string (:castling state)
 
-         half-moves (if pawn-or-capture-move? 0 (+ (:half-moves state) 1))
+         half-moves (if pawn-or-capture-move? 0 (inc (:half-moves state)))
 
-         full-moves (if (= side :black)
-                      (+ (:full-moves state) 1)
+         full-moves (if (= player :black)
+                      (inc (:full-moves state))
                       (:full-moves state))
 
          ;; make changes to board
          new-board (cond
                     promotion? (fill-square (clear-square board from-index)
                                             to-index
-                                            (if (= side :white)
+                                            (if (= player :white)
                                               (piece-char->value (:promotion move))
-                                              (+ (piece-char->value (:promotion move)) 1)))
+                                              (inc (piece-char->value (:promotion move)))))
                     castling? (commit-castle-move board
                                                   move
                                                   (if (= column to-index 2)
