@@ -304,7 +304,7 @@
                 '())
 
         ;; possible capture
-        captures (if (= side :black)
+        captures (if (= side :white)
                    (list (+ NW index) (+ NE index))
                    (list (+ SW index) (+ SE index)))
         en-passant-index (if (= en-passant "-")
