@@ -441,7 +441,7 @@
                                 KING-SIDE))
           :else
           (-> (clear-square board from-index)
-              (fill-square % to-index moving-piece)))))
+              (fill-square to-index moving-piece)))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
