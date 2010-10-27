@@ -499,7 +499,7 @@
   (commit-move [state move]
                (update-state state move))
   (in-check? [state]
-             (index-under-threat? state (king-index state (:turn state)) (:turn state)))
+             (index-under-threat? state (king-index (:board state) (:turn state)) (:turn state)))
   (fen->state [fen]
               (let [fen-list (re-seq #"\S+" fen)]
                 (when (= (count fen-list) 6)
