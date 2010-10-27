@@ -169,9 +169,8 @@
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
-  [state index direction]
-  (let [board (:board state)
-        friendly? (if (black? board index) black? white?)]
+  [board index direction]
+  (let [friendly? (if (black? board index) black? white?)]
     (loop [target-index (+ index direction)
            moves ()]
       (if (or (not (board-index? target-index))
@@ -184,9 +183,8 @@
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
-  [state index place]
-  (let [board (:board state)
-        friendly? (if (black? board index) black? white?)]
+  [board index place]
+  (let [friendly? (if (black? board index) black? white?)]
     (if (and (board-index? place)
              (not (friendly? board place)))
       (list (Move. index place nil))
