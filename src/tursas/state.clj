@@ -9,7 +9,5 @@
   (in-check? [state])
   (fen->state [fen])
   (state->fen [state])
-  (pgn->state [pgn])
-  (state->pgn [state])
   (legal-states [state])
   (get-pieces [state])) ;; {:index piece-char}
