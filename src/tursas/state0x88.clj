@@ -484,6 +484,29 @@
                         full-moves
                         (move->algebraic move))))
 
+(defn- parse-fen
+  "Parse FEN string and buld a state record."
+  [fen]
+  (let [fen-list (re-seq #"\S+" fen)]
+    (when (= (count fen-list) 6)
+      (StateWith0x88. (fen-board->0x88board (first fen-list))
+                      (if (= (second fen-list) "w") :white :black)
+                      (nth fen-list 2)
+                      (nth fen-list 3)
+                      (Integer/parseInt (nth fen-list 4))
+                      (Integer/parseInt (nth fen-list 5))
+                      nil))))
+
+(defn- parse-state
+  "Returns FEN representation of given STATE."
+  [state]
+  (str (board->fen-board (:board state)) " "
+       (if (= (:turn state) :white) "w" "b") " "
+       (:castling state) " "
+       (:en-passant state) " "
+       (:half-moves state) " "
+       (:full-moves state)))
+
 ;;;;; TYPE EXTENSION ;;;;;;
 
 (extend-type StateWithHex
@@ -501,22 +524,9 @@
   (in-check? [state]
              (index-under-threat? state (king-index (:board state) (:turn state)) (:turn state)))
   (fen->state [fen]
-              (let [fen-list (re-seq #"\S+" fen)]
-                (when (= (count fen-list) 6)
-                  (StateWith0x88. (fen-board->0x88board (first fen-list))
-                                  (if (= (second fen-list) "w") :white :black)
-                                  (nth fen-list 2)
-                                  (nth fen-list 3)
-                                  (Integer/parseInt (nth fen-list 4))
-                                  (Integer/parseInt (nth fen-list 5))
-                                  nil))))
+              (parse-fen fen))
   (state->fen [state]
-              (str (board->fen-board (:board state)) " "
-                   (if (= (:turn state) :white) "w" "b") " "
-                   (:castling state) " "
-                   (:en-passant state) " "
-                   (:half-moves state) " "
-                   (:full-moves state)))
+              (parse-state state))
   (legal-states [state]
                 (map #(commit-move state %) (all-moves-for state (:turn state)))))
 
