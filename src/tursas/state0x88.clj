@@ -243,7 +243,7 @@
                WHITE-KING)]
     (first (filter #(= (get board %) king) (range 128)))))
 
-(defn game-end?
+(defn- game-end?
   "Predicate to check if given STATE would indicate the game has ended.
    Mostly it checks if king has been captured, 50 move rule has come in effect
    or if player has no moves left to make."
@@ -305,8 +305,8 @@
 
         ;; possible capture
         captures (if (= side :black)
-                   (list (+ SW index) (+ SE index))
-                   (list (+ NW index) (+ NE index)))
+                   (list (+ NW index) (+ NE index))
+                   (list (+ SW index) (+ SE index)))
         en-passant-index (if (= en-passant "-")
                            -1
                            (algebraic->index en-passant))]
