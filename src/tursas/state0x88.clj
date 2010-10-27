@@ -102,10 +102,10 @@
 (defn- index->algebraic
   "Converts given index to algebraic representation."
   [index]
-  (let* [coord (format "%x" index)
-         num (+ (- (int (nth coord 0)) 48) 1)
-         alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
-        (str alpha num)))
+  (let [coord (format "%x" index)
+        num (+ (- (int (nth coord 0)) 48) 1)
+        alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
+    (str alpha num)))
 
 (defn- algebraic->index
   "Converts given algebraic representation to board index value."
@@ -140,45 +140,45 @@
 (defn- commit-castle-move
   "Make castling move on board."
   [board move castling-side]
-  (let* [side (if (white? (get board (:from move))) :white :black)
-         rook (if (= side :white) WHITE-ROOK BLACK-ROOK)
-         king (if (= side :white) WHITE-KING BLACK-KING)
-         rook-from (if (= castling-side QUEEN-SIDE)
-                     (if (= side :white) 0 112)
-                     (if (= side :white) 7 119))
-         rook-to (if (= castling-side QUEEN-SIDE)
-                   (if (= side :white) 3 115)
-                   (if (= side :white) 5 117))
-         temp-board (clear-square board (:from move))
-         temp-board (clear-square temp-board rook-from)
-         temp-board (fill-square temp-board (:to move) king)]
-        (fill-square temp-board temp-board rook-to rook)))
+  (let [side (if (white? (get board (:from move))) :white :black)
+        rook (if (= side :white) WHITE-ROOK BLACK-ROOK)
+        king (if (= side :white) WHITE-KING BLACK-KING)
+        rook-from (if (= castling-side QUEEN-SIDE)
+                    (if (= side :white) 0 112)
+                    (if (= side :white) 7 119))
+        rook-to (if (= castling-side QUEEN-SIDE)
+                  (if (= side :white) 3 115)
+                  (if (= side :white) 5 117))
+        temp-board (clear-square board (:from move))
+        temp-board (clear-square temp-board rook-from)
+        temp-board (fill-square temp-board (:to move) king)]
+    (fill-square temp-board temp-board rook-to rook)))
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
   [state index direction]
-  (let* [board (:board state)
-         friendly? (if (black? board index) black? white?)]
-        (loop [target-index (+ index direction)
-               moves ()]
-          (if (or (not (board-index? target-index))
-                  (friendly? board target-index))
-            moves
-            (if (empty-square? board (get board target-index))
-              (recur (+ target-index direction)
-                     (cons  (Move. index target-index nil) moves))
-              (cons (Move. index target-index nil) moves))))))
+  (let [board (:board state)
+        friendly? (if (black? board index) black? white?)]
+    (loop [target-index (+ index direction)
+           moves ()]
+      (if (or (not (board-index? target-index))
+              (friendly? board target-index))
+        moves
+        (if (empty-square? board (get board target-index))
+          (recur (+ target-index direction)
+                 (cons  (Move. index target-index nil) moves))
+          (cons (Move. index target-index nil) moves))))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
   [state index place]
-  (let* [board (:board state)
-         friendly? (if (black? board index) black? white?)]
-        (if (and (board-index? place)
-                 (not (friendly? board place)))
-          (list (Move. index place nil))
-          '())))
+  (let [board (:board state)
+        friendly? (if (black? board index) black? white?)]
+    (if (and (board-index? place)
+             (not (friendly? board place)))
+      (list (Move. index place nil))
+      '())))
 
 (defn- ray-to-pieces?
   "Checks if there's ray to from INDEX to given PIECES."
@@ -190,48 +190,48 @@
 (defn- index-under-threat?
   "Checks if given INDEX in STATE is under threath of enemy."
   [state index opponent]
-  (let* [board (:board state)]
-        (or
-         ;; check if opponent's knight can attack index
-         (nil? (some #(= (get board %)
-                         (if (= opponent :white)
-                           WHITE-KNIGHT
-                           BLACK-KING)) (map #(+ index %) knight-movement)))
-         ;; check if there's ray to opponents queen or
-         ;; bishop diagonally from index
-         (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                      (if (= opponent :white)
-                                                        [WHITE-QUEEN WHITE-BISHOP]
-                                                        [BLACK-QUEEN BLACK-BISHOP]))
-                                     [NE NW SW SE]))))
+  (let [board (:board state)]
+    (or
+     ;; check if opponent's knight can attack index
+     (nil? (some #(= (get board %)
+                     (if (= opponent :white)
+                       WHITE-KNIGHT
+                       BLACK-KING)) (map #(+ index %) knight-movement)))
+     ;; check if there's ray to opponents queen or
+     ;; bishop diagonally from index
+     (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                  (if (= opponent :white)
+                                                    [WHITE-QUEEN WHITE-BISHOP]
+                                                    [BLACK-QUEEN BLACK-BISHOP]))
+                                 [NE NW SW SE]))))
 
-         ;; check if there's ray to opponents queen or
-         ;; rook on the same column or row
-         (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                      (if (= opponent :white)
-                                                        [WHITE-QUEEN WHITE-ROOK]
-                                                        [BLACK-QUEEN BLACK-ROOK]))
-                                     [NORTH EAST WEST SOUTH]))))
+     ;; check if there's ray to opponents queen or
+     ;; rook on the same column or row
+     (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                  (if (= opponent :white)
+                                                    [WHITE-QUEEN WHITE-ROOK]
+                                                    [BLACK-QUEEN BLACK-ROOK]))
+                                 [NORTH EAST WEST SOUTH]))))
 
-         ;; check pawns
-         (if (= opponent :white)
-           (or (= (get board (+ index SE)) WHITE-PAWN)
-               (= (get board (+ index SW)) WHITE-PAWN))
-           (or (= (get board (+ index NE)) BLACK-PAWN)
-               (= (get board (+ index NW)) BLACK-PAWN)))
+     ;; check pawns
+     (if (= opponent :white)
+       (or (= (get board (+ index SE)) WHITE-PAWN)
+           (= (get board (+ index SW)) WHITE-PAWN))
+       (or (= (get board (+ index NE)) BLACK-PAWN)
+           (= (get board (+ index NW)) BLACK-PAWN)))
 
 
-         ;; check kings if there's king next to index and
-         ;; it can attack index
-         (let [side (if (= opponent :white) :black :white)
-               own-king (if (= side :white) WHITE-KING BLACK-KING)
-               enemy-king-index (filter #(= (get board  %) own-king)
-                                        (map #(+ index %) king-movement))]
-           (if (empty? enemy-king-index)
-             false
-             (index-under-threat?
-              (commit-move state (Move. enemy-king-index index nil))
-              index side))))))
+     ;; check kings if there's king next to index and
+     ;; it can attack index
+     (let [side (if (= opponent :white) :black :white)
+           own-king (if (= side :white) WHITE-KING BLACK-KING)
+           enemy-king-index (filter #(= (get board  %) own-king)
+                                    (map #(+ index %) king-movement))]
+       (if (empty? enemy-king-index)
+         false
+         (index-under-threat?
+          (commit-move state (Move. enemy-king-index index nil))
+          index side))))))
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
@@ -271,60 +271,60 @@
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [state index]
-  (let* [side (if (black? (:board state) index) :black :white)
-         castling (:castling state)
-         normal-moves (flatten (map #(move-to-place state index (+ index %))
-                                    king-movement))
-         castling-king-side (some #{(if (= side :black) \k \K)} castling)
-         castling-queen-side (some #{(if (= side :black) \q \Q)} castling)
-         castling-moves-king (if (and (not (nil? castling-king-side))
-                                      (legal-castling? state index EAST))
-                               (Move. index (* WEST 2) nil)
-                               '())
-         castling-moves-queen (if (and (not (nil? castling-queen-side))
-                                       (legal-castling? state index WEST))
-                                (Move. index (* EAST 2) nil)
-                                '())]
-        (concat normal-moves castling-moves-king castling-moves-queen)))
+  (let [side (if (black? (:board state) index) :black :white)
+        castling (:castling state)
+        normal-moves (flatten (map #(move-to-place state index (+ index %))
+                                   king-movement))
+        castling-king-side (some #{(if (= side :black) \k \K)} castling)
+        castling-queen-side (some #{(if (= side :black) \q \Q)} castling)
+        castling-moves-king (if (and (not (nil? castling-king-side))
+                                     (legal-castling? state index EAST))
+                              (Move. index (* WEST 2) nil)
+                              '())
+        castling-moves-queen (if (and (not (nil? castling-queen-side))
+                                      (legal-castling? state index WEST))
+                               (Move. index (* EAST 2) nil)
+                               '())]
+    (concat normal-moves castling-moves-king castling-moves-queen)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [state index]
-  (let* [board (:board state)
-         side (if (black? board index) :black :white)
-         friendly? (if (= side :black) black? white?)
-         step (if (= side :black) SOUTH NORTH)
-         move-index (+ index step)
-         move-twice (or (and (= side :black) (same-row? index 96))
-                        (and (= side :white) (same-row? index 16)))
+  (let [board (:board state)
+        side (if (black? board index) :black :white)
+        friendly? (if (= side :black) black? white?)
+        step (if (= side :black) SOUTH NORTH)
+        move-index (+ index step)
+        move-twice (or (and (= side :black) (same-row? index 96))
+                       (and (= side :white) (same-row? index 16)))
 
-         ;; calculate movement
-         moves (if (and (board-index? move-index)
-                        (empty-square? board move-index))
-                 (if (and move-twice
-                          (board-index? (+ move-index step))
-                          (empty-square? board (+ move-index step)))
-                   (list (Move. index move-index nil)
-                         (Move. index (+ move-index step) nil))
-                   (list (Move. index move-index nil)))
-                 '())
+        ;; calculate movement
+        moves (if (and (board-index? move-index)
+                       (empty-square? board move-index))
+                (if (and move-twice
+                         (board-index? (+ move-index step))
+                         (empty-square? board (+ move-index step)))
+                  (list (Move. index move-index nil)
+                        (Move. index (+ move-index step) nil))
+                  (list (Move. index move-index nil)))
+                '())
 
-         ;; possible capture
-         captures (if (= side :black)
-                    (list (+ SW index) (+ SE index))
-                    (list (+ NW index) (+ NE index)))
-         en-passant-index (if (= (:en-passant state) "-")
-                            -1
-                            (algebraic->index (:en-passant state)))]
+        ;; possible capture
+        captures (if (= side :black)
+                   (list (+ SW index) (+ SE index))
+                   (list (+ NW index) (+ NE index)))
+        en-passant-index (if (= (:en-passant state) "-")
+                           -1
+                           (algebraic->index (:en-passant state)))]
 
-        ;; check capture points
-        (flatten (conj moves (map #(if (or (and (board-index? %)
-                                                (= en-passant-index %))
-                                           (and (board-index? %)
-                                                (occupied? board %)
-                                                (not (friendly? board %))))
-                                     (list (Move. index % nil))
-                                     '()) captures)))))
+    ;; check capture points
+    (flatten (conj moves (map #(if (or (and (board-index? %)
+                                            (= en-passant-index %))
+                                       (and (board-index? %)
+                                            (occupied? board %)
+                                            (not (friendly? board %))))
+                                 (list (Move. index % nil))
+                                 '()) captures)))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
@@ -425,26 +425,26 @@
 (defn commit-new-move
   "Commits move"
   [state move]
-  (let* [board (:board state)
-         to-index (:to move)
-         from-index (:from move)
-         side (if (black? board from-index)
-                :black
-                :white)
+  (let [board (:board state)
+        to-index (:to move)
+        from-index (:from move)
+        side (if (black? board from-index)
+               :black
+               :white)
 
-         moving-piece (get board from-index)
+        moving-piece (get board from-index)
 
-         turn (if (= side :black) "w" "b")
+        turn (if (= side :black) "w" "b")
 
-         ;; pawn moves
-         pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
+        ;; pawn moves
+        pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
+                                      (= moving-piece BLACK-PAWN))
+                                  (not (= (get board to-index) EMPTY)))
+        en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
                                        (= moving-piece BLACK-PAWN))
-                                   (not (= (get board to-index) EMPTY)))
-         en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
-                                        (= moving-piece BLACK-PAWN))
-                                    (= (abs (- to-index from-index)) 0x20))
-                             (index->algebraic (/ (+ to-index from-index) 2))
-                             "-")
+                                   (= (abs (- to-index from-index)) 0x20))
+                            (index->algebraic (/ (+ to-index from-index) 2))
+                            "-")
          promotion? (or (and (= moving-piece WHITE-PAWN)
                              (= (row to-index) 7))
                         (and (= moving-piece BLACK-PAWN)
@@ -488,7 +488,7 @@
                         en-passant-string
                         half-moves
                         full-moves
-                        move)))
+                        (move->algebraic move))))
 
 ;;;;; TYPE EXTENSION ;;;;;;
 
@@ -509,8 +509,8 @@
   (commit-move [state move]
                (commit-new-move state move))
   (in-check? [state]
-             (let* [side (if (= (:turn state) "w") :white :black)]
-                   (index-under-threat? state (king-index state side) side)))
+             (let [side (if (= (:turn state) "w") :white :black)]
+               (index-under-threat? state (king-index state side) side)))
   (fen->state [fen]
               (let [fen-list (re-seq #"\S+" fen)]
                 (when (= (count fen-list) 6)

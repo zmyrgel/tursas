@@ -98,16 +98,16 @@
   "Evaluates given game STATE.
    Simply calculates the material balance of the board."
   [state]
-  (let* [pieces (get-pieces state)
-         game-situation (cond
-                         (< (count pieces) 15)
-                         :end-game
-                         (> (:full-moves state) 10)
-                         :middle-game
-                         :else :opening-game)]
-        (reduce #(+ (piece-value->material-value (get pieces %))
-                    (piece-index-score (get pieces %) % game-situation))
-                (keys pieces))))
+  (let [pieces (get-pieces state)
+        game-situation (cond
+                        (< (count pieces) 15)
+                        :end-game
+                        (> (:full-moves state) 10)
+                        :middle-game
+                        :else :opening-game)]
+    (reduce #(+ (piece-value->material-value (get pieces %))
+                (piece-index-score (get pieces %) % game-situation))
+            (keys pieces))))
 
 
 
