@@ -257,51 +257,46 @@
    or if player has no moves left to make."
   [state]
   (or (>= (:half-moves state) 50)
-      (nil? (king-index state (if (= (:turn state) "w") :white :black)))
+      (nil? (king-index (:board state) (:turn state)))
       (empty? (legal-states state))))
 
 (defn- legal-castling?
-  [state index increment]
-  (let [side (if (= (get (:board state) index) :white) :white :black)]
+  [player state index increment]
+  (let [board (:board state)]
     (loop [index (+ index increment)
            king-squares 2]
       (cond (> king-squares 0)
-            (if (or (occupied? (:board state) index)
-                    (index-under-threat? state index side))
+            (if (or (occupied? board index)
+                    (index-under-threat? state index player))
               false
               (recur (+ index increment) (- king-squares 1)))
             :else (if (occupied? index)
                     false
-                    (or (= (get (:board state)
-                                (+ index increment)) WHITE-ROOK)
-                        (= (get (:board state)
-                                (+ index increment)) BLACK-ROOK)))))))
+                    (or (= (get board (+ index increment)) WHITE-ROOK)
+                        (= (get board (+ index increment)) BLACK-ROOK)))))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
-  [state index]
-  (let [side (if (black? (:board state) index) :black :white)
-        castling (:castling state)
-        normal-moves (flatten (map #(move-to-place state index (+ index %))
+  [player state index]
+  (let [castling (:castling state)
+        normal-moves (flatten (map #(move-to-place (:board state) index (+ index %))
                                    king-movement))
-        castling-king-side (some #{(if (= side :black) \k \K)} castling)
-        castling-queen-side (some #{(if (= side :black) \q \Q)} castling)
+        castling-king-side (some #{(if (= player :black) \k \K)} castling)
+        castling-queen-side (some #{(if (= player :black) \q \Q)} castling)
         castling-moves-king (if (and (not (nil? castling-king-side))
-                                     (legal-castling? state index EAST))
+                                     (legal-castling? player state index EAST))
                               (Move. index (* WEST 2) nil)
                               '())
         castling-moves-queen (if (and (not (nil? castling-queen-side))
-                                      (legal-castling? state index WEST))
+                                      (legal-castling? player state index WEST))
                                (Move. index (* EAST 2) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
-  [state index]
-  (let [board (:board state)
-        side (if (black? board index) :black :white)
-        friendly? (if (= side :black) black? white?)
+  [player board index en-passant]
+  (let [friendly? (if (= player :black) black? white?)
         step (if (= side :black) SOUTH NORTH)
         move-index (+ index step)
         move-twice (or (and (= side :black) (same-row? index 96))
