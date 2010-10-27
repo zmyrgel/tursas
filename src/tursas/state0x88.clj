@@ -427,9 +427,10 @@
          (cond
           promotion? (fill-square (clear-square board from-index)
                                   to-index
-                                  (if (= player :white)
-                                    (piece-char->value (:promotion move))         ;; apply toUpper
-                                    (inc (piece-char->value (:promotion move))))) ;; apply toLower
+                                  (piece-char->value
+                                   (if (= player :white)
+                                     (Character/toUpperCase (:promotion move))
+                                     (Character/toLowerCase (:promotion move)))))
           castling? (commit-castle-move board
                                         move
                                         (if (= column to-index 2)
