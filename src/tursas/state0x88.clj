@@ -421,7 +421,7 @@
            (= piece BLACK-KING))
        (= (abs (- (:to move) (:from move))) 2)))
 
-(defn update-board
+(defn- update-board
   "Returns new board after applying MOVE to BOARD."
   [player move board]
   (let [to-index (:to move)
@@ -443,23 +443,26 @@
           (-> (clear-square board from-index)
               (fill-square % to-index moving-piece)))))
 
-(defn update-state
+(defn- pawn-or-capture-move?
+  "Predicate to see if move was pawn move or a capture"
+  [piece board move]
+  (or (or (= piece WHITE-PAWN)
+          (= piece BLACK-PAWN))
+      (not (= (get board (:to move)) EMPTY))))
+
+(defn- update-state
   "Return result of applying given MOVE to STATE."
   [state move]
   (let [to-index (:to move)
         from-index (:from move)
         player (if (occupied-by? :white board from-index)
-                 :white
-                 :black)
+                 :white :black)
 
         moving-piece (get (:board state) from-index)
 
         turn (if (= player :white) "b" "w")
 
         ;; pawn moves
-        pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
-                                      (= moving-piece BLACK-PAWN))
-                                  (not (= (get (:board state) to-index) EMPTY)))
         en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
                                        (= moving-piece BLACK-PAWN))
                                    (= (abs (- to-index from-index)) 0x20))
@@ -474,7 +477,9 @@
 
         castling-string (:castling state)
 
-         half-moves (if pawn-or-capture-move? 0 (inc (:half-moves state)))
+         half-moves (if (pawn-or-capture-move? moving-piece (:board state) move)
+                      0
+                      (inc (:half-moves state)))
 
          full-moves (if (= player :black)
                       (inc (:full-moves state))
