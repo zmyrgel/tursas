@@ -165,17 +165,16 @@
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
-  [board index direction]
-  (let [friendly? (if (black? board index) black? white?)]
-    (loop [target-index (+ index direction)
-           moves ()]
-      (if (or (not (board-index? target-index))
-              (friendly? board target-index))
-        moves
-        (if (empty-square? board (get board target-index))
-          (recur (+ target-index direction)
-                 (cons  (Move. index target-index nil) moves))
-          (cons (Move. index target-index nil) moves))))))
+  [player board index direction]
+  (loop [target-index (+ index direction)
+         moves ()]
+    (if (or (not (board-index? target-index))
+            (occupied-by? player board target-index))
+      moves
+      (if (empty-square? board (get board target-index))
+        (recur (+ target-index direction)
+               (cons  (Move. index target-index nil) moves))
+        (cons (Move. index target-index nil) moves)))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
@@ -326,9 +325,9 @@
   (let [board (:board state)
         player (if (occupied-by? :white board index) :white :black)]
     (case (Character/toLowerCase (piece-value->char (get board index)))
-          \r (map #(slide-in-direction board index %) rook-directions)
-          \b (map #(slide-in-direction board index %) bishop-directions)
-          \q (map #(slide-in-direction board index %) queen-directions)
+          \r (map #(slide-in-direction player board index %) rook-directions)
+          \b (map #(slide-in-direction player board index %) bishop-directions)
+          \q (map #(slide-in-direction player board index %) queen-directions)
           \n (map #(move-to-place board index (+ index %)) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
           \k (list-king-moves board index (:castling state))
