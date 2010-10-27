@@ -411,34 +411,44 @@
                    0
                    false)))))
 
+(defn promotion?
+  "Checks if given move is pawn promotion."
+  [piece move]
+  (or (and (= piece WHITE-PAWN)
+           (= (row (:to move)) 7))
+      (and (= piece BLACK-PAWN)
+           (= (row (:to move)) 0))))
+
+(defn castling?
+  "Checks given move is castling move."
+  [piece move]
+  (and (or (= piece WHITE-KING)
+           (= piece BLACK-KING))
+       (= (abs (- (:to move) (:from move))) 2)))
+
 (defn update-board
   "Returns new board after applying MOVE to BOARD."
   [player move board]
   (let [to-index (:to move)
         from-index (:from move)
-        moving-piece (get board from-index)
-        promotion? (or (and (= moving-piece WHITE-PAWN)
-                            (= (row to-index) 7))
-                       (and (= moving-piece BLACK-PAWN)
-                            (= (row to-index) 0)))
-        castling? (and (or (= moving-piece WHITE-KING)
-                           (= moving-piece BLACK-KING))
-                       (= (abs (- to-index from-index)) 2))]
-         (cond
-          promotion? (fill-square (clear-square board from-index)
-                                  to-index
-                                  (piece-char->value
-                                   (if (= player :white)
-                                     (Character/toUpperCase (:promotion move))
-                                     (Character/toLowerCase (:promotion move)))))
-          castling? (commit-castle-move board
-                                        move
-                                        (if (= column to-index 2)
-                                          QUEEN-SIDE
-                                          KING-SIDE))
-          :else (fill-square (clear-square board from-index)
-                             to-index
-                             moving-piece))))
+        moving-piece (get board from-index)]
+    (cond (promotion? moving-piece move)
+          (fill-square (clear-square board from-index)
+                       to-index
+                       (piece-char->value
+                        (if (= player :white)
+                          (Character/toUpperCase (:promotion move))
+                          (Character/toLowerCase (:promotion move)))))
+          (castling? moving-piece move)
+          (commit-castle-move board
+                              move
+                              (if (= column to-index 2)
+                                QUEEN-SIDE
+                                KING-SIDE))
+          :else
+          (fill-square (clear-square board from-index)
+                       to-index
+                       moving-piece))))
 
 (defn update-state
   "Return result of applying given MOVE to STATE."
