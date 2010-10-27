@@ -82,6 +82,18 @@
   [state]
   (assoc state :en-passant "-"))
 
+(defn- occupied?
+  "Checks if BOARD INDEX is occupied by piece."
+  [board index]
+  (and (board-index? index)
+       (not (= (get board index) EMPTY))))
+
+(defn- occupied-by?
+  "Checks if given BOARD INDEX is occupied by PLAYER."
+  [player board index]
+  (and (occupied? board index)
+       (= (mod (get board index) 2) player)))
+
 (defn- init-game-board
   "Generates new 128 element vector of bytes
    and places chess piece representation to it."
