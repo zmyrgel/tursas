@@ -199,49 +199,46 @@
 
 (defn- index-under-threat?
   "Checks if given INDEX in STATE is under threath of enemy."
-  [state index opponent]
-  (let [board (:board state)]
-    (or
-     ;; check if opponent's knight can attack index
-     (nil? (some #(= (get board %)
-                     (if (= opponent :white)
-                       WHITE-KNIGHT
-                       BLACK-KING)) (map #(+ index %) knight-movement)))
-     ;; check if there's ray to opponents queen or
-     ;; bishop diagonally from index
-     (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                  (if (= opponent :white)
-                                                    [WHITE-QUEEN WHITE-BISHOP]
-                                                    [BLACK-QUEEN BLACK-BISHOP]))
-                                 [NE NW SW SE]))))
+  [board index opponent]
+  (or
+   ;; check if opponent's knight can attack index
+   (nil? (some #(= (get board %)
+                   (if (= opponent :white)
+                     WHITE-KNIGHT BLACK-KING))
+               (map #(+ index %) knight-movement)))
+   ;; check if there's ray to opponents queen or
+   ;; bishop diagonally from index
+   (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                (if (= opponent :white)
+                                                  [WHITE-QUEEN WHITE-BISHOP]
+                                                  [BLACK-QUEEN BLACK-BISHOP]))
+                               [NE NW SW SE]))))
 
-     ;; check if there's ray to opponents queen or
-     ;; rook on the same column or row
-     (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                  (if (= opponent :white)
-                                                    [WHITE-QUEEN WHITE-ROOK]
-                                                    [BLACK-QUEEN BLACK-ROOK]))
-                                 [NORTH EAST WEST SOUTH]))))
+   ;; check if there's ray to opponents queen or
+   ;; rook on the same column or row
+   (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                                (if (= opponent :white)
+                                                  [WHITE-QUEEN WHITE-ROOK]
+                                                  [BLACK-QUEEN BLACK-ROOK]))
+                               [NORTH EAST WEST SOUTH]))))
 
-     ;; check pawns
-     (if (= opponent :white)
-       (or (= (get board (+ index SE)) WHITE-PAWN)
-           (= (get board (+ index SW)) WHITE-PAWN))
-       (or (= (get board (+ index NE)) BLACK-PAWN)
-           (= (get board (+ index NW)) BLACK-PAWN)))
+   ;; check pawns
+   (if (= opponent :white)
+     (or (= (get board (+ index SE)) WHITE-PAWN)
+         (= (get board (+ index SW)) WHITE-PAWN))
+     (or (= (get board (+ index NE)) BLACK-PAWN)
+         (= (get board (+ index NW)) BLACK-PAWN)))
 
 
-     ;; check kings if there's king next to index and
-     ;; it can attack index
-     (let [side (if (= opponent :white) :black :white)
-           own-king (if (= side :white) WHITE-KING BLACK-KING)
-           enemy-king-index (filter #(= (get board  %) own-king)
-                                    (map #(+ index %) king-movement))]
-       (if (empty? enemy-king-index)
-         false
-         (index-under-threat?
-          (commit-move state (Move. enemy-king-index index nil))
-          index side))))))
+   ;; check kings if there's king next to index and
+   ;; it can attack index
+   (let [player (if (= opponent :white) :black :white)
+         own-king (if (= player :white) WHITE-KING BLACK-KING)
+         enemy-king-index (filter #(= (get board  %) own-king)
+                                  (map #(+ index %) king-movement))]
+     (if (empty? enemy-king-index)
+       false
+       (index-under-threat? (update-board player (Move. enemy-king-index index nil) board) index player)))))
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
@@ -261,34 +258,32 @@
       (empty? (legal-states state))))
 
 (defn- legal-castling?
-  [player state index increment]
-  (let [board (:board state)]
-    (loop [index (+ index increment)
-           king-squares 2]
-      (cond (> king-squares 0)
-            (if (or (occupied? board index)
-                    (index-under-threat? state index player))
-              false
-              (recur (+ index increment) (- king-squares 1)))
-            :else (if (occupied? index)
-                    false
-                    (or (= (get board (+ index increment)) WHITE-ROOK)
-                        (= (get board (+ index increment)) BLACK-ROOK)))))))
+  [player board index increment]
+  (loop [index (+ index increment)
+         king-squares 2]
+    (cond (> king-squares 0)
+          (if (or (occupied? board index)
+                  (index-under-threat? board index player))
+            false
+            (recur (+ index increment) (- king-squares 1)))
+          :else (if (occupied? index)
+                  false
+                  (or (= (get board (+ index increment)) WHITE-ROOK)
+                      (= (get board (+ index increment)) BLACK-ROOK))))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
-  [player state index]
-  (let [castling (:castling state)
-        normal-moves (flatten (map #(move-to-place (:board state) index (+ index %))
+  [player board index castling]
+  (let [normal-moves (flatten (map #(move-to-place board index (+ index %))
                                    king-movement))
-        castling-king-side (some #{(if (= player :black) \k \K)} castling)
-        castling-queen-side (some #{(if (= player :black) \q \Q)} castling)
+        castling-king-side (some #{(if (= player :white) \K \k)} castling)
+        castling-queen-side (some #{(if (= player :white) \Q \q)} castling)
         castling-moves-king (if (and (not (nil? castling-king-side))
-                                     (legal-castling? player state index EAST))
+                                     (legal-castling? player board index EAST))
                               (Move. index (* WEST 2) nil)
                               '())
         castling-moves-queen (if (and (not (nil? castling-queen-side))
-                                      (legal-castling? player state index WEST))
+                                      (legal-castling? player board index WEST))
                                (Move. index (* EAST 2) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
@@ -334,22 +329,20 @@
   [state index]
   (let [board (:board state)
         player (if (occupied-by? :white board index) :white :black)]
-    (case (Character/toLowerCase (piece-value->char (get (:board state) index)))
+    (case (Character/toLowerCase (piece-value->char (get board index)))
           \r (map #(slide-in-direction board index %) rook-directions)
           \b (map #(slide-in-direction board index %) bishop-directions)
           \q (map #(slide-in-direction board index %) queen-directions)
           \n (map #(move-to-place board index (+ index %)) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
-          \k (list-king-moves state index)
+          \k (list-king-moves board index (:castling state))
         '())))
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
    SIDE's pieces in given STATE."
   [board side]
-  (if (= side :black)
-    (filter #(black? board %) (range 128))
-    (filter #(white? board %) (range 128))))
+  (filter #(occupied-by? side board %) (range 128)))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
@@ -418,67 +411,72 @@
                    0
                    false)))))
 
-(defn commit-new-move
-  "Commits move"
+(defn update-board
+  "Returns new board after applying MOVE to BOARD."
+  [player move board]
+  (let [to-index (:to move)
+        from-index (:from move)
+        moving-piece (get board from-index)
+        promotion? (or (and (= moving-piece WHITE-PAWN)
+                            (= (row to-index) 7))
+                       (and (= moving-piece BLACK-PAWN)
+                            (= (row to-index) 0)))
+        castling? (and (or (= moving-piece WHITE-KING)
+                           (= moving-piece BLACK-KING))
+                       (= (abs (- to-index from-index)) 2))]
+         (cond
+          promotion? (fill-square (clear-square board from-index)
+                                  to-index
+                                  (if (= player :white)
+                                    (piece-char->value (:promotion move))         ;; apply toUpper
+                                    (inc (piece-char->value (:promotion move))))) ;; apply toLower
+          castling? (commit-castle-move board
+                                        move
+                                        (if (= column to-index 2)
+                                          QUEEN-SIDE
+                                          KING-SIDE))
+          :else (fill-square (clear-square board from-index)
+                             to-index
+                             moving-piece))))
+
+(defn update-state
+  "Return result of applying given MOVE to STATE."
   [state move]
-  (let [board (:board state)
-        to-index (:to move)
+  (let [to-index (:to move)
         from-index (:from move)
         player (if (occupied-by? :white board from-index)
                  :white
                  :black)
 
-        moving-piece (get board from-index)
+        moving-piece (get (:board state) from-index)
 
         turn (if (= player :white) "b" "w")
 
         ;; pawn moves
         pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
                                       (= moving-piece BLACK-PAWN))
-                                  (not (= (get board to-index) EMPTY)))
+                                  (not (= (get (:board state) to-index) EMPTY)))
         en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
                                        (= moving-piece BLACK-PAWN))
                                    (= (abs (- to-index from-index)) 0x20))
                             (index->algebraic (/ (+ to-index from-index) 2))
                             "-")
-         promotion? (or (and (= moving-piece WHITE-PAWN)
-                             (= (row to-index) 7))
-                        (and (= moving-piece BLACK-PAWN)
-                             (= (row to-index) 0)))
-
          ;; castling checks
          side-castling (if (= (:castling state) "-")
                          "-"
                          (if (= player :white)
                            (reduce str (re-seq #"\p{Upper}" (:castling state)))
                            (reduce str (re-seq #"\p{Lower}" (:castling state)))))
-         castling? (and (or (= moving-piece WHITE-KING)
-                            (= moving-piece BLACK-KING))
-                        (= (abs (- to-index from-index)) 2))
-         castling-string (:castling state)
+
+        castling-string (:castling state)
 
          half-moves (if pawn-or-capture-move? 0 (inc (:half-moves state)))
 
          full-moves (if (= player :black)
                       (inc (:full-moves state))
-                      (:full-moves state))
+                      (:full-moves state))]
 
-         ;; make changes to board
-         new-board (cond
-                    promotion? (fill-square (clear-square board from-index)
-                                            to-index
-                                            (if (= player :white)
-                                              (piece-char->value (:promotion move))
-                                              (inc (piece-char->value (:promotion move)))))
-                    castling? (commit-castle-move board
-                                                  move
-                                                  (if (= column to-index 2)
-                                                    QUEEN-SIDE
-                                                    KING-SIDE))
-                    :else (fill-square (clear-square board from-index)
-                                       to-index
-                                       moving-piece))]
-        (StateWith0x88. new-board
+        (StateWith0x88. (update-board player move (:board state))
                         turn
                         castling-string
                         en-passant-string
@@ -499,7 +497,7 @@
   (opponent [state]
             (if (= (:turn state) :white) :black :white))
   (commit-move [state move]
-               (commit-new-move state move))
+               (update-state state move))
   (in-check? [state]
              (index-under-threat? state (king-index state (:turn state)) (:turn state)))
   (fen->state [fen]
