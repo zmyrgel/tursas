@@ -157,10 +157,10 @@
           [WHITE-ROOK WHITE-KING [0 7] [3 5]]
           [BLACK-ROOK BLACK-KING [112 119] [115 117]])]
     (-> board
-        (clear-square % (:from move))
-        (clear-square % (get from castling-side))
-        (fill-square % (:to move) king)
-        (fill-square % (get to castling-side) rook))))
+        (clear-square (:from move))
+        (clear-square (get from castling-side))
+        (fill-square (:to move) king)
+        (fill-square (get to castling-side) rook))))
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
