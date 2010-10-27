@@ -403,15 +403,9 @@
       (cond (= index -1)
             fen
             (not (board-index? index))
-            (recur (dec index)
-                   fen
-                   0
-                   true)
+            (recur (dec index) fen 0 true)
             add-slash
-            (recur index
-                   (str fen "/")
-                   0
-                   false)
+            (recur index (str fen "/") 0 false)
             last-place
             (recur (dec index)
                    (if (= (get board index) EMPTY)
@@ -422,10 +416,7 @@
                    0
                    false)
             (= (get board index) EMPTY)
-            (recur (dec index)
-                   fen
-                   (inc empty)
-                   false)
+            (recur (dec index) fen (inc empty) false)
             :else
             (recur (dec index)
                    (str fen
@@ -440,13 +431,13 @@
   (let [board (:board state)
         to-index (:to move)
         from-index (:from move)
-        side (if (black? board from-index)
-               :black
-               :white)
+        player (if (occupied-by? :white board from-index)
+                 :white
+                 :black)
 
         moving-piece (get board from-index)
 
-        turn (if (= side :black) "w" "b")
+        turn (if (= player :white) "b" "w")
 
         ;; pawn moves
         pawn-or-capture-move? (or (or (= moving-piece WHITE-PAWN)
@@ -465,7 +456,7 @@
          ;; castling checks
          side-castling (if (= (:castling state) "-")
                          "-"
-                         (if (= side :white)
+                         (if (= player :white)
                            (reduce str (re-seq #"\p{Upper}" (:castling state)))
                            (reduce str (re-seq #"\p{Lower}" (:castling state)))))
          castling? (and (or (= moving-piece WHITE-KING)
