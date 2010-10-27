@@ -244,8 +244,8 @@
   "Gets the kings index in STATE for SIDE."
   [board player]
   (let [king (if (= player :black)
-               (piece-char->value \k)
-               (piece-char->value \K))]
+               BLACK-KING
+               WHITE-KING)]
     (first (filter #(= (get board %) king) (range 128)))))
 
 (defn game-end?
@@ -258,6 +258,7 @@
       (empty? (legal-states state))))
 
 (defn- legal-castling?
+  "Predicate to check if castling is possible on the board."
   [player board index increment]
   (loop [index (+ index increment)
          king-squares 2]
