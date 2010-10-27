@@ -291,8 +291,7 @@
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [player board index en-passant]
-  (let [friendly? (if (= player :black) black? white?)
-        step (if (= side :black) SOUTH NORTH)
+  (let [step (if (= side :black) SOUTH NORTH)
         move-index (+ index step)
         move-twice (or (and (= side :black) (same-row? index 96))
                        (and (= side :white) (same-row? index 16)))
@@ -320,7 +319,7 @@
     (flatten (conj moves (map #(if (or (and (board-index? %)
                                             (= en-passant-index %))
                                        (and (occupied? board %)
-                                            (not (friendly? board %))))
+                                            (not (occupied-by? player board %))))
                                  (list (Move. index % nil))
                                  '()) captures)))))
 
