@@ -32,6 +32,7 @@
   [node]
   (evaluate-state (first node)))
 
+(declare minimise)
 (defn maximise
   "Searches the maximum score from subtree"
   [node]
