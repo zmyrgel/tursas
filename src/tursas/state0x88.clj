@@ -44,7 +44,7 @@
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
 ;; base record type
-(defrecord StateWith0x88 board turn castling en-passant half-moves full-moves prev-move)
+(defrecord StateWith0x88 [board turn castling en-passant half-moves full-moves prev-move])
 
 ;; Predicates
 (defn- board-index?
