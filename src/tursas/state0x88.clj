@@ -86,7 +86,7 @@
   "Checks if BOARD INDEX is occupied by piece."
   [board index]
   (and (board-index? index)
-       (not (= (get board index) EMPTY))))
+       (not (empty-square? board index))))
 
 (defn- occupied-by?
   "Checks if given BOARD INDEX is occupied by PLAYER."
@@ -171,7 +171,7 @@
     (if (or (not (board-index? target-index))
             (occupied-by? board target-index player))
       moves
-      (if (empty-square? board (get board target-index))
+      (if (not (occupied? board (get board target-index)))
         (recur (+ target-index direction)
                (cons  (Move. index target-index nil) moves))
         (cons (Move. index target-index nil) moves)))))
@@ -188,7 +188,7 @@
   "Checks if there's ray to from INDEX to given PIECES."
   [board index inc pieces]
   (cond (not (board-index? index)) false
-        (empty-square? board index) (recur board (+ index inc) inc pieces)
+        (not (occupied? board index) (recur board (+ index inc) inc pieces))
         :else (nil? (some #{(get board index)} pieces))))
 
 (defn- threaten-index?
