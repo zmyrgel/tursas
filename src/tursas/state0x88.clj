@@ -291,15 +291,13 @@
   [player board index en-passant]
   (let [step (if (= side :black) SOUTH NORTH)
         move-index (+ index step)
-        move-twice (or (and (= side :black) (same-row? index 96))
-                       (and (= side :white) (same-row? index 16)))
+        move-twice? (or (and (= side :black) (same-row? index 96))
+                        (and (= side :white) (same-row? index 16)))
 
         ;; calculate movement
-        moves (if (and (board-index? move-index)
-                       (empty-square? board move-index))
-                (if (and move-twice
-                         (board-index? (+ move-index step))
-                         (empty-square? board (+ move-index step)))
+        moves (if (not (occupied? board move-index))
+                (if (and move-twice?
+                         (not (occupied? board (+ move-index step))))
                   (list (Move. index move-index nil)
                         (Move. index (+ move-index step) nil))
                   (list (Move. index move-index nil)))
@@ -314,12 +312,14 @@
                            (algebraic->index en-passant))]
 
     ;; check capture points
-    (flatten (conj moves (map #(if (or (and (board-index? %)
-                                            (= en-passant-index %))
-                                       (and (occupied? board %)
-                                            (not (occupied-by? player board %))))
-                                 (list (Move. index % nil))
-                                 '()) captures)))))
+    (flatten (conj moves
+                   (map #(if (or (and (board-index? %)
+                                      (= en-passant-index %))
+                                 (and (occupied? board %)
+                                      (not (occupied-by? player board %))))
+                           (list (Move. index % nil))
+                           '())
+                        captures)))))
 
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
