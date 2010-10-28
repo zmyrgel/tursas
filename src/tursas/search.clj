@@ -14,7 +14,7 @@
 (defn maptree
   "Apply f to all elements in form."
   [f tree]
-  (walk #(lazy-seq (maptree f %)) identity tree))
+  (w/walk #(lazy-seq (maptree f %)) identity tree))
 
 (defn tree-node?
   "Checks if X is tree node or not."
