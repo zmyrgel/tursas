@@ -90,7 +90,7 @@
 
 (defn- occupied-by?
   "Checks if given BOARD INDEX is occupied by PLAYER."
-  [player board index]
+  [board index player]
   (and (occupied? board index)
        (= (mod (get board index) 2) player)))
 
@@ -169,7 +169,7 @@
   (loop [target-index (+ index direction)
          moves ()]
     (if (or (not (board-index? target-index))
-            (occupied-by? player board target-index))
+            (occupied-by? board target-index player))
       moves
       (if (empty-square? board (get board target-index))
         (recur (+ target-index direction)
@@ -318,7 +318,7 @@
                    (map #(if (or (and (board-index? %)
                                       (= en-passant-index %))
                                  (and (occupied? board %)
-                                      (not (occupied-by? player board %))))
+                                      (not (occupied-by? board % player))))
                            (list (Move. index % nil))
                            '())
                         captures)))))
@@ -327,12 +327,12 @@
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
   (let [board (:board state)
-        player (if (occupied-by? :white board index) :white :black)]
+        player (if (occupied-by? board index :white) :white :black)]
     (case (Character/toLowerCase (piece-value->char (get board index)))
           \r (map #(slide-in-direction player board index %) rook-directions)
           \b (map #(slide-in-direction player board index %) bishop-directions)
           \q (map #(slide-in-direction player board index %) queen-directions)
-          \n (map #(move-to-place board index (+ index %)) knight-movement)
+          \n (map #(move-to-place board index (+ index %) player) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
           \k (list-king-moves board index (:castling state))
         '())))
@@ -340,8 +340,8 @@
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
    SIDE's pieces in given STATE."
-  [board side]
-  (filter #(occupied-by? side board %) (range 128)))
+  [board player]
+  (filter #(occupied-by? board % player) (range 128)))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
@@ -477,7 +477,7 @@
   [state move]
   (let [to-index (:to move)
         from-index (:from move)
-        player (if (occupied-by? :white board from-index)
+        player (if (occupied-by? board from-index :white)
                  :white :black)
 
         moving-piece (get (:board state) from-index)
@@ -528,9 +528,9 @@
   (occupied? [state index]
              (occupied? (:board state) index))
   (black? [state index]
-          (occupied-by? :black (:board state) index))
+          (occupied-by? (:board state) index :black))
   (white? [state index]
-          (occupied-by? :white (:board state) index))
+          (occupied-by? (:board state) index :white))
   (opponent [state]
             (if (= (:turn state) :white) :black :white))
   (apply-move [state move]
