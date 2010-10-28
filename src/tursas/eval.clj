@@ -94,20 +94,24 @@
              (get black-king-table index))
         0))
 
+(defn check-situation
+  "Checks which situation, opening, middle or end-game the game is."
+  [state pieces]
+  (cond
+   (< (count (get-pieces state)) 15)
+   :end-game
+   (> (:full-moves state) 10)
+   :middle-game
+   :else :opening-game))
+
 (defn evaluate-state
   "Evaluates given game STATE.
    Simply calculates the material balance of the board."
   [state]
-  (let [pieces (get-pieces state)
-        game-situation (cond
-                        (< (count pieces) 15)
-                        :end-game
-                        (> (:full-moves state) 10)
-                        :middle-game
-                        :else :opening-game)]
-    (reduce #(+ (piece-value->material-value (get pieces %))
-                (piece-index-score (get pieces %) % game-situation))
-            (keys pieces))))
+  (let [pieces (get-pieces state)]
+  (reduce #(+ (piece-value->material-value (get pieces %))
+              (piece-index-score (get pieces %) % (check-situation state pieces)))
+          (keys pieces))))
 
 
 
