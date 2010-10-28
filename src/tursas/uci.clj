@@ -11,6 +11,47 @@
        '("Hash type spin default 1 min 1 max 32"
          "UCI_EngineAbout type string default Tursas by Timo Myyrä")))
 
+(defn- uci-set-position
+  "Sets game to position [fen <fenstring> | startpos ] moves <move1> .... <movei>"
+  [pos]
+  (let [operands (re-seq #"\S+" pos)]
+    (if (= (first operands) "fen")
+      (set-game (second operands))
+      (set-game (first operands)))
+    (cond (and (not (nil? (nth operands 1 nil)))
+               (= (nth operands 1 nil) "moves"))
+          (map make-move (nthnext operands 2))
+          (and (not (nil? (nth operands 2 nil)))
+               (= (nth operands 2 nil) "moves"))
+          (map make-move (nthnext operands 3)))))
+
+(defn- register-name
+  "Registers given name."
+  [name]
+  (println (str "Registered name " name)))
+
+(defn- register-value
+  "Registers given value."
+  [value]
+  (println (str "Registered value " value)))
+
+(defn- register
+  "Registers values."
+  [command]
+  (let [values (re-seq #"\S+" command)]
+    (cond (= (first values) "register")
+          (println "register got")
+          (= (first values) "name")
+          (register-name (second values))
+          (= (first values) "code")
+          (register-value (second values))
+          :else (println "invalid option!"))))
+
+(defn- go
+  "Handles go command"
+  [command]
+  )
+
 (defn print-uci-usage
   "Prints the available commands of the repl."
   []
@@ -57,10 +98,10 @@
                               false))
         "isready" (send-command "readyok")
         "setoption" (set-option (rest command))
-        "register"
-        "ucinewgame"
-        "position"
-        "go"
+        "register" (register (rest command))
+        "ucinewgame" (set-game "startpos") ;; wrong?
+        "position" (uci-set-position (rest command))
+        "go" (go (rest command))
         "stop"
         "ponderhit"
         nil))
