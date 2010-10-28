@@ -544,8 +544,8 @@
                (update-state state move))
   (in-check? [state]
              (threaten-index? (:board state)
-                                  (king-index (:board state) (:turn state))
-                                  (:turn state)))
+                              (king-index (:board state) (:turn state))
+                              (:turn state)))
   (fen->state [fen]
               (parse-fen fen))
   (state->fen [state]
