@@ -233,7 +233,9 @@
                                   (map #(+ index %) king-movement))]
      (if (empty? enemy-king-index)
        false
-       (index-under-threat? (update-board player (Move. enemy-king-index index nil) board) index player)))))
+       (-> board
+           (update-board (Move. enemy-king-index index nil) player)
+           (threaten-index? index player))))))
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
