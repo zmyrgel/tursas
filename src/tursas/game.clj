@@ -90,5 +90,6 @@
 (defn make-move
   "Apply given MOVE to game."
   [move]
-
-  )
+  (dosync
+   (ref-set game-state
+            (cons (make-move @game-state move) @game-state))))
