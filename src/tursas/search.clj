@@ -55,12 +55,6 @@
   (cons node (when (not (zero? depth))
                (map (prune (dec depth)) (rest node)))))
 
-;; evaluate = maximise . maptree static . prune 5 . gametree
-;;(def evaluate (comp (trampoline maximise)
-;;                    (maptree static)
-;;                    (prune 5)
-;;                    gametree))
-
 (defn evaluate
   "Evaluates given STATE to certain DEPTH."
   [depth state]
