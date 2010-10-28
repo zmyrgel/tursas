@@ -268,20 +268,28 @@
                   (or (= (get board (+ index increment)) WHITE-ROOK)
                       (= (get board (+ index increment)) BLACK-ROOK))))))
 
+(defn- castle-side?
+  "Predicate to check if given piece can do castling."
+  [player side castling]
+  (let [piece (if (= player :white)
+                (if (= side QUEEN-SIDE)
+                  \Q \K)
+                (if (= side QUEEN-SIDE)
+                  \q \k))]
+    (not (nil (some #{piece} castling)))))
+
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [player board index castling]
   (let [normal-moves (flatten (map #(move-to-place board index (+ index %) player)
                                    king-movement))
-        castling-king-side (some #{(if (= player :white) \K \k)} castling)
-        castling-queen-side (some #{(if (= player :white) \Q \q)} castling)
 
-        castling-moves-king (if (and (not (nil? castling-king-side))
+        castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
                               (Move. index (* WEST 2) nil)
                               '())
 
-        castling-moves-queen (if (and (not (nil? castling-queen-side))
+        castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index WEST))
                                (Move. index (* EAST 2) nil)
                                '())]
