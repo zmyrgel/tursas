@@ -20,10 +20,6 @@
      (dosync (ref-set game-state state)))
    (catch Exception e nil)))
 
-(defn setup-game
-  "Sets up the chess game to given state."
-  [state])
-
 (defn display-board
   "Displays the given FEN in ASCII."
   [fen]
