@@ -528,7 +528,7 @@
           (occupied-by? :white (:board state) index))
   (opponent [state]
             (if (= (:turn state) :white) :black :white))
-  (commit-move [state move]
+  (make-move [state move]
                (update-state state move))
   (in-check? [state]
              (index-under-threat? state (king-index (:board state) (:turn state)) (:turn state)))

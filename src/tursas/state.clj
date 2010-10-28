@@ -4,10 +4,10 @@
   (occupied? [state index])
   (black? [state index])
   (white? [state index])
-  (opponent [state]) ; either :black or :white
-  (commit-move [state move]) ; new state
+  (opponent [state])
+  (make-move [state move])
   (in-check? [state])
   (fen->state [fen])
   (state->fen [state])
   (legal-states [state])
-  (get-pieces [state])) ;; {:index piece-char}
+  (get-pieces [state]))
