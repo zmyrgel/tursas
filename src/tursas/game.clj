@@ -72,9 +72,7 @@
 (defn get-move
   "Let AI to seek its next move from STATE."
   [state]
-  (let [depth @*search-depth*]
-    (:prev-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
-                                  (legal-states state)))))))
+  (evaluate @*search-depth* state))
 
 (defn set-game
   "Sets game to given FEN state."
