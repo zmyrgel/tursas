@@ -1,5 +1,6 @@
 (ns tursas.search
-  (:use (tursas state)))
+  (:require [clojure.walk :as w])
+  (:use (tursas state eval)))
 
 ;;; Based on 'Why Functional Programming Matters' paper
 ;;; http://www.cse.chalmers.se/~rjmh/Papers/whyfp.pdf
