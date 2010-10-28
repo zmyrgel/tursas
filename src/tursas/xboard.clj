@@ -99,8 +99,7 @@
 (defn xboard-get-option
   "Returns the current OPTIONs value."
   [option]
-  (io! (println (str
-                 ((keyword option) @xboard-engine-options)))))
+  (io! (println (str (keyword option) @xboard-engine-options))))
 
 (defn xboard-accept-feature
   "Tells the engine that GUI accepts last feature."
@@ -130,16 +129,21 @@ and once done, respond with pong"
 
 (defn xboard-set-board
   "Tells the XBoard to set the board to given FEN string."
-  [fen])
+  [fen]
+  (set-game fen))
 
 (defn xboard-hint
   "Tells the engine to provide a hint for good move."
-  [])
+  []
+  ;; search 6 best moves and return random from them
+  (first (shuffle (take 6 (get-move)))))
 
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
   [& n]
-  (dosync (ref-set game-state (rest @game-state))))
+  (if (nil? n)
+    (dosync (ref-set game-state (rest @game-state)))
+    (dosync (ref-set game-state (nthnext @game-state n)))))
 
 (defn xboard-bk
   "Tells the XBoard to use Book"
@@ -148,7 +152,7 @@ and once done, respond with pong"
 (defn xboard-send-rating
   "Prompts the Engine to send its rating."
   []
-  (io! (println "10")))
+  (io! (println "100")))
 
 (defn xboard-parse-option
   "Wrapper to parse options from string and set them."
