@@ -192,7 +192,7 @@
         (empty-square? board index) (recur board (+ index inc) inc pieces)
         :else (nil? (some #{(get board index)} pieces))))
 
-(defn- index-under-threat?
+(defn- threaten-index?
   "Checks if given INDEX in STATE is under threath of enemy."
   [board index opponent]
   (or
@@ -259,7 +259,7 @@
          king-squares 2]
     (cond (> king-squares 0)
           (if (or (occupied? board index)
-                  (index-under-threat? board index player))
+                  (threaten-index? board index player))
             false
             (recur (+ index increment) (- king-squares 1)))
           :else (if (occupied? index)
@@ -274,10 +274,12 @@
                                    king-movement))
         castling-king-side (some #{(if (= player :white) \K \k)} castling)
         castling-queen-side (some #{(if (= player :white) \Q \q)} castling)
+
         castling-moves-king (if (and (not (nil? castling-king-side))
                                      (legal-castling? player board index EAST))
                               (Move. index (* WEST 2) nil)
                               '())
+
         castling-moves-queen (if (and (not (nil? castling-queen-side))
                                       (legal-castling? player board index WEST))
                                (Move. index (* EAST 2) nil)
@@ -423,7 +425,7 @@
 
 (defn- update-board
   "Returns new board after applying MOVE to BOARD."
-  [player move board]
+  [board move player move]
   (let [to-index (:to move)
         from-index (:from move)
         moving-piece (get board from-index)]
@@ -486,7 +488,7 @@
                       (inc (:full-moves state))
                       (:full-moves state))]
 
-        (StateWith0x88. (update-board player move (:board state))
+        (StateWith0x88. (update-board (:board state) move player)
                         (if (= player :white) "b" "w")
                         (update-castling (:castling state) player move)
                         (update-en-passant moving-piece move)
@@ -532,7 +534,7 @@
   (apply-move [state move]
                (update-state state move))
   (in-check? [state]
-             (index-under-threat? (:board state)
+             (threaten-index? (:board state)
                                   (king-index (:board state) (:turn state))
                                   (:turn state)))
   (fen->state [fen]
