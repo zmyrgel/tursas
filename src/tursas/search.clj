@@ -61,5 +61,11 @@
 ;;                    (prune 5)
 ;;                    gametree))
 
-(defn evaluate [depth state]
-  (trampoline maximise (maptree static (prune depth (gametree state)))))
+(defn evaluate
+  "Evaluates given STATE to certain DEPTH."
+  [depth state]
+  (->> state
+       gametree
+       (prune depth)
+       (maptree static)
+       (trampoline maximise)))
