@@ -345,9 +345,9 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (let [all-moves (flatten (map #(list-moves-for-piece state %)
-                                (all-piece-indexes-for (:board state) side)))]
-    (filter #(in-check? (commit-move state %)) all-moves)))
+  (filter #(in-check? (apply-move state %))
+          (flatten (map #(list-moves-for-piece state %)
+                        (all-piece-indexes-for (:board state) side)))))
 
 (defn- fen-board->0x88board
   "Parses board information from FEN-BOARD field."
@@ -543,6 +543,6 @@
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (map #(commit-move state %)
+                (map #(apply-move state %)
                      (all-moves-for state (:turn state)))))
 
