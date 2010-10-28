@@ -1,28 +1,65 @@
 (ns tursas.search
   (:use (tursas state)))
 
-;; function minimax(node, depth)
-;;     if node is a terminal node or depth = 0
-;;         return the heuristic value of node
-;;     else
-;;         let α := -∞
-;;         foreach child of node      { evaluation is identical for both players }
-;;             let α := max(α, -minimax(child, depth-1))
-;;         return α
+;;; Based on 'Why Functional Programming Matters' paper
+;;; http://www.cse.chalmers.se/~rjmh/Papers/whyfp.pdf
 
-(defn minimax-search
-  "Search STATEs with Minimax algorithm until DEPTH and use EVAL to
-  evaluate results."
-  [state depth eval-fn]
-  (if (= depth 0)
-    (eval-fn state)
-    (loop [states (legal-states state)
-           best-state nil
-           best-value nil]
-      (if (empty? states)
-        best-value
-        (let [value (- (minimax-search (first states) (- depth 1) eval-fn))]
-          (if (or (nil? best-value)
-                  (> value best-value))
-            (recur (rest states) (first states) value)
-            (recur (rest states) best-state best-value)))))))
+;; leaf = game position
+;; subtree = all possible game positions achievable with a single move from leaf
+(defrecord Node [leaf subtree])
+
+(defn moves
+  "Generates list of nodes representing possible game states reachable
+  from given gametree NODE."
+  [node]
+  (map #(Node. % nil) (legal-states (:leaf node))))
+
+(defn maptree
+  "Apply f to all elements in form."
+  [f tree]
+  (walk #(lazy-seq (maptree f %)) identity tree))
+
+(defn tree-node?
+  "Checks if X is tree node or not."
+  [x]
+  (instance? x Node))
+
+(defn gametree
+  "Create a full gametree from STATE.
+   For obvious reasons, this need to be lazy."
+  [state]
+  (tree-seq tree-node? moves (Node. state nil)))
+
+(defn static
+  "Evaluates the given gametree NODE."
+  [node]
+  (evaluate-state (:leaf node)))
+
+(defn maximise
+  "Searches the maximum score from subtree"
+  [node]
+  (if (nil? (:subtree node))
+    (:leat node)
+    #(max (map minimise (:subtree node)))))
+
+(defn minimise
+  "Searches the minimum score from subtree"
+  [node]
+  (if (nil? (:subtree node))
+    (:leaf node)
+    #(min (map maximise (:subtree node)))))
+
+(defn prune
+  "Prunes the results of gametree search.
+   Limit the search to certain DEPTH to complete the search
+   in adequote time frame."
+  [depth node]
+  (assoc node (:subtree node)
+         (when (not (zero? depth))
+           (map (recur (dec depth) (:subtree node)))))))
+
+;; evaluate = maximise . maptree static . prune 5 . gametree
+(def evaluate (comp (trampoline maximise)
+                    (maptree static)
+                    (prune 5)
+                    gametree))
