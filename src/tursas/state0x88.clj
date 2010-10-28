@@ -450,6 +450,24 @@
           (= piece BLACK-PAWN))
       (not (= (get board (:to move)) EMPTY))))
 
+(defn- update-castling
+  "Return new castling string for move"
+  [current-castling player move]
+  (if (= (current-castling) "-")
+    "-"
+    (if (= player :white)
+      (reduce str (re-seq #"\p{Upper}" (current-castling)))
+      (reduce str (re-seq #"\p{Lower}" (current-castling))))))
+
+(defn- update-en-passant
+  "Construct en-passant string from PIECE and MOVE."
+  [piece move]
+  (if (and (or (= piece WHITE-PAWN)
+               (= piece BLACK-PAWN))
+           (= (abs (- (:to move) (:from move))) 0x20))
+    (index->algebraic (/ (+ (:to move) (:from move)) 2))
+    "-"))
+
 (defn- update-state
   "Return result of applying given MOVE to STATE."
   [state move]
@@ -460,35 +478,18 @@
 
         moving-piece (get (:board state) from-index)
 
-        turn (if (= player :white) "b" "w")
-
-        ;; pawn moves
-        en-passant-string (if (and (or (= moving-piece WHITE-PAWN)
-                                       (= moving-piece BLACK-PAWN))
-                                   (= (abs (- to-index from-index)) 0x20))
-                            (index->algebraic (/ (+ to-index from-index) 2))
-                            "-")
-         ;; castling checks
-         side-castling (if (= (:castling state) "-")
-                         "-"
-                         (if (= player :white)
-                           (reduce str (re-seq #"\p{Upper}" (:castling state)))
-                           (reduce str (re-seq #"\p{Lower}" (:castling state)))))
-
-        castling-string (:castling state)
-
-         half-moves (if (pawn-or-capture-move? moving-piece (:board state) move)
-                      0
-                      (inc (:half-moves state)))
+        half-moves (if (pawn-or-capture-move? moving-piece (:board state) move)
+                     0
+                     (inc (:half-moves state)))
 
          full-moves (if (= player :black)
                       (inc (:full-moves state))
                       (:full-moves state))]
 
         (StateWith0x88. (update-board player move (:board state))
-                        turn
-                        castling-string
-                        en-passant-string
+                        (if (= player :white) "b" "w")
+                        (update-castling (:castling state) player move)
+                        (update-en-passant moving-piece move)
                         half-moves
                         full-moves
                         (move->algebraic move))))
