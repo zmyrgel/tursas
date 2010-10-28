@@ -83,4 +83,12 @@
 (defn set-game
   "Sets game to given FEN state."
   [fen]
-  (dosync (ref-set game-state (fen->state fen))))
+  (if (= fen "startpos")
+    (dosync (ref-set game-state (fen->state startpos)))
+    (dosync (ref-set game-state (fen->state fen)))))
+
+(defn make-move
+  "Apply given MOVE to game."
+  [move]
+
+  )
