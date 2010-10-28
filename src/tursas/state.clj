@@ -5,7 +5,7 @@
   (black? [state index])
   (white? [state index])
   (opponent [state])
-  (make-move [state move])
+  (apply-move [state move])
   (in-check? [state])
   (fen->state [fen])
   (state->fen [state])

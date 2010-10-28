@@ -89,4 +89,4 @@
   [move]
   (dosync
    (ref-set game-state
-            (cons (make-move @game-state move) @game-state))))
+            (cons (apply-move @game-state move) @game-state))))

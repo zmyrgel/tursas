@@ -528,14 +528,17 @@
           (occupied-by? :white (:board state) index))
   (opponent [state]
             (if (= (:turn state) :white) :black :white))
-  (make-move [state move]
+  (apply-move [state move]
                (update-state state move))
   (in-check? [state]
-             (index-under-threat? state (king-index (:board state) (:turn state)) (:turn state)))
+             (index-under-threat? (:board state)
+                                  (king-index (:board state) (:turn state))
+                                  (:turn state)))
   (fen->state [fen]
               (parse-fen fen))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (map #(commit-move state %) (all-moves-for state (:turn state)))))
+                (map #(commit-move state %)
+                     (all-moves-for state (:turn state)))))
 
