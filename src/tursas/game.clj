@@ -79,3 +79,8 @@
   (let [depth @*search-depth*]
     (:prev-move (first (sort (map #(cons (minimax-search % depth evaluate-state) %)
                                   (legal-states state)))))))
+
+(defn set-game
+  "Sets game to given FEN state."
+  [fen]
+  (dosync (ref-set game-state (fen->state fen))))
