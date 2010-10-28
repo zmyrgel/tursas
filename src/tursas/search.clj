@@ -53,10 +53,13 @@
    in adequote time frame."
   [depth node]
   (cons node (when (not (zero? depth))
-               (map (recur (dec depth) (rest node)))))))
+               (map (prune (dec depth)) (rest node)))))
 
 ;; evaluate = maximise . maptree static . prune 5 . gametree
-(def evaluate (comp (trampoline maximise)
-                    (maptree static)
-                    (prune 5)
-                    gametree))
+;;(def evaluate (comp (trampoline maximise)
+;;                    (maptree static)
+;;                    (prune 5)
+;;                    gametree))
+
+(defn evaluate [depth state]
+  (trampoline maximise (maptree static (prune depth (gametree state)))))
