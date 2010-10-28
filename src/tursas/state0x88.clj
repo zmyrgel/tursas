@@ -178,12 +178,11 @@
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
-  [board index place]
-  (let [friendly? (if (black? board index) black? white?)]
-    (if (and (board-index? place)
-             (not (friendly? board place)))
-      (list (Move. index place nil))
-      '())))
+  [board index place player]
+  (if (or (occupied-by? board place (opponent player))
+          (not (occupied? board place)))
+    (list (Move. index place nil))
+    '()))
 
 (defn- ray-to-pieces?
   "Checks if there's ray to from INDEX to given PIECES."
@@ -272,7 +271,7 @@
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [player board index castling]
-  (let [normal-moves (flatten (map #(move-to-place board index (+ index %))
+  (let [normal-moves (flatten (map #(move-to-place board index (+ index %) player)
                                    king-movement))
         castling-king-side (some #{(if (= player :white) \K \k)} castling)
         castling-queen-side (some #{(if (= player :white) \Q \q)} castling)
