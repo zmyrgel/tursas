@@ -446,8 +446,8 @@
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
   [piece board move]
-  (or (or (= piece WHITE-PAWN)
-          (= piece BLACK-PAWN))
+  (or (= piece WHITE-PAWN)
+      (= piece BLACK-PAWN)
       (not (= (get board (:to move)) EMPTY))))
 
 (defn- update-castling
