@@ -17,8 +17,8 @@
 
 (defn tree-node?
   "Checks if X is tree node or not."
-  [x]
-  (instance? x (list? node)))
+  [node]
+  (list? node))
 
 (defn gametree
   "Create a full gametree from STATE.
