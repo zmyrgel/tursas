@@ -303,7 +303,7 @@
         move-twice? (or (and (= side :black) (same-row? index 96))
                         (and (= side :white) (same-row? index 16)))
 
-        ;; calculate movement
+        ;; calculate normal movement
         moves (if (not (occupied? board move-index))
                 (if (and move-twice?
                          (not (occupied? board (+ move-index step))))
@@ -529,7 +529,6 @@
        (:full-moves state)))
 
 ;;;;; TYPE EXTENSION ;;;;;;
-
 (extend-type StateWithHex
   State
   (occupied? [state index]
