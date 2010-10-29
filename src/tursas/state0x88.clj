@@ -262,7 +262,7 @@
           (if (or (occupied? board index)
                   (threaten-index? board index player))
             false
-            (recur (+ index increment) (- king-squares 1)))
+            (recur (+ index increment) (dec king-squares)))
           :else (if (occupied? index)
                   false
                   (or (= (get board (+ index increment)) WHITE-ROOK)
