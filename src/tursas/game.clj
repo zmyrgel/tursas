@@ -4,9 +4,11 @@
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def game-state (ref ()))
-(def *search-depth* (ref 2))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
+(def *depth-limit* (ref 2))
+(def *node-limit* (ref 5000))
+(def *time-limit* (ref 15))
 
 (defn save-game
   "Saves the current game by writing game-state to file."
@@ -74,7 +76,7 @@
 (defn get-move
   "Let AI to seek its next move from STATE."
   [state]
-  (evaluate @*search-depth* state))
+  (evaluate @*depth-limit* state))
 
 (defn set-game
   "Sets game to given FEN state."
