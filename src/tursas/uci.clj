@@ -48,9 +48,20 @@
           :else (println "invalid option!"))))
 
 (defn- go
-  "Handles go command"
+  "Handler for go command"
   [command]
-  )
+  (loop [values (re-seq #"\S+" command)]
+    (when (not (empty? values))
+      (cond (= (first values) "searchmoves")
+            (do "baa"
+                (recur (rest values)))
+            (= (first values) "ponder")
+            (set-option "ponder")
+            (= (first values) "wtime")
+            (set-clock! :white (second values))
+            (= (first values) "btime")
+            (set-clock! :black (second values))
+            :else (println "invalid option!"))))l)
 
 (defn print-uci-usage
   "Prints the available commands of the repl."

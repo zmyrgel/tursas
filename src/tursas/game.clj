@@ -86,6 +86,14 @@
                          (fen->state startpos)
                          (fen->state fen)))))
 
+(defn set-clock!
+  "Sets PLAYER's clock to TIME."
+  [player time]
+  (dosync (ref-set
+           (if (= player :white)
+             *white-clock*
+             *black-clock*) time)))
+
 (defn make-move
   "Apply given MOVE to game."
   [move]
