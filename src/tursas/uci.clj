@@ -61,7 +61,7 @@
             (set-clock! :white (second values))
             (= (first values) "btime")
             (set-clock! :black (second values))
-            :else (println "invalid option!"))))l)
+            :else (println "invalid option!")))))
 
 (defn print-uci-usage
   "Prints the available commands of the repl."
