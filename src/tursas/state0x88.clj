@@ -510,7 +510,8 @@
                         (update-en-passant moving-piece move)
                         half-moves
                         full-moves
-                        (move->algebraic move))))
+                        (move->algebraic move)
+                        nil)))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
@@ -523,6 +524,7 @@
                       (nth fen-list 3)
                       (Integer/parseInt (nth fen-list 4))
                       (Integer/parseInt (nth fen-list 5))
+                      nil
                       nil))))
 
 (defn- parse-state
