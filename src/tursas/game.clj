@@ -76,7 +76,7 @@
 (defn get-move
   "Let AI to seek its next move from STATE with given STRATEGY."
   [& strategy]
-  (let [moves (legal-moves @game-state)]
+  (let [moves (legal-moves (first @game-state))]
     (case strategy
           :total-random (rand-nth moves)
           (first (sort-by :score > moves)))))
