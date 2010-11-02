@@ -37,14 +37,14 @@
   "Searches the maximum score from subtree"
   [node]
   (if (nil? (rest node))
-    (first node)
+    (:score (first node))
     #(max (map minimise (rest node)))))
 
 (defn minimise
   "Searches the minimum score from subtree"
   [node]
   (if (nil? (rest node))
-    (first node)
+    (:score (first node))
     #(min (map maximise (rest node)))))
 
 (defn prune
@@ -56,7 +56,8 @@
                (map (prune (dec depth)) (rest node)))))
 
 (defn evaluate
-  "Evaluates given STATE to certain DEPTH."
+  "Evaluates given STATE to certain DEPTH.
+   Returns new state with evaluation score attached"
   [depth state]
   (->> state
        gametree

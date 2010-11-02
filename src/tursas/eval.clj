@@ -109,9 +109,10 @@
    Simply calculates the material balance of the board."
   [state]
   (let [pieces (get-pieces state)]
-  (reduce #(+ (piece-value->material-value (get pieces %))
-              (piece-index-score (get pieces %) % (check-situation state pieces)))
-          (keys pieces))))
+    (assoc state :score
+           (reduce #(+ (piece-value->material-value (get pieces %))
+                       (piece-index-score (get pieces %) % (check-situation state pieces)))
+                   (keys pieces)))))
 
 
 
