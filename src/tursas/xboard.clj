@@ -1,6 +1,6 @@
 (ns tursas.xboard
   (:use [clojure.contrib.string :only [as-str map-str split]]
-        (tursas game state utility move)))
+        (tursas game utility move)))
 
 (def xboard-default-features
      {:ping 1
@@ -66,7 +66,7 @@
           "ping N - Pings the engine for pong reply"
           ;;"draw - offer draw to engine"
           "result RESULT {COMMENTS} - give the game RESULT to engine"
-          "setboard FEN - Set the game state to given FEN."
+          "setboard FEN - Set the game board to given FEN."
           ;;"edit - enable edit mode [obsolete]"
           ;;". - exit edit mode"
           "hint - prompt move hint from engine"
@@ -141,11 +141,7 @@ and once done, respond with pong"
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
   [& n]
-  (dosync
-   (ref-set game-state
-            (if (nil? n)
-              (rest @game-state)
-              (nthnext @game-state n)))))
+  (undo-move n))
 
 (defn xboard-bk
   "Tells the XBoard to use Book"

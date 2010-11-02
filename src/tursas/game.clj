@@ -104,3 +104,12 @@
   (dosync
    (ref-set game-state
             (cons (apply-move @game-state move) @game-state))))
+
+(defn undo-move
+  "Undo last move or if N given, N last moves."
+  [& n]
+  (dosync
+   (ref-set game-state
+            (if (nil? n)
+              (rest @game-state)
+              (nthnext @game-state n)))))
