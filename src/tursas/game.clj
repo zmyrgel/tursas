@@ -76,7 +76,8 @@
 (defn get-move
   "Let AI to seek its next move from STATE."
   [state]
-  (evaluate @*depth-limit* state))
+  (first (sort-by sort (map (partial evaluate @*depth-limit*)
+                            (legal-states state)))))
 
 (defn set-game
   "Sets game to given FEN state."
