@@ -135,8 +135,7 @@ and once done, respond with pong"
 (defn xboard-hint
   "Tells the engine to provide a hint for good move."
   []
-  ;; search 6 best moves and return random from them
-  (get-hint))
+  (io! (println (move->algebraic (get-hint)))))
 
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
