@@ -1,6 +1,6 @@
 (ns tursas.uci
-  (:use (tursas utility game))
-  (:require [clojure.contrib.string :as string]))
+  (:require [clojure.contrib.string :as string])
+  (:use (tursas utility game)))
 
 (def uci-engine-options (ref {:debug false}))
 
