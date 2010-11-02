@@ -74,13 +74,29 @@
                     (str (get "abcdefgh" x) (inc y))))))
 
 (defn get-move
-  "Let AI to seek its next move from STATE."
+  "Let AI to seek its next move from STATE with given STRATEGY."
+  [& strategy]
+  (let [moves (legal-moves @game-state)]
+    (case strategy
+          :total-random (rand-nth moves)
+          (first (sort-by :score > moves)))))
+
+(defn- legal-moves
+  "Generates all available moves from given STATE."
   [state]
   (->> state
        (map (partial evaluate @*depth-limit*)
-            (legal-states))
-       (sort-by :score >)
-       first))
+            (legal-states))))
+
+(defn get-hint
+  "Evaluates all states and chooses one from top three moves at random."
+  []
+  (:prev-move
+   (->> @game-state
+        first
+        legal-moves
+        (take 5)
+        rand-nth)))
 
 (defn set-game
   "Sets game to given FEN state."

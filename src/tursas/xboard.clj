@@ -136,7 +136,7 @@ and once done, respond with pong"
   "Tells the engine to provide a hint for good move."
   []
   ;; search 6 best moves and return random from them
-  (first (shuffle (take 6 (get-move)))))
+  (get-hint))
 
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
