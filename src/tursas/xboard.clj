@@ -141,9 +141,11 @@ and once done, respond with pong"
 (defn xboard-undo-move
   "Undo last N moves or just the last one."
   [& n]
-  (if (nil? n)
-    (dosync (ref-set game-state (rest @game-state)))
-    (dosync (ref-set game-state (nthnext @game-state n)))))
+  (dosync
+   (ref-set game-state
+            (if (nil? n)
+              (rest @game-state)
+              (nthnext @game-state n)))))
 
 (defn xboard-bk
   "Tells the XBoard to use Book"
