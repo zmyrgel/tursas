@@ -4,11 +4,19 @@
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def game-state (ref ()))
+
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
-(def *depth-limit* (ref 2))
-(def *node-limit* (ref 5000))
-(def *time-limit* (ref 15))
+
+(def game-options (ref {:depth-limit 2
+                        :node-limit 5000
+                        :time-limit 15
+                        :random-mode false
+                        :ai-mode false
+                        :xboard-protocol-version 1
+                        :debug false
+                        :ponder false
+                        :ponder-output false}))
 
 (defn save-game
   "Saves the current game by writing game-state to file."
