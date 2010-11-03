@@ -28,8 +28,8 @@
 
 (def xboard-engine-options (ref {:debug false :protocol 1}))
 
-(defn xboard-send-default-features
-  "Sends the default features of the engine."
+(defn xboard-print-default-features
+  "Prints the default features of the engine."
   []
   (io!
    (map println
@@ -165,9 +165,9 @@
 (defn process-xboard-command
   "Processes command in xboard mode."
   [command]
-  (case command
+  (case (first command)
         "protover" (do (xboard-set-option :protocol-version (second command))
-                       (xboard-send-default-features))
+                         (xboard-print-default-features))
         "accepted" (xboard-accept-feature)
         "rejected" (xboard-reject-feature)
         "variant" (xboard-set-option :variant (second command))
