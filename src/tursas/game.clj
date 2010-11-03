@@ -26,8 +26,8 @@
 
 (defn display-board
   "Displays the given FEN in ASCII."
-  [fen]
-  (let [fen-list (re-seq #"\S+" fen)]
+  []
+  (let [fen-list (re-seq #"\S+" (state->fen @game-state))]
     (loop [i 8
            pieces (re-seq #"\w+" (first fen-list))
            turn (second fen-list)]
