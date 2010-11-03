@@ -155,26 +155,24 @@
   "Wrapper to parse options from string and set them."
   [option]
   (let [pair (split #"=" option)]
-    (xboard-set-option (keyword (first pair))
-                       (if (= (count pair) 1)
-                         true
-                         (second pair)))))
+    (set-option (keyword (first pair))
+                (if (= (count pair) 1)
+                  true
+                  (second pair)))))
 
 (defn process-xboard-command
   "Processes command in xboard mode."
   [command]
   (case (first command)
-        "protover" (do (xboard-set-option :protocol-version (second command))
-                         (xboard-print-default-features))
+        "protover" (do (set-game-option :xboard-protocol-version (second command))
+                       (xboard-print-default-features))
         "accepted" (xboard-accept-feature)
         "rejected" (xboard-reject-feature)
-        "variant" (xboard-set-option :variant (second command))
+        "variant" (set-game-option :variant (second command))
         "quit" (quit)
-        "random" (if (= (xboard-get-option :random-mode) true)
-                   (xboard-set-option :random-mode false)
-                   (xboard-set-option :random-mode true))
-        "force" (xboard-set-option :ai-mode false)
-        "go" (xboard-set-option :ai-mode true)
+        "random" (toggle-game-option :random-mode)
+        "force" (set-game-option :ai-mode false)
+        "go" (set-game-option :ai-mode true)
 
         ;; set playother=1 to enable
         ;;"playother" (xboard-playother)
@@ -183,16 +181,16 @@
         ;;"white" (xboard-white)
         ;;"black" (xboard-black)
 
-        "level" (xboard-set-option :level (rest command))
-        "st" (xboard-set-option :time (second command))
-        "sd" (xboard-set-option :depth (second command))
-        "nps" (xboard-set-option :nps (rest command))
+        "level" (set-game-option :level (rest command))
+        "st" (set-game-option :time (second command))
+        "sd" (set-game-option :depth-limit (second command))
+        "nps" (set-game-option :nps (rest command))
 
         ;; set time=1 to enable these
         ;;"time" (xboard-set-engine-clock (second command))
         ;;"otim" (xboard-set-opponent-clock (second command))
 
-        "usermove" (xboard-make-move (second command))
+        "usermove" (make-move (algebraic->move (second command)))
         "?" (xboard-move-now)
         "ping" (xboard-ping)
 
@@ -202,29 +200,29 @@
         "result" (xboard-result (rest command))
 
         ;; setboard=0 to disable setboard and use edit command
-        "setboard" (xboard-set-board (second command))
+        "setboard" (set-game (second command))
         ;;"edit" (xboard-enter-edit-mode)
         ;;"." (xboard-exit-edit-mode)
 
         "hint" (xboard-hint)
         "bk" (xboard-bk)
-        "undo" (xboard-undo-move)
-        "remove" (xboard-undo-move 2)
-        "hard" (xboard-set-option :ponder true)
-        "easy" (xboard-set-option :ponder false)
-        "post" (xboard-set-option :ponder-output true)
-        "nopost" (xboard-set-option :ponder-output false)
+        "undo" (undo-move)
+        "remove" (undo-move 2)
+        "hard" (set-game-option :ponder true)
+        "easy" (set-game-option :ponder false)
+        "post" (set-game-option :ponder-output true)
+        "nopost" (set-game-option :ponder-output false)
 
         ;; set analyse=1 to enable
         ;;"analyse" (xboard-analyse-mode)
 
-        "name" (xboard-set-option :opponent-name (second command))
+        "name" (set-game-option :opponent-name (second command))
         "rating" (xboard-send-rating)
 
         ;; set ics=1 to enable
         ;;"ics" (xboard-ics)
 
-        "computer" (xboard-set-option :opponent "cpu")
+        "computer" (set-game-option :opponent "cpu")
 
         ;; set pause=1 to enable
         ;;"pause" (xboard-pause)
