@@ -474,9 +474,10 @@
   [current-castling player move]
   (if (= (current-castling) "-")
     "-"
-    (if (= player :white)
-      (reduce str (re-seq #"\p{Upper}" (current-castling)))
-      (reduce str (re-seq #"\p{Lower}" (current-castling))))))
+    (reduce str (re-seq
+                 (if (= player :white)
+                   #"\p{Upper}"
+                   #"\p{Lower}") (current-castling)))))
 
 (defn- update-en-passant
   "Construct en-passant string from PIECE and MOVE."
