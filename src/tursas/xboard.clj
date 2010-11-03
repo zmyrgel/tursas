@@ -26,7 +26,7 @@
       :smp 0
       :done 1})
 
-(def xboard-engine-options (ref {:debug false :protocol 2}))
+(def xboard-engine-options (ref {:debug false :protocol 1}))
 
 (defn xboard-send-default-features
   "Sends the default features of the engine."
