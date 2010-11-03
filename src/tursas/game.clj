@@ -27,9 +27,9 @@
 (defn display-board
   "Displays the given FEN in ASCII."
   []
-  (let [fen-list (re-seq #"\S+" (state->fen @game-state))]
-    (if (empty? fen-list)
-      (io! (println "Can't print empty board!"))
+  (if (empty? @game-state)
+    (io! (println "Can't print empty board!"))
+    (let [fen-list (re-seq #"\S+" (state->fen @game-state))]
       (loop [i 8
              pieces (re-seq #"\w+" (first fen-list))
              turn (second fen-list)]
