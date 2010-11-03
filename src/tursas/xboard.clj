@@ -120,12 +120,13 @@
 
 (defn xboard-ping
   "Tells XBoard to wait for all the stuff to complete given before this
-and once done, respond with pong"
+   and once done, respond with pong"
   [n]
   (io! (println (str "pong " n))))
 
 (defn xboard-result
-  "Sets the game result to engine, for learning purposes."
+  "Sets the game result to engine, for learning purposes
+   discarded by Tursas for now."
   [result])
 
 (defn xboard-set-board
