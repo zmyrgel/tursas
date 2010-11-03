@@ -2,7 +2,7 @@
   (:use [clojure.contrib.string :only [as-str map-str split]]
         (tursas game utility move)))
 
-(def xboard-default-features
+(def xboard-supported-features
      {:ping 1
       :setboard 1
       :playother 1
@@ -26,17 +26,15 @@
       :smp 0
       :done 1})
 
-(def xboard-engine-options (ref {:debug false :protocol 1}))
-
-(defn xboard-print-default-features
+(defn xboard-print-supported-features
   "Prints the default features of the engine."
   []
   (io!
    (dorun (map println
-               (for [option (keys xboard-default-features)]
+               (for [option (keys xboard-supported-features)]
                  (format "feature %s=%s"
                          (as-str option)
-                         (xboard-default-features option)))))))
+                         (xboard-supported-features option)))))))
 
 (defn print-xboard-usage
   "Prints the available commands of the repl."
