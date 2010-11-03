@@ -5,49 +5,49 @@
 ;;; Based on 'Why Functional Programming Matters' paper
 ;;; http://www.cse.chalmers.se/~rjmh/Papers/whyfp.pdf
 
-(defn moves
+(defn- moves
   "Generates list of nodes representing possible game states reachable
   from given gametree NODE."
   [node]
   (map #(cons % nil) (legal-states (first node))))
 
-(defn maptree
+(defn- maptree
   "Apply f to all elements in form."
   [f tree]
   (w/walk #(lazy-seq (maptree f %)) identity tree))
 
-(defn tree-node?
+(defn- tree-node?
   "Checks if X is tree node or not."
   [node]
   (list? node))
 
-(defn gametree
+(defn- gametree
   "Create a full gametree from STATE.
    For obvious reasons, this need to be lazy."
   [state]
   (tree-seq tree-node? moves (cons state nil)))
 
-(defn static
+(defn- static
   "Evaluates the given gametree NODE."
   [node]
   (evaluate-state (first node)))
 
 (declare minimise)
-(defn maximise
+(defn- maximise
   "Searches the maximum score from subtree"
   [node]
   (if (nil? (rest node))
     (:score (first node))
     #(max (map minimise (rest node)))))
 
-(defn minimise
+(defn- minimise
   "Searches the minimum score from subtree"
   [node]
   (if (nil? (rest node))
     (:score (first node))
     #(min (map maximise (rest node)))))
 
-(defn prune
+(defn- prune
   "Prunes the results of gametree search.
    Limit the search to certain DEPTH to complete the search
    in adequote time frame."
