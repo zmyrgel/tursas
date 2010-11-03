@@ -20,45 +20,47 @@
   "Loads the game-state from file to resume the previous game."
   []
   (try
-   (let [state (read-string (slurp "saved-game.txt"))]
-     (dosync (ref-set game-state state)))
-   (catch Exception e nil)))
+    (let [state (read-string (slurp "saved-game.txt"))]
+      (dosync (ref-set game-state state)))
+    (catch Exception e nil)))
 
 (defn display-board
   "Displays the given FEN in ASCII."
   []
   (let [fen-list (re-seq #"\S+" (state->fen @game-state))]
-    (loop [i 8
-           pieces (re-seq #"\w+" (first fen-list))
-           turn (second fen-list)]
-      (if (= i 0)
-        (println (str "------------------\n"
-                      " | a b c d e f g h\n"
-                      (if (= turn "w")
-                        "  WHITE"
-                        "  BLACK")
-                      " TO MOVE"))
-        (do
-          (println (str i "| "
-                        (string/map-str #(if (and (>= (int %) 49)
-                                           (<= (int %) 56))
-                                    (string/repeat (- (int %) 48)
-                                            (str \space \-))
-                                    (str \space %))
-                                 (first pieces))))
-          (recur (dec i)
-                 (rest pieces)
-                 turn))))))
+    (if (empty? fen-list)
+      (io! (println "Can't print empty board!"))
+      (loop [i 8
+             pieces (re-seq #"\w+" (first fen-list))
+             turn (second fen-list)]
+        (if (= i 0)
+          (println (str "------------------\n"
+                        " | a b c d e f g h\n"
+                        (if (= turn "w")
+                          "  WHITE"
+                          "  BLACK")
+                        " TO MOVE"))
+          (do
+            (println (str i "| "
+                          (string/map-str #(if (and (>= (int %) 49)
+                                                    (<= (int %) 56))
+                                             (string/repeat (- (int %) 48)
+                                                            (str \space \-))
+                                             (str \space %))
+                                          (first pieces))))
+            (recur (dec i)
+                   (rest pieces)
+                   turn)))))))
 
 (defn- expand-row
   "Expands numbers to spaces for given FEN notation ROW."
   [row]
   (string/map-str #(if (and (>= (int %) 49)
-                     (<= (int %) 56))
+                            (<= (int %) 56))
                      (string/repeat (- (int %) 48)
-                             \space)
+                                    \space)
                      %)
-           row))
+                  row))
 
 (defn- get-piece
   "Returns letter representing game piece in given LOCATION on the BOARD."
