@@ -157,9 +157,10 @@
   "Wrapper to parse options from string and set them."
   [option]
   (let [pair (split #"=" option)]
-    (if (= (count pair) 1)
-      (xboard-set-option (first pair) true)
-      (xboard-set-option (first pair) (second pair)))))
+    (xboard-set-option (first pair)
+                       (if (= (count pair) 1)
+                         true
+                         (second pair)))))
 
 (defn process-xboard-command
   "Processes command in xboard mode."
