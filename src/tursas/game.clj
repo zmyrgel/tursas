@@ -130,6 +130,25 @@
              *white-clock*
              *black-clock*) time)))
 
+(defn set-game-option
+  "Sets game option"
+  [key value]
+  (dosync (alter game-options
+                 (assoc @game-options key value))))
+
+(defn get-game-option
+  "Returns value of given game option"
+  [option]
+  (@game-options option))
+
+(defn toggle-game-option
+  "Toggles the value of given game option, only for boolean."
+  [option]
+  (set-game-option option
+                   (if (= (get-game-option option) true)
+                     false
+                     true)))
+
 (defn make-move
   "Apply given MOVE to game."
   [move]
