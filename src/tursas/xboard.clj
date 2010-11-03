@@ -157,7 +157,7 @@
   "Wrapper to parse options from string and set them."
   [option]
   (let [pair (split #"=" option)]
-    (xboard-set-option (first pair)
+    (xboard-set-option (keyword (first pair))
                        (if (= (count pair) 1)
                          true
                          (second pair)))))
