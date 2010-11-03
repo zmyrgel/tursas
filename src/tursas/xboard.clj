@@ -87,18 +87,6 @@
           ;;"egtpath PATH - tell engine to use end-game tables from PATH"
           "option NAME[=VALUE] - tell engine to use new option"))))
 
-(defn xboard-set-option
-  "Sets XBoard engine options."
-  [option value]
-  (dosync
-   (alter xboard-engine-options
-          (assoc @xboard-engine-options option value))))
-
-(defn xboard-get-option
-  "Returns the current OPTIONs value."
-  [option]
-  (io! (println (str (keyword option) @xboard-engine-options))))
-
 (defn xboard-accept-feature
   "Tells the engine that GUI accepts last feature."
   [])
@@ -127,20 +115,10 @@
    discarded by Tursas for now."
   [result])
 
-(defn xboard-set-board
-  "Tells the XBoard to set the board to given FEN string."
-  [fen]
-  (set-game fen))
-
 (defn xboard-hint
   "Tells the engine to provide a hint for good move."
   []
   (io! (println (move->algebraic (get-hint)))))
-
-(defn xboard-undo-move
-  "Undo last N moves or just the last one."
-  [& n]
-  (undo-move n))
 
 (defn xboard-bk
   "Tells the XBoard to use Book"
