@@ -2,8 +2,6 @@
   (:require [clojure.contrib.string :as string])
   (:use (tursas utility game)))
 
-(def uci-engine-options (ref {:debug false}))
-
 (defn supported-uci-options
   "Prints the supported options for Tursas."
   []
