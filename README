@@ -4,24 +4,28 @@ Tursas is a simple chess engine implemented in Clojure.
 
 ## Status
 
-- UCI / XBoard interface : some stubbs exist
-- Saving / Loading game state: done
-- REPL to play with: stubbs, not connected to state handling yet
-- State representation with 0x88 board: done
-- Move generation: done
-- Search algorithm: wip
-- Evaluator: simple, material balance for now
+- UCI / XBoard interface : Some implemented
+- Saving / Loading game: done
+- REPL to play with: stubbs
+- State representation: Done with 0x88 board
+- Move generation: Done
+- Search algorithm: Functional minimax algorithm implemented
+- Evaluator: simple, material balance and board location for now
 
-## Usage
-
-Currently this is un-usable. It is very much work in progress code.
+Currently this is not usable. It is very much work in progress code.
+The code compiles and most of the functions seem to work.  Currently
+I'm trying to iron out the runtime bugs in the code and try to get it
+play with XBoard.
 
 ## Installation
 
 Use leiningen to build the project.
 lein uberjar
 
-Then you can run the generated jar file to access the engine.
+## Running
+
+After making the jar file you can run the engine with
+java -jar tursas-0.1-standalone.jar
 
 ## License
 
