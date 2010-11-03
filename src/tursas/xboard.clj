@@ -32,11 +32,11 @@
   "Prints the default features of the engine."
   []
   (io!
-   (map println
-        (for [option (keys xboard-default-features)]
-          (format "feature %s=%s"
-                  (as-str option)
-                  (xboard-default-features option))))))
+   (dorun (map println
+               (for [option (keys xboard-default-features)]
+                 (format "feature %s=%s"
+                         (as-str option)
+                         (xboard-default-features option)))))))
 
 (defn print-xboard-usage
   "Prints the available commands of the repl."
