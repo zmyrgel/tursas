@@ -143,7 +143,7 @@
   [command]
   (case (first command)
         "protover" (do (set-game-option :xboard-protocol-version (second command))
-                       (xboard-print-default-features))
+                       (xboard-print-supported-features))
         "accepted" (xboard-accept-feature)
         "rejected" (xboard-reject-feature)
         "variant" (set-game-option :variant (second command))
