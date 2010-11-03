@@ -94,7 +94,7 @@
   [option value]
   (dosync
    (alter xboard-engine-options
-          (assoc (keyword option) value @xboard-engine-options))))
+          (assoc @xboard-engine-options option value))))
 
 (defn xboard-get-option
   "Returns the current OPTIONs value."
