@@ -111,7 +111,8 @@
 
 (defn xboard-make-move
   "Tells the XBoard to make MOVE."
-  [move])
+  [move]
+  (make-move (algebraic->move move)))
 
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
