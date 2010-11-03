@@ -446,19 +446,20 @@
         from-index (:from move)
         moving-piece (get board from-index)]
     (cond (promotion? moving-piece move)
-          (fill-square (clear-square board from-index)
-                       to-index
-                       (piece-char->value
-                        (if (= player :white)
-                          (Character/toUpperCase (:promotion move))
-                          (Character/toLowerCase (:promotion move)))))
+          (-> board
+              (clear-square from-index)
+              (fill-square to-index (piece-char->value
+                                     (if (= player :white)
+                                       (Character/toUpperCase (:promotion move))
+                                       (Character/toLowerCase (:promotion move))))))
           (castling? moving-piece move)
           (commit-castle-move player board move
                               (if (= column to-index 2)
                                 QUEEN-SIDE
                                 KING-SIDE))
           :else
-          (-> (clear-square board from-index)
+          (-> board
+              (clear-square from-index)
               (fill-square to-index moving-piece)))))
 
 (defn- pawn-or-capture-move?
