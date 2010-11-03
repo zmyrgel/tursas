@@ -93,6 +93,16 @@
   Not used currently but provided for future expansion."
   [])
 
+(defn- uci-set-option
+  "Sets UCI specific game options:
+   name <id> [value <x>]"
+  [options]
+  (let [opts (re-seq #"\S+" options)]
+    (case (count opts)
+          2 (set-game-option (keyword (second opts)) true)
+          4 (set-game-option (keyword (second opts)) (fourth opts))
+          (write "Error parsing options!"))))
+
 (defn process-uci-command
   "Processes command in uci mode."
   [command]
@@ -101,14 +111,14 @@
                   (send-command "id author Timo Myyrä")
                   (map send-command (supported-uci-options))
                   (send-command "uciok"))
-        "debug" (set-option :debug
+        "debug" (set-game-option :debug
                             (if (= (second command) "on")
                               true
                               false))
         "isready" (send-command "readyok")
-        "setoption" (set-option (rest command))
+        "setoption" (uci-set-option (rest command))
         "register" (register (rest command))
-        "ucinewgame" (set-game "startpos") ;; wrong?
+        "ucinewgame" (set-game "startpos")
         "position" (uci-set-position (rest command))
         "go" (go (rest command))
         "stop"
