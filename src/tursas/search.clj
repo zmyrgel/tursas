@@ -4,6 +4,7 @@
 
 ;;; Based on 'Why Functional Programming Matters' paper
 ;;; http://www.cse.chalmers.se/~rjmh/Papers/whyfp.pdf
+;;; Uses minimax algorithm for now, to be expanded to alphabeta later on
 
 (defn- moves
   "Generates list of nodes representing possible game states reachable
