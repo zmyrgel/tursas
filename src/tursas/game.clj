@@ -15,7 +15,12 @@
                         :xboard-protocol-version 1
                         :debug false
                         :ponder false
-                        :ponder-output false}))
+                        :ponder-output false
+                        :movestogo 0
+                        :white-increment 0
+                        :black-increment 0
+                        :move-limit nil
+                        :search-time 0}))
 
 (defn save-game
   "Saves the current game by writing game-state to file."
