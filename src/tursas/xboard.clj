@@ -133,10 +133,10 @@
   "Wrapper to parse options from string and set them."
   [option]
   (let [pair (split #"=" option)]
-    (set-option (keyword (first pair))
-                (if (= (count pair) 1)
-                  true
-                  (second pair)))))
+    (set-game-option (keyword (first pair))
+                     (if (= (count pair) 1)
+                       true
+                       (second pair)))))
 
 (defn process-xboard-command
   "Processes command in xboard mode."
@@ -217,8 +217,3 @@
 
         "option" (xboard-parse-option (second command))
         nil))
-
-(defn quit-xboard-engine
-  "Handler to close xboard engine."
-  [])
-
