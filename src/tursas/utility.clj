@@ -6,11 +6,6 @@
   (.write *out* (.concat msg "\n"))
   (flush))
 
-(defn set-option
-  "Sets the option given as command"
-  [args] ;; name <id> [value <x>]
-  args)
-
 (defn send-command
   "Sends given command."
   [command]
