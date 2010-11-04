@@ -125,7 +125,7 @@
   (let [opts (re-seq #"\S+" options)]
     (case (count opts)
           2 (set-game-option (keyword (second opts)) true)
-          4 (set-game-option (keyword (second opts)) (fourth opts))
+          4 (set-game-option (keyword (second opts)) (nth opts 4))
           (write "Error parsing options!"))))
 
 (defn process-uci-command
