@@ -11,8 +11,3 @@
   [command]
   (write command))
 
-(defn quit
-  "Function to handle closing the engine."
-  []
-  (System/exit 0))
-

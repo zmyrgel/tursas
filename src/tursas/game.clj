@@ -4,6 +4,7 @@
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
+(def active-repl (ref :general))
 (def game-state (ref ()))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
@@ -21,6 +22,21 @@
                         :black-increment 0
                         :move-limit nil
                         :search-time 0}))
+
+(defn get-active-repl
+  "Returns currently active repl"
+  []
+  @active-repl)
+
+(defn set-active-repl
+  "Sets the currently active repl"
+  [repl]
+  (dosync (ref-set active-repl repl)))
+
+(defn quit
+  "Function to handle closing the engine."
+  []
+  (System/exit 0))
 
 (defn save-game
   "Saves the current game by writing game-state to file."
