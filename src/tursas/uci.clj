@@ -84,7 +84,7 @@
                        (recur (rest values)))
         "infinite" (do (set-game-option :search-time 0)
                        (recur (rest values)))
-        (println "BAA!"))
+        (println "BAA!")))
 
   (defn print-uci-usage
   "Prints the available commands of the repl."
