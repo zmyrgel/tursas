@@ -45,12 +45,11 @@
           (register-value (second values))
           :else (println "invalid option!"))))
 
-
 (defn- move?
   "Predicate to detect valid move strings"
   [item]
-  (and (or (count item 4)
-           (count item 5))
+  (and (or (= (count item) 4)
+           (= (count item) 5))
        (or (= item "0000")
            (and (number? (get item 0))
                 (number? (get item 2)))
