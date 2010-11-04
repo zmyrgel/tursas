@@ -45,38 +45,48 @@
           (register-value (second values))
           :else (println "invalid option!"))))
 
-(defn- go
+
+(defn- move?
+  "Predicate to detect valid move strings"
+  [item]
+  (and (or (count item 4)
+           (count item 5))
+       (or (= item "0000")
+           (and (number? (get item 0))
+                (number? (get item 2)))
+           (and (char? (get item 1))
+                (char? (get item 3))))))
+
+(defn- go-handler
   "Handler for go command"
   [command]
-  (loop [values (re-seq #"\S+" command)]
-    (if (empty? values)
-      (do (print "commit move here and stuff"))
-      (cond (= (first values) "searchmoves")
-            (set-game-option :move-limit (second values)) ;; wrong! detect moves!!!
-            (= (first values) "ponder")
-            (set-game-option :ponder-mode true)
-            (= (first values) "wtime")
-            (set-clock! :white (second values))
-            (= (first values) "btime")
-            (set-clock! :black (second values))
-            (= (first values) "winc")
-            (set-game-option :white-increment (second values))
-            (= (first values) "binc")
-            (set-game-option :black-increment (second values))
-            (= (first values) "movestogo")
-            (set-game-option :movestogo (second values))
-            (= (first values) "depth")
-            (set-game-option :depth-limit (second values))
-            (= (first values) "nodes")
-            (set-game-option :node-limit (second values))
-            (= (first values) "movetime")
-            (set-game-option :search-time (second values))
-            (= (first values) "infinite")
-            (set-game-option :search-time 0)
-            :else (println "invalid option!"))
-      (recur (rest values)))))
+  (case (first values)
+        "searchmoves" (do (set-game-option :move-limit (take-while move? values))
+                          (recur (drop-while move? values)))
+        "ponder" (do
+                   (set-game-option :ponder-mode true)
+                   (recur (rest values)))
+        "wtime" (do (set-clock! :white (second values))
+                    (recur (rest values)))
+        "btime" (do (set-clock! :black (second values))
+                    (recur (rest values)))
+        "winc" (do (set-game-option :white-increment (second values))
+                   (recur (rest values)))
+        "binc" (do (set-game-option :black-increment (second values))
+                   (recur (rest values)))
+        "movestogo" (do (set-game-option :movestogo (second values))
+                        (recur (rest values)))
+        "depth" (do (set-game-option :depth-limit (second values))
+                    (recur (rest values)))
+        "nodes" (do (set-game-option :node-limit (second values))
+                    (recur (rest values)))
+        "movetime" (do (set-game-option :search-time (second values))
+                       (recur (rest values)))
+        "infinite" (do (set-game-option :search-time 0)
+                       (recur (rest values)))
+        (println "BAA!"))
 
-(defn print-uci-usage
+  (defn print-uci-usage
   "Prints the available commands of the repl."
   []
   (io! (string/map-str
@@ -135,7 +145,7 @@
         "register" (register (rest command))
         "ucinewgame" (set-game "startpos")
         "position" (uci-set-position (rest command))
-        "go" (go (rest command))
+        "go" (go-handler (re-seq #"\S+" (rest command)))
         "stop"
         "ponderhit"
         nil))
