@@ -49,17 +49,32 @@
   "Handler for go command"
   [command]
   (loop [values (re-seq #"\S+" command)]
-    (when (not (empty? values))
+    (if (empty? values)
+      (do (print "commit move here and stuff"))
       (cond (= (first values) "searchmoves")
-            (do "baa"
-                (recur (rest values)))
+            (set-game-option :move-limit (second values)) ;; wrong! detect moves!!!
             (= (first values) "ponder")
-            (set-option "ponder")
+            (set-game-option :ponder-mode true)
             (= (first values) "wtime")
             (set-clock! :white (second values))
             (= (first values) "btime")
             (set-clock! :black (second values))
-            :else (println "invalid option!")))))
+            (= (first values) "winc")
+            (set-game-option :white-increment (second values))
+            (= (first values) "binc")
+            (set-game-option :black-increment (second values))
+            (= (first values) "movestogo")
+            (set-game-option :movestogo (second values))
+            (= (first values) "depth")
+            (set-game-option :depth-limit (second values))
+            (= (first values) "nodes")
+            (set-game-option :node-limit (second values))
+            (= (first values) "movetime")
+            (set-game-option :search-time (second values))
+            (= (first values) "infinite")
+            (set-game-option :search-time 0)
+            :else (println "invalid option!"))
+      (recur (rest values)))))
 
 (defn print-uci-usage
   "Prints the available commands of the repl."
