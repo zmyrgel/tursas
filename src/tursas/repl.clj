@@ -2,8 +2,6 @@
   (:use (tursas uci xboard utility game))
   (:require [clojure.contrib.string :as string]))
 
-(def active-repl (ref :general))
-
 (defn- print-usage
   "Prints the available commands of the repl."
   []
@@ -18,9 +16,9 @@
           "xboard - ebable xboard mode"
           "quit - quite the Tursas engine"
           ""))
-       (when (= @active-repl :uci)
+       (when (= (get-active-repl) :uci)
          (print-uci-usage))
-       (when (= @active-repl :xboard)
+       (when (= (get-active-repl) :xboard)
          (print-xboard-usage))))
 
 
@@ -33,16 +31,10 @@
           "load" (load-game (rest cmd))
           "save" (save-game (rest cmd))
           "bd"   (display-board)
-          "uci"  (dosync (ref-set active-repl :uci))
-          "xboard" (dosync (ref-set active-repl :xboard))
-          "quit" (case @active-repl
-                       :general (quit)
-                       :uci (do (quit-uci-engine)
-                                (quit))
-                       :xboard (do (quit-xboard-engine)
-                                   (quit))
-                       :else (quit))
-          (case @active-repl
+          "uci"  (set-active-repl :uci)
+          "xboard" (set-active-repl :xboard)
+          "quit" (quit)
+          (case (get-active-repl)
                 :general (when (not (empty? (rest cmd)))
                            (recur (rest cmd)))
                 :uci (process-uci-command cmd)
