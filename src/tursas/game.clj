@@ -3,11 +3,10 @@
   (:use (tursas search state eval)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-(def game-state (ref ()))
 
+(def game-state (ref ()))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
-
 (def game-options (ref {:depth-limit 2
                         :node-limit 5000
                         :time-limit 15
