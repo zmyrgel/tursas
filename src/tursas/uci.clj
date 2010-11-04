@@ -112,11 +112,6 @@
           " ponderhit - the user has played the expected move."
           " quit - quit the program as soon as possible"))))
 
-(defn quit-uci-engine
-  "Tells UCI engine to quit.
-  Not used currently but provided for future expansion."
-  [])
-
 (defn- uci-set-option
   "Sets UCI specific game options:
    name <id> [value <x>]"
