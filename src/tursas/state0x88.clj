@@ -89,7 +89,7 @@
   [state]
   (assoc state :en-passant "-"))
 
-(defn- occupied?
+(defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
   [board index]
   (and (board-index? index)
@@ -98,7 +98,7 @@
 (defn- occupied-by?
   "Checks if given BOARD INDEX is occupied by PLAYER."
   [board index player]
-  (and (occupied? board index)
+  (and (board-occupied? board index)
        (= (mod (get board index) 2) player)))
 
 (defn- init-game-board
@@ -178,7 +178,7 @@
     (if (or (not (board-index? target-index))
             (occupied-by? board target-index player))
       moves
-      (if (not (occupied? board (get board target-index)))
+      (if (not (board-occupied? board (get board target-index)))
         (recur (+ target-index direction)
                (cons  (Move. index target-index nil) moves))
         (cons (Move. index target-index nil) moves)))))
@@ -187,7 +187,7 @@
   "Return set with index of possible move to given PLACE in given STATE."
   [board index place player]
   (if (or (occupied-by? board place (opponent player))
-          (not (occupied? board place)))
+          (not (board-occupied? board place)))
     (list (Move. index place nil))
     '()))
 
@@ -195,7 +195,7 @@
   "Checks if there's ray to from INDEX to given PIECES."
   [board index inc pieces]
   (cond (not (board-index? index)) false
-        (not (occupied? board index) (recur board (+ index inc) inc pieces))
+        (not (board-occupied? board index) (recur board (+ index inc) inc pieces))
         :else (nil? (some #{(get board index)} pieces))))
 
 (defn- threaten-index?
@@ -266,11 +266,11 @@
   (loop [index (+ index increment)
          king-squares 2]
     (cond (> king-squares 0)
-          (if (or (occupied? board index)
+          (if (or (board-occupied? board index)
                   (threaten-index? board index player))
             false
             (recur (+ index increment) (dec king-squares)))
-          :else (if (occupied? index)
+          :else (if (board-occupied? index)
                   false
                   (or (= (get board (+ index increment)) WHITE-ROOK)
                       (= (get board (+ index increment)) BLACK-ROOK))))))
@@ -311,9 +311,9 @@
                         (and (= side :white) (same-row? index 16)))
 
         ;; calculate normal movement
-        moves (if (not (occupied? board move-index))
+        moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
-                         (not (occupied? board (+ move-index step))))
+                         (not (board-occupied? board (+ move-index step))))
                   (list (Move. index move-index nil)
                         (Move. index (+ move-index step) nil))
                   (list (Move. index move-index nil)))
@@ -331,7 +331,7 @@
     (flatten (conj moves
                    (map #(if (or (and (board-index? %)
                                       (= en-passant-index %))
-                                 (and (occupied? board %)
+                                 (and (board-occupied? board %)
                                       (not (occupied-by? board % player))))
                            (list (Move. index % nil))
                            '())
@@ -540,10 +540,10 @@
        (:full-moves state)))
 
 ;;;;; TYPE EXTENSION ;;;;;;
-(extend-type StateWithHex
+(extend-type StateWith0x88
   State
   (occupied? [state index]
-             (occupied? (:board state) index))
+             (occupied-place? (:board state) index))
   (black? [state index]
           (occupied-by? (:board state) index :black))
   (white? [state index]
