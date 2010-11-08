@@ -1,6 +1,6 @@
 (ns tursas.state0x88
-  (:use [clojure.contrib.math :only [abs]]
-        (tursas move state)))
+  (:use (tursas state move)
+        [clojure.contrib.math :only [abs]]))
 
 ;; direction vectors
 (def NORTH 16)
@@ -44,14 +44,14 @@
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
 ;; base record type
-(defrecord StateWith0x88 [board
-                          turn
-                          castling
-                          en-passant
-                          half-moves
-                          full-moves
-                          prev-move
-                          score])
+(defrecord State0x88 [board
+                      turn
+                      castling
+                      en-passant
+                      half-moves
+                      full-moves
+                      prev-move
+                      score])
 
 ;; Predicates
 (defn- board-index?
@@ -349,7 +349,7 @@
           \n (map #(move-to-place board index (+ index %) player) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
           \k (list-king-moves board index (:castling state))
-        '())))
+          '())))
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
@@ -502,32 +502,32 @@
                      0
                      (inc (:half-moves state)))
 
-         full-moves (if (= player :black)
-                      (inc (:full-moves state))
-                      (:full-moves state))]
+        full-moves (if (= player :black)
+                     (inc (:full-moves state))
+                     (:full-moves state))]
 
-        (StateWith0x88. (update-board (:board state) move player)
-                        (if (= player :white) "b" "w")
-                        (update-castling (:castling state) player move)
-                        (update-en-passant moving-piece move)
-                        half-moves
-                        full-moves
-                        (move->algebraic move)
-                        nil)))
+    (State0x88. (update-board (:board state) move player)
+                (if (= player :white) "b" "w")
+                (update-castling (:castling state) player move)
+                (update-en-passant moving-piece move)
+                half-moves
+                full-moves
+                (move->algebraic move)
+                nil)))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
   [fen]
   (let [fen-list (re-seq #"\S+" fen)]
     (when (= (count fen-list) 6)
-      (StateWith0x88. (fen-board->0x88board (first fen-list))
-                      (if (= (second fen-list) "w") :white :black)
-                      (nth fen-list 2)
-                      (nth fen-list 3)
-                      (Integer/parseInt (nth fen-list 4))
-                      (Integer/parseInt (nth fen-list 5))
-                      nil
-                      nil))))
+      (State0x88. (fen-board->0x88board (first fen-list))
+                  (if (= (second fen-list) "w") :white :black)
+                  (nth fen-list 2)
+                  (nth fen-list 3)
+                  (Integer/parseInt (nth fen-list 4))
+                  (Integer/parseInt (nth fen-list 5))
+                  nil
+                  nil))))
 
 (defn- parse-state
   "Returns FEN representation of given STATE."
@@ -540,7 +540,7 @@
        (:full-moves state)))
 
 ;;;;; TYPE EXTENSION ;;;;;;
-(extend-type StateWith0x88
+(extend-type State0x88
   State
   (occupied? [state index]
              (occupied-place? (:board state) index))
@@ -551,13 +551,13 @@
   (opponent [state]
             (if (= (:turn state) :white) :black :white))
   (apply-move [state move]
-               (update-state state move))
+              (update-state state move))
   (in-check? [state]
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
                               (:turn state)))
-;;  (fen->state [state fen]
-;;              (parse-fen fen))
+  ;;  (fen->state [state fen]
+  ;;              (parse-fen fen))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
@@ -570,13 +570,14 @@
 (extend-type String
   Fen
   (fen->state [fen]
-             (let [fen-list (re-seq #"\S+" fen)]
-               (when (= (count fen-list) 6)
-                 (StateWith0x88. (fen-board->0x88board (first fen-list))
-                                 (if (= (second fen-list) "w") :white :black)
-                                 (nth fen-list 2)
-                                 (nth fen-list 3)
-                                 (Integer/parseInt (nth fen-list 4))
-                                 (Integer/parseInt (nth fen-list 5))
-                                 nil
-                                 nil)))))
+              (let [fen-list (re-seq #"\S+" fen)]
+                (when (= (count fen-list) 6)
+                  (State0x88. (fen-board->0x88board (first fen-list))
+                              (if (= (second fen-list) "w") :white :black)
+                              (nth fen-list 2)
+                              (nth fen-list 3)
+                              (Integer/parseInt (nth fen-list 4))
+                              (Integer/parseInt (nth fen-list 5))
+                              nil
+                              nil)))))
+
