@@ -1,6 +1,6 @@
 (ns tursas.uci
   (:require [clojure.contrib.string :as string])
-  (:use (tursas utility game)))
+  (:use (tursas game)))
 
 (defn supported-uci-options
   "Prints the supported options for Tursas."
@@ -120,21 +120,21 @@
     (case (count opts)
           2 (set-game-option (keyword (second opts)) true)
           4 (set-game-option (keyword (second opts)) (nth opts 4))
-          (write "Error parsing options!"))))
+          (println "Error parsing options!"))))
 
 (defn process-uci-command
   "Processes command in uci mode."
   [command]
   (case (first command)
-        "uci" (do (send-command "id name Tursas 0.1")
-                  (send-command "id author Timo Myyrä")
-                  (map send-command (supported-uci-options))
-                  (send-command "uciok"))
+        "uci" (do (println "id name Tursas 0.1")
+                  (println "id author Timo Myyrä")
+                  (map println (supported-uci-options))
+                  (println "uciok"))
         "debug" (set-game-option :debug
                             (if (= (second command) "on")
                               true
                               false))
-        "isready" (send-command "readyok")
+        "isready" (println "readyok")
         "setoption" (uci-set-option (rest command))
         "register" (register (rest command))
         "ucinewgame" (set-game "startpos")
