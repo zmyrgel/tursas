@@ -170,7 +170,7 @@
 
         "usermove" (make-move (algebraic->move (second command)))
         "?" (xboard-move-now)
-        "ping" (xboard-ping)
+        "ping" (xboard-ping (second command))
 
         ;; set draw=1 to enable
         ;;"draw" (xboard-draw)
