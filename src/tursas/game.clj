@@ -138,17 +138,19 @@
   "Sets game to given FEN state."
   [fen]
   (dosync
-   (ref-set game-state (if (= fen "startpos")
-                         (fen->state startpos)
-                         (fen->state fen)))))
+   (ref-set game-state
+            (if (= fen "startpos")
+              (fen->state startpos)
+              (fen->state fen)))))
 
 (defn set-clock!
   "Sets PLAYER's clock to TIME."
   [player time]
-  (dosync (ref-set
-           (if (= player :white)
-             *white-clock*
-             *black-clock*) time)))
+  (dosync
+   (ref-set (if (= player :white)
+              *white-clock*
+              *black-clock*)
+            time)))
 
 (defn set-game-option
   "Sets game option"
