@@ -164,10 +164,7 @@
 (defn toggle-game-option
   "Toggles the value of given game option, only for boolean."
   [option]
-  (set-game-option option
-                   (if (= (get-game-option option) true)
-                     false
-                     true)))
+  (set-game-option option (not (= (get-game-option option) true))))
 
 (defn make-move
   "Apply given MOVE to game."
