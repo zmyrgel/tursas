@@ -1,5 +1,5 @@
 (ns tursas.repl
-  (:use (tursas uci xboard utility game))
+  (:use (tursas uci xboard game))
   (:require [clojure.contrib.string :as string]))
 
 (defn- print-usage
