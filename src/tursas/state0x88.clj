@@ -556,11 +556,27 @@
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
                               (:turn state)))
-  (fen->state [fen]
-              (parse-fen fen))
+;;  (fen->state [state fen]
+;;              (parse-fen fen))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
                 (map #(apply-move state %)
                      (all-moves-for state (:turn state)))))
 
+(defprotocol Fen
+  (fen->state [fen]))
+
+(extend-type String
+  Fen
+  (fen->state [fen]
+             (let [fen-list (re-seq #"\S+" fen)]
+               (when (= (count fen-list) 6)
+                 (StateWith0x88. (fen-board->0x88board (first fen-list))
+                                 (if (= (second fen-list) "w") :white :black)
+                                 (nth fen-list 2)
+                                 (nth fen-list 3)
+                                 (Integer/parseInt (nth fen-list 4))
+                                 (Integer/parseInt (nth fen-list 5))
+                                 nil
+                                 nil)))))
