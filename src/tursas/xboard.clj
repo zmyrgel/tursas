@@ -122,7 +122,7 @@
 
 (defn xboard-bk
   "Tells the XBoard to use Book"
-  [book])
+  [])
 
 (defn xboard-send-rating
   "Prompts the Engine to send its rating."
