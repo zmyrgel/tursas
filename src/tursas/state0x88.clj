@@ -195,7 +195,7 @@
   "Checks if there's ray to from INDEX to given PIECES."
   [board index inc pieces]
   (cond (not (board-index? index)) false
-        (not (board-occupied? board index) (recur board (+ index inc) inc pieces))
+        (not (board-occupied? board index)) (recur board (+ index inc) inc pieces)
         :else (nil? (some #{(get board index)} pieces))))
 
 (defn- threaten-index?
