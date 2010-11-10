@@ -28,3 +28,7 @@
         promotion (str (get algebraic 4))]
     (Move. from to promotion)))
 
+(defn make-move
+  "Constructor for moves."
+  [from to promotion]
+  (Move. from to promotion))
