@@ -1,6 +1,6 @@
 (ns tursas.game
   (:require [clojure.contrib.string :as string])
-  (:use (tursas search eval state0x88)))
+  (:use (tursas search eval state state0x88)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
