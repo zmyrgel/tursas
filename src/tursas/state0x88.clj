@@ -198,6 +198,7 @@
         (not (board-occupied? board index)) (recur board (+ index inc) inc pieces)
         :else (nil? (some #{(get board index)} pieces))))
 
+(declare update-board)
 (defn- threaten-index?
   "Checks if given INDEX in STATE is under threath of enemy."
   [board index opponent]
