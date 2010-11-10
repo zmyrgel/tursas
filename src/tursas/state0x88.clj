@@ -494,7 +494,7 @@
   [state move]
   (let [to-index (:to move)
         from-index (:from move)
-        player (if (occupied-by? board from-index :white)
+        player (if (occupied-by? (:board state) from-index :white)
                  :white :black)
 
         moving-piece (get (:board state) from-index)
