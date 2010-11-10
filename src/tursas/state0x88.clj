@@ -544,7 +544,7 @@
 (extend-type State0x88
   State
   (occupied? [state index]
-             (occupied-place? (:board state) index))
+             (board-occupied? (:board state) index))
   (black? [state index]
           (occupied-by? (:board state) index :black))
   (white? [state index]
