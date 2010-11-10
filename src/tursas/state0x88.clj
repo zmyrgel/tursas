@@ -180,15 +180,15 @@
       moves
       (if (not (board-occupied? board (get board target-index)))
         (recur (+ target-index direction)
-               (cons  (Move. index target-index nil) moves))
-        (cons (Move. index target-index nil) moves)))))
+               (cons  (make-move index target-index nil) moves))
+        (cons (make-move index target-index nil) moves)))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
   [board index place player]
   (if (or (occupied-by? board place (opponent player))
           (not (board-occupied? board place)))
-    (list (Move. index place nil))
+    (list (make-move index place nil))
     '()))
 
 (defn- ray-to-pieces?
@@ -240,7 +240,7 @@
      (if (empty? enemy-king-index)
        false
        (-> board
-           (update-board (Move. enemy-king-index index nil) player)
+           (update-board (make-move enemy-king-index index nil) player)
            (threaten-index? index player))))))
 
 (defn- king-index
@@ -293,12 +293,12 @@
 
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
-                              (Move. index (* WEST 2) nil)
+                              (make-move index (* WEST 2) nil)
                               '())
 
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index WEST))
-                               (Move. index (* EAST 2) nil)
+                               (make-move index (* EAST 2) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
@@ -314,9 +314,9 @@
         moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
                          (not (board-occupied? board (+ move-index step))))
-                  (list (Move. index move-index nil)
-                        (Move. index (+ move-index step) nil))
-                  (list (Move. index move-index nil)))
+                  (list (make-move index move-index nil)
+                        (make-move index (+ move-index step) nil))
+                  (list (make-move index move-index nil)))
                 '())
 
         ;; possible capture
@@ -333,7 +333,7 @@
                                       (= en-passant-index %))
                                  (and (board-occupied? board %)
                                       (not (occupied-by? board % player))))
-                           (list (Move. index % nil))
+                           (list (make-move index % nil))
                            '())
                         captures)))))
 
