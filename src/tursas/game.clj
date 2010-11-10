@@ -168,8 +168,8 @@
   [option]
   (set-game-option option (not (= (get-game-option option) true))))
 
-(defn make-move
-  "Apply given MOVE to game."
+(defn make-chess-move
+  "Make given MOVE in chess game."
   [move]
   (dosync
    (ref-set game-state

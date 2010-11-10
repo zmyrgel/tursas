@@ -18,10 +18,10 @@
       (set-game (first operands)))
     (cond (and (not (nil? (nth operands 1 nil)))
                (= (nth operands 1 nil) "moves"))
-          (map make-move (nthnext operands 2))
+          (map make-chess-move (nthnext operands 2))
           (and (not (nil? (nth operands 2 nil)))
                (= (nth operands 2 nil) "moves"))
-          (map make-move (nthnext operands 3)))))
+          (map make-chess-move (nthnext operands 3)))))
 
 (defn- register-name
   "Registers given name."

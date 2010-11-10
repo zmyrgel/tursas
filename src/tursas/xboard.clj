@@ -95,11 +95,6 @@
   "Tells the engine that GUI rejects given feature."
   [])
 
-(defn xboard-make-move
-  "Tells the XBoard to make MOVE."
-  [move]
-  (make-move (algebraic->move move)))
-
 (defn xboard-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
@@ -168,7 +163,7 @@
         ;;"time" (xboard-set-engine-clock (second command))
         ;;"otim" (xboard-set-opponent-clock (second command))
 
-        "usermove" (make-move (algebraic->move (second command)))
+        "usermove" (make-chess-move (algebraic->move (second command)))
         "?" (xboard-move-now)
         "ping" (xboard-ping (second command))
 
