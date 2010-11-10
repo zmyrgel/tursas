@@ -284,7 +284,7 @@
                   \Q \K)
                 (if (= side QUEEN-SIDE)
                   \q \k))]
-    (not (nil (some #{piece} castling)))))
+    (not (nil? (some #{piece} castling)))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
