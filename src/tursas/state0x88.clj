@@ -306,10 +306,10 @@
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [player board index en-passant]
-  (let [step (if (= side :black) SOUTH NORTH)
+  (let [step (if (= player :black) SOUTH NORTH)
         move-index (+ index step)
-        move-twice? (or (and (= side :black) (same-row? index 96))
-                        (and (= side :white) (same-row? index 16)))
+        move-twice? (or (and (= player :black) (same-row? index 96))
+                        (and (= player :white) (same-row? index 16)))
 
         ;; calculate normal movement
         moves (if (not (board-occupied? board move-index))
@@ -321,7 +321,7 @@
                 '())
 
         ;; possible capture
-        captures (if (= side :white)
+        captures (if (= player :white)
                    (list (+ NW index) (+ NE index))
                    (list (+ SW index) (+ SE index)))
         en-passant-index (if (= en-passant "-")
