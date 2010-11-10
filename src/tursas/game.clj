@@ -140,8 +140,8 @@
   (dosync
    (ref-set game-state
             (if (= fen "startpos")
-              (fen->state startpos)
-              (fen->state fen)))))
+              (list (fen->state startpos))
+              (list (fen->state fen))))))
 
 (defn set-clock!
   "Sets PLAYER's clock to TIME."
