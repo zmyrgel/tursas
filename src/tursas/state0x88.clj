@@ -418,30 +418,24 @@
          empty 0
          add-slash false]
     (let [last-place (zero? (mod index 16))]
-      (cond (= index -1)
-            fen
-            (not (board-index? index))
-            (recur (dec index) fen 0 true)
-            add-slash
-            (recur index (str fen "/") 0 false)
-            last-place
-            (recur (dec index)
-                   (if (= (get board index) EMPTY)
-                     (str fen (inc empty))
-                     (str fen
-                          (if (> empty 0) empty "")
-                          (piece-value->char (get board index))))
-                   0
-                   false)
-            (= (get board index) EMPTY)
-            (recur (dec index) fen (inc empty) false)
-            :else
-            (recur (dec index)
-                   (str fen
-                        (if (> empty 0) empty "")
-                        (piece-value->char (get board index)))
-                   0
-                   false)))))
+      (cond (= index -1) fen
+            (not (board-index? index)) (recur (dec index) fen 0 true)
+            add-slash (recur index (str fen "/") 0 false)
+            last-place (recur (dec index)
+                              (if (= (get board index) EMPTY)
+                                (str fen (inc empty))
+                                (str fen
+                                     (if (> empty 0) empty "")
+                                     (piece-value->char (get board index))))
+                              0
+                              false)
+            (= (get board index) EMPTY) (recur (dec index) fen (inc empty) false)
+            :else (recur (dec index)
+                         (str fen
+                              (if (> empty 0) empty "")
+                              (piece-value->char (get board index)))
+                         0
+                         false)))))
 
 (defn promotion?
   "Checks if given move is pawn promotion."
