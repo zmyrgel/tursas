@@ -109,6 +109,8 @@
   "Checks if given BOARD INDEX is occupied by PLAYER."
   [board index player]
   (and (board-occupied? board index)
+       (if (= player :white)
+         )
        (= (mod (get board index) 2) player)))
 
 (defn- init-game-board
