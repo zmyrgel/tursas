@@ -89,6 +89,16 @@
   [state]
   (assoc state :en-passant "-"))
 
+(defn- white-piece?
+  "Predicate to check if given piece value belongs to white."
+  [piece]
+  (zero? (mod piece 2)))
+
+(defn- black-piece?
+  "Checks if given PIECE value belongs to black."
+  [piece]
+  (not (white-piece?)))
+
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
   [board index]
