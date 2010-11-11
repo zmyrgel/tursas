@@ -127,12 +127,14 @@
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
   []
-  (:prev-move
-   (->> @game-state
-        first
-        legal-moves
-        (take 5)
-        rand-nth)))
+  (->> @game-state
+       first
+       legal-moves
+       (take 5)
+       rand-nth
+       :prev-move
+       println
+       io!))
 
 (defn set-game
   "Sets game to given FEN state."
