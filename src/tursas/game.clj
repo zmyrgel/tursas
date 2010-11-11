@@ -69,7 +69,7 @@
                           "  BLACK")
                         " TO MOVE"))
           (do
-            (println (str i "| "
+            (println (str i "|"
                           (string/map-str #(if (and (>= (int %) 49)
                                                     (<= (int %) 56))
                                              (string/repeat (- (int %) 48)
