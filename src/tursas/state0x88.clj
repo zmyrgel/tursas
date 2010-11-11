@@ -149,7 +149,7 @@
   [algebraic]
   (let [file (- (int (nth algebraic 0)) 97)
         rank (- (int (nth algebraic 1)) 48)]
-    (+ (* rank 16) file)))
+    (- (+ (* rank 16) file) 16)))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
