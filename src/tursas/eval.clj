@@ -98,7 +98,7 @@
   "Checks which situation, opening, middle or end-game the game is."
   [state pieces]
   (cond
-   (< (count (get-pieces state)) 15)
+   (< (count (keys pieces)) 15)
    :end-game
    (> (:full-moves state) 10)
    :middle-game
