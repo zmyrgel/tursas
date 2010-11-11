@@ -164,9 +164,9 @@
           [WHITE-ROOK WHITE-KING [0 7] [3 5]]
           [BLACK-ROOK BLACK-KING [112 119] [115 117]])]
     (-> board
-        (clear-square (:from move))
+        (clear-square (algebraic->index (:from move)))
         (clear-square (get from castling-side))
-        (fill-square (:to move) king)
+        (fill-square (algebraic->index (:to move)) king)
         (fill-square (get to castling-side) rook))))
 
 (defn- slide-in-direction
@@ -429,16 +429,17 @@
   "Checks if given move is pawn promotion."
   [piece move]
   (or (and (= piece WHITE-PAWN)
-           (= (row (:to move)) 7))
+           (= (row (algebraic->index (:to move))) 7))
       (and (= piece BLACK-PAWN)
-           (= (row (:to move)) 0))))
+           (= (row (algebraic->index (:to move))) 0))))
 
 (defn castling?
   "Checks given move is castling move."
   [piece move]
   (and (or (= piece WHITE-KING)
            (= piece BLACK-KING))
-       (= (abs (- (:to move) (:from move))) 2)))
+       (= (abs (- (algebraic->index (:to move))
+                  (algebraic->index (:from move)))) 2)))
 
 (defn- update-board
   "Returns new board after applying MOVE to BOARD."
@@ -468,10 +469,11 @@
   [piece board move]
   (or (= piece WHITE-PAWN)
       (= piece BLACK-PAWN)
-      (not (= (get board (:to move)) EMPTY))))
+      (not (= (get board (algebraic->index (:to move))) EMPTY))))
 
 (defn- update-castling
-  "Return new castling string for move"
+  "Return new castling string for move
+   XXX: move arg?"
   [current-castling player move]
   (if (= (current-castling) "-")
     "-"
@@ -485,8 +487,11 @@
   [piece move]
   (if (and (or (= piece WHITE-PAWN)
                (= piece BLACK-PAWN))
-           (= (abs (- (:to move) (:from move))) 0x20))
-    (index->algebraic (/ (+ (:to move) (:from move)) 2))
+           (= (abs (- (algebraic->index (:to move))
+                      (algebraic->index (:from move))))
+              0x20))
+    (index->algebraic (/ (+ (algebraic->index (:to move))
+                            (algebraic->index (:from move))) 2))
     "-"))
 
 (defn- update-state
