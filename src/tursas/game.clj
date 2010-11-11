@@ -173,7 +173,7 @@
   [move]
   (dosync
    (ref-set game-state
-            (cons (apply-move @game-state move) @game-state))))
+            (cons (apply-move (first @game-state) move) @game-state))))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
