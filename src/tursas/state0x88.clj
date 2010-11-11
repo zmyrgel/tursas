@@ -522,7 +522,7 @@
                      (:full-moves state))]
 
     (State0x88. (update-board (:board state) move player)
-                (if (= player :white) "b" "w")
+                (if (= player :white) :black :white)
                 (update-castling (:castling state) player move)
                 (update-en-passant moving-piece move)
                 half-moves
