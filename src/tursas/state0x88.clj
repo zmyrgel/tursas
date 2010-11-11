@@ -367,7 +367,7 @@
           \q (map #(slide-in-direction player board index %) queen-directions)
           \n (map #(move-to-place board index (+ index %) player) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
-          \k (list-king-moves board index (:castling state))
+          \k (list-king-moves player board index (:castling state))
           '())))
 
 (defn- all-piece-indexes-for
