@@ -508,8 +508,7 @@
   [state move]
   (let [to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
-        player (if (occupied-by? (:board state) from-index :white)
-                 :white :black)
+        player (:turn state)
 
         moving-piece (get (:board state) from-index)
 
@@ -520,15 +519,16 @@
         full-moves (if (= player :black)
                      (inc (:full-moves state))
                      (:full-moves state))]
-
-    (State0x88. (update-board (:board state) move player)
-                (if (= player :white) :black :white)
-                (update-castling (:castling state) player move)
-                (update-en-passant moving-piece move)
-                half-moves
-                full-moves
-                (move->algebraic move)
-                nil)))
+    (if (not (occupied-by? (:board state) from-index player))
+      (println "Invalid move given!")
+      (State0x88. (update-board (:board state) move player)
+                  (if (= player :white) :black :white)
+                  (update-castling (:castling state) player move)
+                  (update-en-passant moving-piece move)
+                  half-moves
+                  full-moves
+                  (move->algebraic move)
+                  nil))))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
