@@ -110,8 +110,8 @@
   [board index player]
   (and (board-occupied? board index)
        (if (= player :white)
-         )
-       (= (mod (get board index) 2) player)))
+         (white-piece? (get board index))
+         (black-piece? (get board index)))))
 
 (defn- init-game-board
   "Generates new 128 element vector of bytes
