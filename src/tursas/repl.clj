@@ -28,8 +28,8 @@
   (loop [cmd (re-seq #"\w+" command)]
     (case (first cmd)
           "help" (print-usage)
-          "load" (load-game (rest cmd))
-          "save" (save-game (rest cmd))
+          "load" (load-game)
+          "save" (save-game)
           "bd"   (display-board)
           "uci"  (set-active-repl :uci)
           "xboard" (set-active-repl :xboard)
