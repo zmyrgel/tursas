@@ -121,9 +121,9 @@
 (defn- index->algebraic
   "Converts given index to algebraic representation."
   [index]
-  (let [coord (format "%x" index)
+  (let [coord (format "%02x" index)
         num (+ (- (int (nth coord 0)) 48) 1)
-        alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
+        alpha (get "abcdefgh" (- (int (nth coord 1)) 97))]
     (str alpha num)))
 
 (defn- algebraic->index
