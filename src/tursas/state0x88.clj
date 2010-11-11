@@ -97,7 +97,7 @@
 (defn- black-piece?
   "Checks if given PIECE value belongs to black."
   [piece]
-  (not (white-piece?)))
+  (not (white-piece? piece)))
 
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
