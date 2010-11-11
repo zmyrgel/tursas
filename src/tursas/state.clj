@@ -4,7 +4,6 @@
   (occupied? [state index])
   (black? [state index])
   (white? [state index])
-  (opponent [state])
   (apply-move [state move])
   (in-check? [state])
   (state->fen [state])

@@ -113,6 +113,12 @@
          (white-piece? (get board index))
          (black-piece? (get board index)))))
 
+(defn- opponent
+  "Return opponent of given player"
+  [player]
+  (if (= player :white)
+    :black :white))
+
 (defn- init-game-board
   "Generates new 128 element vector of bytes
    and places chess piece representation to it."
@@ -590,8 +596,6 @@
           (occupied-by? (:board state) index :black))
   (white? [state index]
           (occupied-by? (:board state) index :white))
-  (opponent [state]
-            (if (= (:turn state) :white) :black :white))
   (apply-move [state move]
               (update-state state move))
   (in-check? [state]
