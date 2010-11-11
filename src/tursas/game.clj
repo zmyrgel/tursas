@@ -80,6 +80,10 @@
                    (rest pieces)
                    turn)))))))
 
+(defn display-fen
+  []
+  (println (state->fen (first @game-state))))
+
 (defn- expand-row
   "Expands numbers to spaces for given FEN notation ROW."
   [row]

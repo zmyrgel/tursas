@@ -211,4 +211,5 @@
         ;;"egtpath" (xboard-set-egtpath (second command))
 
         "option" (xboard-parse-option (second command))
+        "bf" (display-fen)
         nil))
