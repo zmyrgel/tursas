@@ -442,9 +442,9 @@
 
 (defn- update-board
   "Returns new board after applying MOVE to BOARD."
-  [board move player move]
-  (let [to-index (:to move)
-        from-index (:from move)
+  [board move player]
+  (let [to-index (algebraic->index (:to move))
+        from-index (algebraic->index (:from move))
         moving-piece (get board from-index)]
     (cond (promotion? moving-piece move)
           (-> board
