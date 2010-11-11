@@ -173,9 +173,11 @@
 (defn make-chess-move
   "Make given MOVE in chess game."
   [move]
-  (dosync
-   (ref-set game-state
-            (cons (apply-move (first @game-state) move) @game-state))))
+  (let [new-state (apply-move (first @game-state) move)]
+    (if (nil? new-state)
+      (io! (println "Invalid move!"))
+      (dosync
+       (ref-set game-state (cons new-state @game-state))))))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."

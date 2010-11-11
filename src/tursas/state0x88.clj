@@ -516,8 +516,9 @@
     "-"))
 
 (defn- update-state
-  "Return result of applying given MOVE to STATE."
-  [state move]
+  "Return result of applying given MOVE to STATE
+   or nil if move is illegal."
+  [state move] ;;a2a3
   (let [to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
         player (:turn state)
@@ -531,8 +532,7 @@
         full-moves (if (= player :black)
                      (inc (:full-moves state))
                      (:full-moves state))]
-    (if (not (occupied-by? (:board state) from-index player))
-      (println "Invalid move given!")
+    (when (occupied-by? (:board state) from-index player)
       (State0x88. (update-board (:board state) move player)
                   (if (= player :white) :black :white)
                   (update-castling (:castling state) player move)
