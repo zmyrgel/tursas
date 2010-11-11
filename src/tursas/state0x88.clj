@@ -492,8 +492,8 @@
 (defn- update-state
   "Return result of applying given MOVE to STATE."
   [state move]
-  (let [to-index (:to move)
-        from-index (:from move)
+  (let [to-index (algebraic->index (:to move))
+        from-index (algebraic->index (:from move))
         player (if (occupied-by? (:board state) from-index :white)
                  :white :black)
 
