@@ -8,6 +8,11 @@
 
 (defrecord Move [from to promotion])
 
+(defn make-move
+  "Constructor for moves."
+  [from to promotion]
+  (Move. from to promotion))
+
 (defn move->algebraic
   "Converts MOVE to long algebraic notation."
   [move]
@@ -26,9 +31,5 @@
         to (str (get algebraic 2)
                 (get algebraic 3))
         promotion (str (get algebraic 4))]
-    (Move. from to promotion)))
+    (make-move from to promotion)))
 
-(defn make-move
-  "Constructor for moves."
-  [from to promotion]
-  (Move. from to promotion))
