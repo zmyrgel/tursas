@@ -472,15 +472,24 @@
       (not (= (get board (algebraic->index (:to move))) EMPTY))))
 
 (defn- update-castling
-  "Return new castling string for move
-   XXX: move arg?"
+  "Return new castling string for move"
   [current-castling player move]
-  (if (= (current-castling) "-")
-    "-"
-    (reduce str (re-seq
-                 (if (= player :white)
-                   #"\p{Upper}"
-                   #"\p{Lower}") (current-castling)))))
+  (let [move-str (str (:from move) (:to move))
+        white-str (re-seq #"\p{Upper}" current-castling)
+        black-str (re-seq #"\p{Lower}" current-castling)]
+    (if (= current-castling "-")
+      "-"
+      (if (= player :white)
+        (if (or (= move-str "e1g1")
+                (= move-str "e1c1"))
+          (if (= black-str "")
+            "-" black-str)
+          (str white-str black-str))
+        (if (or (= move-str "e8g8")
+                (= move-str "e8c8"))
+          (if (= white-str "")
+            "-" white-str)
+          (str white-str black-str))))))
 
 (defn- update-en-passant
   "Construct en-passant string from PIECE and MOVE."
