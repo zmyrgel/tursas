@@ -554,7 +554,7 @@
        (:half-moves state) " "
        (:full-moves state)))
 
-;;;;; TYPE EXTENSION ;;;;;;
+;;;;; TYPE EXTENSIONS ;;;;;;
 (extend-type State0x88
   State
   (occupied? [state index]
@@ -571,8 +571,6 @@
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
                               (:turn state)))
-  ;;  (fen->state [state fen]
-  ;;              (parse-fen fen))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
