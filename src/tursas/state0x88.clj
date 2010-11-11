@@ -130,8 +130,8 @@
   "Converts given algebraic representation to board index value."
   [algebraic]
   (let [file (- (int (nth algebraic 0)) 97)
-        rank (- (int (nth algebraic 1)) 48)]
-    (+ (* (- 8 rank) 16) file)))
+        rank (- (int (onth algebraic 1)) 48)]
+    (+ (* rank 16) file)))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
