@@ -475,8 +475,8 @@
   "Return new castling string for move"
   [current-castling player move]
   (let [move-str (str (:from move) (:to move))
-        white-str (re-seq #"\p{Upper}" current-castling)
-        black-str (re-seq #"\p{Lower}" current-castling)]
+        white-str (str (re-seq #"\p{Upper}" current-castling))
+        black-str (str (re-seq #"\p{Lower}" current-castling))]
     (if (= current-castling "-")
       "-"
       (if (= player :white)
