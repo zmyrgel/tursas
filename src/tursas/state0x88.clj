@@ -627,11 +627,11 @@
   (in-check? [state]
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
-                              (:turn state)))
+                              (opponent (:turn state))))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (map #(apply-move state %)
+                (map (partial apply-move state)
                      (all-moves-for state (:turn state))))
   (get-pieces [state]
               (build-piece-map state)))
