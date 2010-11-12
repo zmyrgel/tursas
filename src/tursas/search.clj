@@ -57,7 +57,7 @@
   (if (nil? depth)
     node
     (cons node (when (not (zero? depth))
-                 (map (partial prune (dec depth)) (next node))))))
+                 (map (partial prune-depth (dec depth)) (next node))))))
 
 (defn- prune-nodes
   "Prune game tree based on number of nodes processed.
