@@ -475,6 +475,16 @@
        (= (abs (- (algebraic->index (:to move))
                   (algebraic->index (:from move)))) 2)))
 
+(defn- get-promotion-piece
+  "Helper function to return new piece char.
+   Gets the char from move or if nil, defaults to queen."
+  [player move]
+  (if (nil? (:promotion move))
+    (if (= player :white) \Q \q)
+    (if (= player :white)
+      (Character/toUpperCase (:promotion move))
+      (Character/toLowerCase (:promotion move)))))
+
 (defn- update-board
   "Returns new board after applying MOVE to BOARD."
   [board move player]
@@ -485,9 +495,7 @@
           (-> board
               (clear-square from-index)
               (fill-square to-index (piece-char->value
-                                     (if (= player :white)
-                                       (Character/toUpperCase (:promotion move))
-                                       (Character/toLowerCase (:promotion move))))))
+                                     (get-promotion-piece player move))))
           (castling? moving-piece move)
           (commit-castle-move player board move
                               (if (= column to-index 2)
