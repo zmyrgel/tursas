@@ -48,20 +48,33 @@
     (:score (first node))
     #(min (map maximise (rest node)))))
 
-(defn- prune
+(defn- prune-depth
   "Prunes the results of gametree search.
    Limit the search to certain DEPTH to complete the search
-   in adequote time frame."
+   in adequote time frame.
+   Don't prune if depth is nil."
   [depth node]
-  (cons node (when (not (zero? depth))
-               (map (partial prune (dec depth)) (rest node)))))
+  (if (nil? depth)
+    node
+    (cons node (when (not (zero? depth))
+                 (map (partial prune (dec depth)) (next node))))))
+
+(defn- prune-nodes
+  "Prune game tree based on number of nodes processed.
+   No pruning if nil given."
+  [nodes node]
+  (if (nil? nodes)
+    node
+    (cons node (when (not (zero? nodes))
+                 (map (partial prune-nodes (dec nodes)) (rest node))))))
 
 (defn evaluate
   "Evaluates given STATE to certain DEPTH.
    Returns new state with evaluation score attached"
-  [depth state]
+  [depth nodes state]
   (->> state
        gametree
-       (prune depth)
+       (prune-nodes nodes)
+       (prune-depth depth)
        (maptree static)
        (trampoline maximise)))
