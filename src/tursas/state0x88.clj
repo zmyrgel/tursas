@@ -51,7 +51,10 @@
                       half-moves
                       full-moves
                       prev-move
-                      score])
+                      score]
+  Comparable
+  (compareTo [this other]
+             (compare score (:score other))))
 
 ;; Predicates
 (defn- board-index?
