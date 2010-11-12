@@ -547,7 +547,7 @@
 
 (defn- update-state
   "Return result of applying given MOVE to STATE
-   or nil if move is illegal."
+   or nil if move or state is illegal."
   [state move]
   (let [to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
@@ -561,16 +561,18 @@
 
         full-moves (if (= player :black)
                      (inc (:full-moves state))
-                     (:full-moves state))]
-    (when (occupied-by? (:board state) from-index player)
-      (State0x88. (update-board (:board state) move player)
-                  (if (= player :white) :black :white)
-                  (update-castling (:castling state) player move)
-                  (update-en-passant moving-piece move)
-                  half-moves
-                  full-moves
-                  (move->algebraic move)
-                  nil))))
+                     (:full-moves state))
+        new-state (State0x88. (update-board (:board state) move player)
+                              (if (= player :white) :black :white)
+                              (update-castling (:castling state) player move)
+                              (update-en-passant moving-piece move)
+                              half-moves
+                              full-moves
+                              (move->algebraic move)
+                              nil)]
+    (when (or (occupied-by? (:board state) from-index player)
+            (not (game-end? new-state)))
+      new-state)))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
