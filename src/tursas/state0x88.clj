@@ -51,7 +51,10 @@
                       half-moves
                       full-moves
                       prev-move
-                      score])
+                      score]
+  Comparable
+  (compareTo [this other]
+             (compare score (:score other))))
 
 ;; Predicates
 (defn- board-index?
@@ -149,7 +152,7 @@
   [algebraic]
   (let [file (- (int (nth algebraic 0)) 97)
         rank (- (int (nth algebraic 1)) 48)]
-    (- (+ (* rank 16) file) 16)))
+    (+ (* (dec rank) 16) file)))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
@@ -198,15 +201,24 @@
       moves
       (if (not (board-occupied? board (get board target-index)))
         (recur (+ target-index direction)
-               (cons  (make-move index target-index nil) moves))
-        (cons (make-move index target-index nil) moves)))))
+               (cons  (make-move (index->algebraic index)
+                                 (index->algebraic target-index)
+                                 nil)
+                      moves))
+        (cons (make-move (index->algebraic index)
+                         (index->algebraic target-index)
+                         nil)
+              moves)))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
   [board index place player]
-  (if (or (occupied-by? board place (opponent player))
-          (not (board-occupied? board place)))
-    (list (make-move index place nil))
+  (if (and (board-index? place)
+           (or (not (board-occupied? board place))
+               (occupied-by? board place (opponent player))))
+    (list (make-move (index->algebraic index)
+                     (index->algebraic place)
+                     nil))
     '()))
 
 (defn- ray-to-pieces?
@@ -259,7 +271,10 @@
      (if (empty? enemy-king-index)
        false
        (-> board
-           (update-board (make-move enemy-king-index index nil) player)
+           (update-board (make-move (index->algebraic enemy-king-index)
+                                    (index->algebraic index)
+                                    nil)
+                         player)
            (threaten-index? index player))))))
 
 (defn- king-index
@@ -276,8 +291,7 @@
    or if player has no moves left to make."
   [state]
   (or (>= (:half-moves state) 50)
-      (nil? (king-index (:board state) (:turn state)))
-      (empty? (legal-states state))))
+      (nil? (king-index (:board state) (:turn state)))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
@@ -312,12 +326,16 @@
 
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
-                              (make-move index (* WEST 2) nil)
+                              (make-move (index->algebraic index)
+                                         (index->algebraic (* WEST 2))
+                                         nil)
                               '())
 
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index WEST))
-                               (make-move index (* EAST 2) nil)
+                               (make-move (index->algebraic index)
+                                          (index->algebraic (* EAST 2))
+                                          nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
@@ -333,9 +351,15 @@
         moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
                          (not (board-occupied? board (+ move-index step))))
-                  (list (make-move index move-index nil)
-                        (make-move index (+ move-index step) nil))
-                  (list (make-move index move-index nil)))
+                  (list (make-move (index->algebraic index)
+                                   (index->algebraic move-index)
+                                   nil)
+                        (make-move (index->algebraic index)
+                                   (index->algebraic (+ move-index step))
+                                   nil))
+                  (list (make-move (index->algebraic index)
+                                   (index->algebraic move-index)
+                                   nil)))
                 '())
 
         ;; possible capture
@@ -352,7 +376,9 @@
                                       (= en-passant-index %))
                                  (and (board-occupied? board %)
                                       (not (occupied-by? board % player))))
-                           (list (make-move index % nil))
+                           (list (make-move (index->algebraic index)
+                                            (index->algebraic %)
+                                            nil))
                            '())
                         captures)))))
 
@@ -379,9 +405,8 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (filter #(in-check? (apply-move state %))
-          (flatten (map #(list-moves-for-piece state %)
-                        (all-piece-indexes-for (:board state) side)))))
+  (flatten (map #(list-moves-for-piece state %)
+                (all-piece-indexes-for (:board state) side))))
 
 (defn- fen-board->0x88board
   "Parses board information from FEN-BOARD field."
@@ -453,6 +478,16 @@
        (= (abs (- (algebraic->index (:to move))
                   (algebraic->index (:from move)))) 2)))
 
+(defn- get-promotion-piece
+  "Helper function to return new piece char.
+   Gets the char from move or if nil, defaults to queen."
+  [player move]
+  (if (nil? (:promotion move))
+    (if (= player :white) \Q \q)
+    (if (= player :white)
+      (Character/toUpperCase (:promotion move))
+      (Character/toLowerCase (:promotion move)))))
+
 (defn- update-board
   "Returns new board after applying MOVE to BOARD."
   [board move player]
@@ -463,9 +498,7 @@
           (-> board
               (clear-square from-index)
               (fill-square to-index (piece-char->value
-                                     (if (= player :white)
-                                       (Character/toUpperCase (:promotion move))
-                                       (Character/toLowerCase (:promotion move))))))
+                                     (get-promotion-piece player move))))
           (castling? moving-piece move)
           (commit-castle-move player board move
                               (if (= column to-index 2)
@@ -517,8 +550,8 @@
 
 (defn- update-state
   "Return result of applying given MOVE to STATE
-   or nil if move is illegal."
-  [state move] ;;a2a3
+   or nil if move or state is illegal."
+  [state move]
   (let [to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
         player (:turn state)
@@ -531,16 +564,18 @@
 
         full-moves (if (= player :black)
                      (inc (:full-moves state))
-                     (:full-moves state))]
-    (when (occupied-by? (:board state) from-index player)
-      (State0x88. (update-board (:board state) move player)
-                  (if (= player :white) :black :white)
-                  (update-castling (:castling state) player move)
-                  (update-en-passant moving-piece move)
-                  half-moves
-                  full-moves
-                  (move->algebraic move)
-                  nil))))
+                     (:full-moves state))
+        new-state (State0x88. (update-board (:board state) move player)
+                              (if (= player :white) :black :white)
+                              (update-castling (:castling state) player move)
+                              (update-en-passant moving-piece move)
+                              half-moves
+                              full-moves
+                              (move->algebraic move)
+                              nil)]
+    (when (or (occupied-by? (:board state) from-index player)
+            (not (game-end? new-state)))
+      new-state)))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
@@ -595,11 +630,11 @@
   (in-check? [state]
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
-                              (:turn state)))
+                              (opponent (:turn state))))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (map #(apply-move state %)
+                (map (partial apply-move state)
                      (all-moves-for state (:turn state))))
   (get-pieces [state]
               (build-piece-map state)))

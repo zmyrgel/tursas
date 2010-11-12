@@ -109,10 +109,11 @@
 
 (defn choose-move
   "Let AI to choose a move from STATE with given STRATEGY."
-  [moves & strategy]
-  (case strategy
-        :total-random (rand-nth moves)
-        (first (sort-by :score > moves))))
+  [states & strategy]
+  (:prev-mode
+   (case strategy
+         :total-random (rand-nth states)
+         (last (sort states)))))
 
 (defn- legal-moves
   "Generates all available moves from given STATE."
