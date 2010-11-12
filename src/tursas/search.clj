@@ -54,7 +54,7 @@
    in adequote time frame."
   [depth node]
   (cons node (when (not (zero? depth))
-               (map (prune (dec depth)) (rest node)))))
+               (map (partial prune (dec depth)) (rest node)))))
 
 (defn evaluate
   "Evaluates given STATE to certain DEPTH.
