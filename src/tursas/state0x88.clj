@@ -149,7 +149,7 @@
   [algebraic]
   (let [file (- (int (nth algebraic 0)) 97)
         rank (- (int (nth algebraic 1)) 48)]
-    (- (+ (* rank 16) file) 16)))
+    (+ (* (dec rank) 16) file)))
 
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
@@ -518,7 +518,7 @@
 (defn- update-state
   "Return result of applying given MOVE to STATE
    or nil if move is illegal."
-  [state move] ;;a2a3
+  [state move]
   (let [to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
         player (:turn state)
