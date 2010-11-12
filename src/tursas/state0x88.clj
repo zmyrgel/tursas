@@ -198,8 +198,14 @@
       moves
       (if (not (board-occupied? board (get board target-index)))
         (recur (+ target-index direction)
-               (cons  (make-move index target-index nil) moves))
-        (cons (make-move index target-index nil) moves)))))
+               (cons  (make-move (index->algebraic index)
+                                 (index->algebraic target-index)
+                                 nil)
+                      moves))
+        (cons (make-move (index->algebraic index)
+                         (index->algebraic target-index)
+                         nil)
+              moves)))))
 
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
@@ -207,7 +213,9 @@
   (if (and (board-index? place)
            (or (not (board-occupied? board place))
                (occupied-by? board place (opponent player))))
-    (list (make-move index place nil))
+    (list (make-move (index->algebraic index)
+                     (index->algebraic place)
+                     nil))
     '()))
 
 (defn- ray-to-pieces?
@@ -260,7 +268,10 @@
      (if (empty? enemy-king-index)
        false
        (-> board
-           (update-board (make-move enemy-king-index index nil) player)
+           (update-board (make-move (index->algebraic enemy-king-index)
+                                    (index->algebraic index)
+                                    nil)
+                         player)
            (threaten-index? index player))))))
 
 (defn- king-index
@@ -313,12 +324,16 @@
 
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
-                              (make-move index (* WEST 2) nil)
+                              (make-move (index->algebraic index)
+                                         (index->algebraic (* WEST 2))
+                                         nil)
                               '())
 
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index WEST))
-                               (make-move index (* EAST 2) nil)
+                               (make-move (index->algebraic index)
+                                          (index->algebraic (* EAST 2))
+                                          nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
@@ -334,9 +349,15 @@
         moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
                          (not (board-occupied? board (+ move-index step))))
-                  (list (make-move index move-index nil)
-                        (make-move index (+ move-index step) nil))
-                  (list (make-move index move-index nil)))
+                  (list (make-move (index->algebraic index)
+                                   (index->algebraic move-index)
+                                   nil)
+                        (make-move (index->algebraic index)
+                                   (index->algebraic (+ move-index step))
+                                   nil))
+                  (list (make-move (index->algebraic index)
+                                   (index->algebraic move-index)
+                                   nil)))
                 '())
 
         ;; possible capture
@@ -353,7 +374,9 @@
                                       (= en-passant-index %))
                                  (and (board-occupied? board %)
                                       (not (occupied-by? board % player))))
-                           (list (make-move index % nil))
+                           (list (make-move (index->algebraic index)
+                                            (index->algebraic %)
+                                            nil))
                            '())
                         captures)))))
 
