@@ -118,7 +118,9 @@
 (defn- legal-moves
   "Generates all available moves from given STATE."
   [state]
-  (map (partial evaluate (:depth-limit @game-options))
+  (map (partial evaluate
+                (:depth-limit @game-options)
+                (:node-limit @game-options))
        (legal-states state)))
 
 (defn get-move
