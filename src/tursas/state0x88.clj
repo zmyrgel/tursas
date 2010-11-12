@@ -204,8 +204,9 @@
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
   [board index place player]
-  (if (or (occupied-by? board place (opponent player))
-          (not (board-occupied? board place)))
+  (if (and (board-index? place)
+           (or (not (board-occupied? board place))
+               (occupied-by? board place (opponent player))))
     (list (make-move index place nil))
     '()))
 
