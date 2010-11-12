@@ -288,8 +288,7 @@
    or if player has no moves left to make."
   [state]
   (or (>= (:half-moves state) 50)
-      (nil? (king-index (:board state) (:turn state)))
-      (empty? (legal-states state))))
+      (nil? (king-index (:board state) (:turn state)))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
