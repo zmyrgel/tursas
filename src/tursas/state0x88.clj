@@ -1,6 +1,7 @@
 (ns tursas.state0x88
   (:use (tursas state move)
-        [clojure.contrib.math :only [abs]]))
+        [clojure.contrib.math :only [abs]]
+        [clojure.contrib.string :only [replace-re]]))
 
 ;; direction vectors
 (def NORTH 16)
@@ -517,24 +518,32 @@
       (not (= (get board (algebraic->index (:to move))) EMPTY))))
 
 (defn- update-castling
-  "Return new castling string for move"
-  [current-castling player move]
-  (let [move-str (str (:from move) (:to move))
-        white-str (str (re-seq #"\p{Upper}" current-castling))
-        black-str (str (re-seq #"\p{Lower}" current-castling))]
-    (if (= current-castling "-")
-      "-"
+  "Return new castling string for move
+   checks for king or rook moves."
+  [castling player move]
+  (if (= castling "-")
+    "-"
+    (let [cur-white (reduce str (re-seq #"\p{Upper}" castling))
+          cur-black (reduce str (re-seq #"\p{Lower}" castling))]
       (if (= player :white)
-        (if (or (= move-str "e1g1")
-                (= move-str "e1c1"))
-          (if (= black-str "")
-            "-" black-str)
-          (str white-str black-str))
-        (if (or (= move-str "e8g8")
-                (= move-str "e8c8"))
-          (if (= white-str "")
-            "-" white-str)
-          (str white-str black-str))))))
+        (case (:from move)
+              "e1" (if (= cur-black "") "-" cur-black)
+              "a1" (if (= (str (replace-re #"Q" "" cur-white) cur-black) "")
+                     "-"
+                     (str (replace-re #"Q" "" cur-white) cur-black))
+              "h1" (if (= (str (replace-re #"K" "" cur-white) cur-black) "")
+                     "-"
+                     (str (replace-re #"K" "" cur-white) cur-black))
+              (str cur-white cur-black))
+        (case (:from move)
+              "e8" (if (= cur-white "") "-" cur-white)
+              "a8" (if (= (str (replace-re #"q" "" cur-black) cur-white) "")
+                     "-"
+                     (str (replace-re #"q" "" cur-black) cur-white))
+              "h8" (if (= (str (replace-re #"k" "" cur-black) cur-white) "")
+                     "-"
+                     (str (replace-re #"k" "" cur-black) cur-white))
+              (str cur-white cur-black))))))
 
 (defn- update-en-passant
   "Construct en-passant string from PIECE and MOVE."
