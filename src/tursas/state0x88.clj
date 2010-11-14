@@ -530,21 +530,21 @@
       (if (= player :white)
         (case (:from move)
               "e1" (if (= cur-black "") "-" cur-black)
-              "a1" (if (= (str (replace-re #"Q" "" cur-white) cur-black) "")
+              "a1" (if (= (str (s/replace-re #"Q" "" cur-white) cur-black) "")
                      "-"
-                     (str (replace-re #"Q" "" cur-white) cur-black))
-              "h1" (if (= (str (replace-re #"K" "" cur-white) cur-black) "")
+                     (str (s/replace-re #"Q" "" cur-white) cur-black))
+              "h1" (if (= (str (s/replace-re #"K" "" cur-white) cur-black) "")
                      "-"
-                     (str (replace-re #"K" "" cur-white) cur-black))
+                     (str (s/replace-re #"K" "" cur-white) cur-black))
               (str cur-white cur-black))
         (case (:from move)
               "e8" (if (= cur-white "") "-" cur-white)
-              "a8" (if (= (str (replace-re #"q" "" cur-black) cur-white) "")
+              "a8" (if (= (str (s/replace-re #"q" "" cur-black) cur-white) "")
                      "-"
-                     (str (replace-re #"q" "" cur-black) cur-white))
-              "h8" (if (= (str (replace-re #"k" "" cur-black) cur-white) "")
+                     (str (s/replace-re #"q" "" cur-black) cur-white))
+              "h8" (if (= (str (s/replace-re #"k" "" cur-black) cur-white) "")
                      "-"
-                     (str (replace-re #"k" "" cur-black) cur-white))
+                     (str (s/replace-re #"k" "" cur-black) cur-white))
               (str cur-white cur-black))))))
 
 (defn- update-en-passant
