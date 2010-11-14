@@ -158,7 +158,9 @@
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
   [value]
-  (nth "PpRrNnBbQqKk" value))
+  (if (= value EMPTY)
+    \E
+    (nth "PpRrNnBbQqKk" value)))
 
 (defn piece-char->value
   "Gives pieces character numerical representation from its CHAR."
