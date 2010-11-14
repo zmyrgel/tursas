@@ -573,8 +573,8 @@
                               full-moves
                               (move->algebraic move)
                               nil)]
-    (when (or (occupied-by? (:board state) from-index player)
-            (not (game-end? new-state)))
+    (when (and (occupied-by? (:board state) from-index player)
+               (not (game-end? new-state)))
       new-state)))
 
 (defn- parse-fen
