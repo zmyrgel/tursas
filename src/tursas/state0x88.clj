@@ -438,32 +438,21 @@
                    (+ col (- (int (first fen)) 48))
                    (rest fen))))))
 
+(defn- make-fen-row
+  "Builds single fen row from given BOARD and ROW index."
+  [board row]
+  (s/map-str  #(if (= (get % 0) \E)
+               (count %) %)
+            (s/partition #"E+"
+                         (s/map-str #(piece-value->char
+                                      (get board (+ row %)))
+                                    (range 8)))))
+
 (defn- board->fen-board
   "Convert the given state's BOARD to fen board field."
   [board]
-  (loop [index 119 ;; start loop from H8 backwards
-         fen ""
-         empty 0
-         add-slash false]
-    (let [last-place (zero? (mod index 16))]
-      (cond (= index -1) fen
-            (not (board-index? index)) (recur (dec index) fen 0 true)
-            add-slash (recur index (str fen "/") 0 false)
-            last-place (recur (dec index)
-                              (if (= (get board index) EMPTY)
-                                (str fen (inc empty))
-                                (str fen
-                                     (if (> empty 0) empty "")
-                                     (piece-value->char (get board index))))
-                              0
-                              false)
-            (= (get board index) EMPTY) (recur (dec index) fen (inc empty) false)
-            :else (recur (dec index)
-                         (str fen
-                              (if (> empty 0) empty "")
-                              (piece-value->char (get board index)))
-                         0
-                         false)))))
+  (s/join "/" (map #(make-fen-row board %)
+                 [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
 (defn promotion?
   "Checks if given move is pawn promotion."
