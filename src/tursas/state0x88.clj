@@ -574,7 +574,9 @@
                               (move->algebraic move)
                               nil)]
     (when (and (occupied-by? (:board state) from-index player)
-               (not (game-end? new-state)))
+               (not (game-end? new-state))
+               (nil? (some #(= move %)
+                           (list-moves-for-piece state from-index))))
       new-state)))
 
 (defn- parse-fen
