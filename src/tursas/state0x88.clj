@@ -1,7 +1,7 @@
 (ns tursas.state0x88
   (:use (tursas state move)
-        [clojure.contrib.math :only [abs]]
-        [clojure.contrib.string :only [replace-re]]))
+        [clojure.contrib.math :only [abs]])
+  (:require [clojure.contrib.string :as s]))
 
 ;; direction vectors
 (def NORTH 16)
