@@ -534,7 +534,8 @@
 (defn- allowed-move?
   "Checks if given MOVE is allowed in STATE."
   [state move]
-  (not (nil? (some #(= move %)
+  (not (nil? (some #(and (= (:from move) (:from %))
+                         (= (:to move) (:to %)))
                    (list-moves-for-piece state
                                          (algebraic->index (:from move)))))))
 
