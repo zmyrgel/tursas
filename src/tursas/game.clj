@@ -57,10 +57,10 @@
   []
   (if (empty? @game-state)
     (io! (println "Can't print empty board!"))
-    (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))]
+    (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
+          turn (second fen-list)]
       (loop [i 8
-             pieces (re-seq #"\w+" (first fen-list))
-             turn (second fen-list)]
+             pieces (re-seq #"\w+" (first fen-list))]
         (if (= i 0)
           (println (str "------------------\n"
                         " | a b c d e f g h\n"
