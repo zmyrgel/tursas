@@ -60,12 +60,12 @@
     (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
           turn (second fen-list)]
       (io! (println (str (s/map-str (fn [[index piece]]
-                                 (str (- 8 index) "|" piece "\n"))
-                               (seq/indexed (->> fen-list
-                                                 first
-                                                 (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                                 (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                                 (s/split #"/+"))))
+                                      (str (- 8 index) "|" piece "\n"))
+                                    (seq/indexed (->> fen-list
+                                                      first
+                                                      (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                                      (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                                      (s/split #"/+"))))
                          "------------------\n"
                          " | a b c d e f g h\n"
                          (if (= turn "w")
