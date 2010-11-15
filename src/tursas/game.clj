@@ -77,12 +77,15 @@
                                              (str \space %))
                                           (first pieces))))
             (recur (dec i)
-                   (rest pieces)
-                   turn)))))))
+                   (rest pieces))))))))
 
 (defn display-fen
   []
-  (println (state->fen (first @game-state))))
+  (->> @game-state
+       first
+       state->fen
+       println
+       io!))
 
 (defn- expand-row
   "Expands numbers to spaces for given FEN notation ROW."
