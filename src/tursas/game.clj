@@ -1,5 +1,6 @@
 (ns tursas.game
-  (:require [clojure.contrib.string :as string])
+  (:require [clojure.contrib.string :as s]
+            [clojure.contrib.seq :as seq])
   (:use (tursas search eval state state0x88)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
@@ -90,12 +91,12 @@
 (defn- expand-row
   "Expands numbers to spaces for given FEN notation ROW."
   [row]
-  (string/map-str #(if (and (>= (int %) 49)
-                            (<= (int %) 56))
-                     (string/repeat (- (int %) 48)
-                                    \space)
-                     %)
-                  row))
+  (s/map-str #(if (and (>= (int %) 49)
+                       (<= (int %) 56))
+                (s/repeat (- (int %) 48)
+                          \space)
+                %)
+             row))
 
 (defn- get-piece
   "Returns letter representing game piece in given LOCATION on the BOARD."
