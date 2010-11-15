@@ -54,31 +54,24 @@
     (catch Exception e nil)))
 
 (defn display-board
-  "Displays the given FEN in ASCII."
   []
   (if (empty? @game-state)
     (io! (println "Can't print empty board!"))
     (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
           turn (second fen-list)]
-      (loop [i 8
-             pieces (re-seq #"\w+" (first fen-list))]
-        (if (= i 0)
-          (println (str "------------------\n"
-                        " | a b c d e f g h\n"
-                        (if (= turn "w")
-                          "  WHITE"
-                          "  BLACK")
-                        " TO MOVE"))
-          (do
-            (println (str i "|"
-                          (string/map-str #(if (and (>= (int %) 49)
-                                                    (<= (int %) 56))
-                                             (string/repeat (- (int %) 48)
-                                                            (str \space \-))
-                                             (str \space %))
-                                          (first pieces))))
-            (recur (dec i)
-                   (rest pieces))))))))
+      (io! (println (str (s/map-str (fn [[index piece]]
+                                 (str (- 8 index) "|" piece "\n"))
+                               (seq/indexed (->> fen-list
+                                                 first
+                                                 (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                                 (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                                 (s/split #"/+"))))
+                         "------------------\n"
+                         " | a b c d e f g h\n"
+                         (if (= turn "w")
+                           "  WHITE"
+                           "  BLACK")
+                         " TO MOVE"))))))
 
 (defn display-fen
   []
