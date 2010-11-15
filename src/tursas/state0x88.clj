@@ -536,8 +536,8 @@
   [state move]
   (not (nil? (some #(and (= (:from move) (:from %))
                          (= (:to move) (:to %)))
-                   (list-moves-for-piece state
-                                         (algebraic->index (:from move)))))))
+                   (flatten (list-moves-for-piece state
+                                                  (algebraic->index (:from move))))))))
 
 (defn- update-state
   "Return result of applying given MOVE to STATE
