@@ -409,7 +409,7 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (flatten (map #(list-moves-for-piece state %)
+  (flatten (map (partial list-moves-for-piece state)
                 (all-piece-indexes-for (:board state) side))))
 
 (defn- fen-board->0x88board
