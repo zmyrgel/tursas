@@ -81,28 +81,11 @@
        println
        io!))
 
-(defn- expand-row
-  "Expands numbers to spaces for given FEN notation ROW."
-  [row]
-  (s/map-str #(if (and (>= (int %) 49)
-                       (<= (int %) 56))
-                (s/repeat (- (int %) 48)
-                          \space)
-                %)
-             row))
-
-(defn- get-piece
-  "Returns letter representing game piece in given LOCATION on the BOARD."
-  [board location]
-  (let [row (- 8 (get location 1))
-        col (- (int (get location 0)) 97)]
-    (get (get (map expand-row board) row) col)))
-
-(defn- valid-coordinate-string?
-  [coordinate]
-  (empty? (filter #(if (= % coordinate) true false)
-                  (for [x (range 8) y (range 8)]
-                    (str (get "abcdefgh" x) (inc y))))))
+(defn- valid-coord?
+  [coord]
+  (not (nil? (some #(= coord %)
+                   (for [x (range 8) y (range 8)]
+                     (str (get "abcdefgh" x) (inc y)))))))
 
 (defn choose-move
   "Let AI to choose a move from STATE with given STRATEGY."
