@@ -1,7 +1,8 @@
 (ns tursas.state0x88
   (:use (tursas state move)
         [clojure.contrib.math :only [abs]])
-  (:require [clojure.contrib.string :as s]))
+  (:require [clojure.contrib.string :as s]
+            [clojure.contrib.seq :as seq]))
 
 ;; direction vectors
 (def NORTH 16)
@@ -412,47 +413,29 @@
                 (all-piece-indexes-for (:board state) side))))
 
 (defn- fen-board->0x88board
-  "Parses board information from FEN-BOARD field."
   [fen-board]
-  (loop [board (init-game-board)
-         row 7
-         col 0
-         fen fen-board]
-    (if (empty? fen)
-      board
-      (cond (.contains "KQBNRPkqbnrp" (str (first fen)))
-            (recur (fill-square board
-                                (+ (* row 16) col)
-                                (piece-char->value (first fen)))
-                   row
-                   (inc col)
-                   (rest fen))
-            (= \/ (first fen))
-            (recur board
-                   (dec row)
-                   0
-                   (rest fen))
-            (.contains "12345678" (str (first fen)))
-            (recur board
-                   row
-                   (+ col (- (int (first fen)) 48))
-                   (rest fen))))))
+  (reduce (fn [board [index piece]]
+            (fill-square board index (piece-char->value piece)))
+          (init-game-board)
+          (seq/indexed (s/map-str #(str % "EEEEEEEE")
+                                  (->> fen-board
+                                       (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \E)))
+                                       (s/split #"/+")
+                                       reverse)))))
 
 (defn- make-fen-row
   "Builds single fen row from given BOARD and ROW index."
   [board row]
-  (s/map-str  #(if (= (get % 0) \E)
-               (count %) %)
-            (s/partition #"E+"
-                         (s/map-str #(piece-value->char
-                                      (get board (+ row %)))
-                                    (range 8)))))
+  (s/map-str #(if (= (get % 0) \E) (count %) %)
+             (s/partition #"E+"
+                          (s/map-str #(piece-value->char (get board (+ row %)))
+                                     (range 8)))))
 
 (defn- board->fen-board
   "Convert the given state's BOARD to fen board field."
   [board]
   (s/join "/" (map #(make-fen-row board %)
-                 [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
+                   [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
 (defn promotion?
   "Checks if given move is pawn promotion."
