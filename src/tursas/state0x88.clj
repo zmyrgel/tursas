@@ -531,6 +531,13 @@
                             (algebraic->index (:from move))) 2))
     "-"))
 
+(defn- allowed-move?
+  "Checks if given MOVE is allowed in STATE."
+  [state move]
+  (not (nil? (some #(= move %)
+                   (list-moves-for-piece state
+                                         (algebraic->index (:from move)))))))
+
 (defn- update-state
   "Return result of applying given MOVE to STATE
    or nil if move or state is illegal."
@@ -558,8 +565,7 @@
                               nil)]
     (when (and (occupied-by? (:board state) from-index player)
                (not (game-end? new-state))
-               (nil? (some #(= move %)
-                           (list-moves-for-piece state from-index))))
+               (allowed-move? state move))
       new-state)))
 
 (defn- parse-fen
