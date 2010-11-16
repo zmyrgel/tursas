@@ -565,20 +565,6 @@
   [move state]
   (assoc state :prev-move (move->algebraic move)))
 
-(defn- parse-fen
-  "Parse FEN string and buld a state record."
-  [fen]
-  (let [fen-list (re-seq #"\S+" fen)]
-    (when (= (count fen-list) 6)
-      (State0x88. (fen-board->0x88board (first fen-list))
-                  (if (= (second fen-list) "w") :white :black)
-                  (nth fen-list 2)
-                  (nth fen-list 3)
-                  (Integer/parseInt (nth fen-list 4))
-                  (Integer/parseInt (nth fen-list 5))
-                  nil
-                  nil))))
-
 (defn- parse-state
   "Returns FEN representation of given STATE."
   [state]
