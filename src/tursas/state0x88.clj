@@ -634,14 +634,13 @@
 (extend-type String
   Fen
   (fen->state [fen]
-              (let [fen-list (re-seq #"\S+" fen)]
-                (when (= (count fen-list) 6)
-                  (State0x88. (fen-board->0x88board (first fen-list))
-                              (if (= (second fen-list) "w") :white :black)
-                              (nth fen-list 2)
-                              (nth fen-list 3)
-                              (Integer/parseInt (nth fen-list 4))
-                              (Integer/parseInt (nth fen-list 5))
-                              nil
-                              nil)))))
+              (when-let [fen-list (re-seq #"\S+" fen)]
+                (State0x88. (fen-board->0x88board (first fen-list))
+                            (if (= (second fen-list) "w") :white :black)
+                            (nth fen-list 2)
+                            (nth fen-list 3)
+                            (Integer/parseInt (nth fen-list 4))
+                            (Integer/parseInt (nth fen-list 5))
+                            nil
+                            nil))))
 
