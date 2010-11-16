@@ -464,25 +464,27 @@
       (Character/toLowerCase (:promotion move)))))
 
 (defn- update-board
-  "Returns new board after applying MOVE to BOARD."
-  [board move player]
-  (let [to-index (algebraic->index (:to move))
+  "Returns state with new board after applying MOVE to STATE."
+  [move state]
+  (let [board (:board state)
+        player (:tun state)
+        to-index (algebraic->index (:to move))
         from-index (algebraic->index (:from move))
         moving-piece (get board from-index)]
-    (cond (promotion? moving-piece move)
-          (-> board
-              (clear-square from-index)
-              (fill-square to-index (piece-char->value
-                                     (get-promotion-piece player move))))
-          (castling? moving-piece move)
-          (commit-castle-move player board move
-                              (if (= column to-index 2)
-                                QUEEN-SIDE
-                                KING-SIDE))
-          :else
-          (-> board
-              (clear-square from-index)
-              (fill-square to-index moving-piece)))))
+    (assoc state :board
+           (cond (promotion? moving-piece move)
+                 (-> board
+                     (clear-square from-index)
+                     (fill-square to-index (piece-char->value
+                                            (get-promotion-piece player move))))
+                 (castling? moving-piece move)
+                 (commit-castle-move player board move
+                                     (if (= column to-index 2)
+                                       QUEEN-SIDE
+                                       KING-SIDE))
+                 :else (-> board
+                           (clear-square from-index)
+                           (fill-square to-index moving-piece))))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
@@ -494,42 +496,51 @@
 (defn- update-castling
   "Return new castling string for move
    checks for king or rook moves."
-  [castling player move]
-  (if (= castling "-")
-    "-"
-    (let [cur-white (reduce str (re-seq #"\p{Upper}" castling))
-          cur-black (reduce str (re-seq #"\p{Lower}" castling))]
-      (if (= player :white)
-        (case (:from move)
-              "e1" (if (= cur-black "") "-" cur-black)
-              "a1" (if (= (str (s/replace-re #"Q" "" cur-white) cur-black) "")
-                     "-"
-                     (str (s/replace-re #"Q" "" cur-white) cur-black))
-              "h1" (if (= (str (s/replace-re #"K" "" cur-white) cur-black) "")
-                     "-"
-                     (str (s/replace-re #"K" "" cur-white) cur-black))
-              (str cur-white cur-black))
-        (case (:from move)
-              "e8" (if (= cur-white "") "-" cur-white)
-              "a8" (if (= (str (s/replace-re #"q" "" cur-black) cur-white) "")
-                     "-"
-                     (str (s/replace-re #"q" "" cur-black) cur-white))
-              "h8" (if (= (str (s/replace-re #"k" "" cur-black) cur-white) "")
-                     "-"
-                     (str (s/replace-re #"k" "" cur-black) cur-white))
-              (str cur-white cur-black))))))
+  [move state]
+  (if (= (:castling state) "-")
+    (assoc state :castling "-")
+    (let [cur-white (reduce str (re-seq #"\p{Upper}" (:castling state)))
+          cur-black (reduce str (re-seq #"\p{Lower}" (:castling state)))]
+      (if (= (:turn state) :white)
+        (assoc state :castling
+               (case (:from move)
+                     "e1" (if (= cur-black "") "-" cur-black)
+                     "a1" (if (= (str (s/replace-re #"Q" "" cur-white) cur-black) "")
+                            "-"
+                            (str (s/replace-re #"Q" "" cur-white) cur-black))
+                     "h1" (if (= (str (s/replace-re #"K" "" cur-white) cur-black) "")
+                            "-"
+                            (str (s/replace-re #"K" "" cur-white) cur-black))
+                     (str cur-white cur-black)))
+        (assoc state :castling
+               (case (:from move)
+                     "e8" (if (= cur-white "") "-" cur-white)
+                     "a8" (if (= (str (s/replace-re #"q" "" cur-black) cur-white) "")
+                            "-"
+                            (str (s/replace-re #"q" "" cur-black) cur-white))
+                     "h8" (if (= (str (s/replace-re #"k" "" cur-black) cur-white) "")
+                            "-"
+                            (str (s/replace-re #"k" "" cur-black) cur-white))
+                     (str cur-white cur-black)))))))
+
+(defn- update-turn
+  "Updates player turn of STATE"
+  [state]
+  (assoc state :turn
+         (if (= (:turn state) :black)
+           :white :black)))
 
 (defn- update-en-passant
-  "Construct en-passant string from PIECE and MOVE."
-  [piece move]
-  (if (and (or (= piece WHITE-PAWN)
-               (= piece BLACK-PAWN))
-           (= (abs (- (algebraic->index (:to move))
-                      (algebraic->index (:from move))))
-              0x20))
-    (index->algebraic (/ (+ (algebraic->index (:to move))
-                            (algebraic->index (:from move))) 2))
-    "-"))
+  "Associates new en-passant string with given STATE based on the MOVE."
+  [move state]
+  (let [from-index (algebraic->index (:from move))
+        to-index (algebraic->index (:to move))
+        piece (get (:board state) from-index)]
+    (assoc state :en-passant (if (and (or (= piece WHITE-PAWN)
+                                          (= piece BLACK-PAWN))
+                                      (= (abs (- to-index from-index)) 0x20))
+                               (index->algebraic (/ (+ to-index from-index) 2))
+                               "-"))))
 
 (defn- allowed-move?
   "Checks if given MOVE is allowed in STATE."
@@ -539,35 +550,28 @@
                    (flatten (list-moves-for-piece state
                                                   (algebraic->index (:from move))))))))
 
-(defn- update-state
-  "Return result of applying given MOVE to STATE
-   or nil if move or state is illegal."
-  [state move]
-  (let [to-index (algebraic->index (:to move))
-        from-index (algebraic->index (:from move))
-        player (:turn state)
+(defn- update-half-moves
+  "Increases STATE half moves count unless the move
+   pawn move or a capture."
+  [move state]
+  (let [piece (get (:board state) (algebraic->index (:from move)))]
+    (assoc state :half-moves
+           (if (pawn-or-capture-move? piece (:board state) move)
+             0
+             (inc (:half-moves state))))))
 
-        moving-piece (get (:board state) from-index)
+(defn- update-full-moves
+  "Updates full move count of STATE"
+  [state]
+  (assoc state :full-moves
+         (if (= (:turn state) :black)
+           (inc (:full-moves state))
+           (:full-moves state))))
 
-        half-moves (if (pawn-or-capture-move? moving-piece (:board state) move)
-                     0
-                     (inc (:half-moves state)))
-
-        full-moves (if (= player :black)
-                     (inc (:full-moves state))
-                     (:full-moves state))
-        new-state (State0x88. (update-board (:board state) move player)
-                              (if (= player :white) :black :white)
-                              (update-castling (:castling state) player move)
-                              (update-en-passant moving-piece move)
-                              half-moves
-                              full-moves
-                              (move->algebraic move)
-                              nil)]
-    (when (and (occupied-by? (:board state) from-index player)
-               (not (game-end? new-state))
-               (allowed-move? state move))
-      new-state)))
+(defn- update-move
+  "Update the previous move of state."
+  [move state]
+  (assoc state :prev-move (move->algebraic move)))
 
 (defn- parse-fen
   "Parse FEN string and buld a state record."
@@ -618,7 +622,19 @@
   (white? [state index]
           (occupied-by? (:board state) index :white))
   (apply-move [state move]
-              (update-state state move))
+              (when (and (occupied-by? (:board state)
+                                       (algebraic->index (:from move))
+                                       (:turn state))
+                         (not (game-end? state))
+                         (allowed-move? state move))
+                (->> state
+                     (update-board move)
+                     update-turn
+                     (update-castling move)
+                     (update-en-passant move)
+                     (update-half-moves move)
+                     update-full-moves
+                     (update-move move))))
   (in-check? [state]
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
