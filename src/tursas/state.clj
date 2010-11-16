@@ -6,6 +6,7 @@
   (white? [state index])
   (apply-move [state move])
   (in-check? [state])
+  (game-end? [state])
   (state->fen [state])
   (legal-states [state])
   (get-pieces [state]))

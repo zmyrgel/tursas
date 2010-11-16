@@ -289,14 +289,6 @@
                WHITE-KING)]
     (first (filter #(= (get board %) king) (range 128)))))
 
-(defn- game-end?
-  "Predicate to check if given STATE would indicate the game has ended.
-   Mostly it checks if king has been captured, 50 move rule has come in effect
-   or if player has no moves left to make."
-  [state]
-  (or (>= (:half-moves state) 50)
-      (nil? (king-index (:board state) (:turn state)))))
-
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index increment]
@@ -639,6 +631,9 @@
              (threaten-index? (:board state)
                               (king-index (:board state) (:turn state))
                               (opponent (:turn state))))
+  (game-end? [state]
+             (or (>= (:half-moves state) 50)
+                 (nil? (king-index (:board state) (:turn state)))))
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
