@@ -338,20 +338,20 @@
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
   [player board index en-passant]
-  (let [step (if (= player :black) SOUTH NORTH)
-        move-index (+ index step)
-        move-twice? (or (and (= player :black) (same-row? index 96))
-                        (and (= player :white) (same-row? index 16)))
+  (let [direction (if (= player :white) NORTH SOUTH)
+        move-index (+ index direction)
+        move-twice? (or (and (= player :white) (same-row? index 16))
+                        (and (= player :black) (same-row? index 96)))
 
         ;; calculate normal movement
         moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
-                         (not (board-occupied? board (+ move-index step))))
+                         (not (board-occupied? board (+ move-index direction))))
                   (list (make-move (index->algebraic index)
                                    (index->algebraic move-index)
                                    nil)
                         (make-move (index->algebraic index)
-                                   (index->algebraic (+ move-index step))
+                                   (index->algebraic (+ move-index direction))
                                    nil))
                   (list (make-move (index->algebraic index)
                                    (index->algebraic move-index)
