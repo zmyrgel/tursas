@@ -10,7 +10,10 @@
   "Generates list of nodes representing possible game states reachable
   from given gametree NODE."
   [node]
-  (map #(cons % nil) (legal-states (first node))))
+  (map #(cons % nil)
+       (if (nil? (first node))
+         '()
+         (legal-states (first node)))))
 
 (defn- maptree
   "Apply f to all elements in form."
@@ -68,13 +71,17 @@
     (cons node (when (not (zero? nodes))
                  (map (partial prune-nodes (dec nodes)) (rest node))))))
 
+(defn- prune
+  [depth node]
+  (cons node (when (not (zero? depth))
+               (map (partial prune (dec depth)) (rest node)))))
+
 (defn evaluate
   "Evaluates given STATE to certain DEPTH.
    Returns new state with evaluation score attached"
-  [depth nodes state]
+  [depth state]
   (->> state
        gametree
-       (prune-nodes nodes)
-       (prune-depth depth)
+       (prune depth)
        (maptree static)
        (trampoline maximise)))
