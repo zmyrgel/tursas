@@ -4,6 +4,7 @@
   (:use (tursas search eval state state0x88)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+(def check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5")
 
 (def active-repl (ref :general))
 (def game-state (ref ()))
@@ -54,26 +55,29 @@
     (catch Exception e nil)))
 
 (defn display-board
+  "Displays the current chess board in ASCII."
   []
-  (if (empty? @game-state)
-    (io! (println "Can't print empty board!"))
-    (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
-          turn (second fen-list)]
-      (io! (println (str (s/map-str (fn [[index piece]]
-                                      (str (- 8 index) "|" piece "\n"))
-                                    (seq/indexed (->> fen-list
-                                                      first
-                                                      (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                                      (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                                      (s/split #"/+"))))
-                         "------------------\n"
-                         " | a b c d e f g h\n"
-                         (if (= turn "w")
-                           "  WHITE"
-                           "  BLACK")
-                         " TO MOVE"))))))
+  (io! (println
+        (if (empty? @game-state)
+          "Can't print empty board!"
+          (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
+                turn (second fen-list)]
+            (str (s/map-str (fn [[index piece]]
+                              (str (- 8 index) "|" piece "\n"))
+                            (seq/indexed (->> fen-list
+                                              first
+                                              (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                              (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                              (s/split #"/+"))))
+                 "------------------\n"
+                 " | a b c d e f g h\n"
+                 (if (= turn "w")
+                   "  WHITE"
+                   "  BLACK")
+                 " TO MOVE"))))))
 
 (defn display-fen
+  "Display FEN of currect game state."
   []
   (->> @game-state
        first
@@ -81,7 +85,16 @@
        println
        io!))
 
+(defn list-moves
+  "List all available moves from currect state."
+  []
+  (io! (doall (map #(println (:prev-move %))
+                   (->> @game-state
+                        first
+                        legal-states)))))
+
 (defn- valid-coord?
+  "Check that given coord is valid on chess board."
   [coord]
   (not (nil? (some #(= coord %)
                    (for [x (range 8) y (range 8)]
@@ -129,9 +142,9 @@
   [fen]
   (dosync
    (ref-set game-state
-            (if (= fen "startpos")
-              (list (fen->state startpos))
-              (list (fen->state fen))))))
+            (cond (= fen "startpos") (list (fen->state startpos))
+                  (= fen "check") (list (fen->state check-fen))
+                  :else (list (fen->state fen))))))
 
 (defn set-clock!
   "Sets PLAYER's clock to TIME."

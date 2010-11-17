@@ -212,4 +212,5 @@
 
         "option" (xboard-parse-option (second command))
         "bf" (display-fen)
+        "lm" (list-moves)
         nil))
