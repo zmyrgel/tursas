@@ -4,6 +4,7 @@
   (:use (tursas search eval state state0x88)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+(def check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5")
 
 (def active-repl (ref :general))
 (def game-state (ref ()))
@@ -128,9 +129,9 @@
   [fen]
   (dosync
    (ref-set game-state
-            (if (= fen "startpos")
-              (list (fen->state startpos))
-              (list (fen->state fen))))))
+            (cond (= fen "startpos") (list (fen->state startpos))
+                  (= fen "check") (list (fen->state check-fen))
+                  :else (list (fen->state fen))))))
 
 (defn set-clock!
   "Sets PLAYER's clock to TIME."
