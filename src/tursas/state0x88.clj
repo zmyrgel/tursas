@@ -379,7 +379,7 @@
                         captures)))))
 
 (defn- list-moves-for-piece
-  "Generates a set of all available moves for piece at INDEX in given STATE."
+  "Generates a set of all available moves for piece at INDEX in given STATE." ;; XXX: nested empty lists
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index :white) :white :black)]
@@ -489,31 +489,63 @@
   "Return new castling string for move
    checks for king or rook moves."
   [move state]
-  (if (= (:castling state) "-")
-    (assoc state :castling "-")
-    (let [cur-white (reduce str (re-seq #"\p{Upper}" (:castling state)))
-          cur-black (reduce str (re-seq #"\p{Lower}" (:castling state)))]
-      (if (= (:turn state) :white)
-        (assoc state :castling
+  (assoc state :castling
+         (if (= (:castling state) "-")
+           "-"
+           (let [cur-white (reduce str (re-seq #"\p{Upper}" (:castling state)))
+                 cur-black (reduce str (re-seq #"\p{Lower}" (:castling state)))]
+             (if (= (:turn state) :white)
                (case (:from move)
                      "e1" (if (= cur-black "") "-" cur-black)
-                     "a1" (if (= (str (s/replace-re #"Q" "" cur-white) cur-black) "")
+                     "a1" (if (empty? (str (s/replace-re #"Q" "" cur-white) cur-black))
                             "-"
                             (str (s/replace-re #"Q" "" cur-white) cur-black))
-                     "h1" (if (= (str (s/replace-re #"K" "" cur-white) cur-black) "")
+                     "h1" (if (empty? (str (s/replace-re #"K" "" cur-white) cur-black))
                             "-"
                             (str (s/replace-re #"K" "" cur-white) cur-black))
-                     (str cur-white cur-black)))
-        (assoc state :castling
+                     (str cur-white cur-black))
                (case (:from move)
                      "e8" (if (= cur-white "") "-" cur-white)
-                     "a8" (if (= (str (s/replace-re #"q" "" cur-black) cur-white) "")
+                     "a8" (if (empty? (str (s/replace-re #"q" "" cur-black) cur-white))
                             "-"
                             (str (s/replace-re #"q" "" cur-black) cur-white))
-                     "h8" (if (= (str (s/replace-re #"k" "" cur-black) cur-white) "")
+                     "h8" (if (empty? (str (s/replace-re #"k" "" cur-black) cur-white))
                             "-"
                             (str (s/replace-re #"k" "" cur-black) cur-white))
                      (str cur-white cur-black)))))))
+
+(defn- update-castling
+  "Return new castling string for move
+   checks for king or rook moves."
+  [move state]
+  (assoc state :castling
+         (if (= (:castling state) "-")
+           "-"
+           (if (= (:turn state) :white)
+             (let [c-pla (reduce str (re-seq #"\p{Upper}" (:castling state)))
+                   c-opp (reduce str (re-seq #"\p{Lower}" (:castling state)))]
+                 (case (:from move)
+                       "e1" (if (= cur-black "") "-" cur-black)
+                       "a1" (if (empty? (str (s/replace-re #"Q" "" cur-white) cur-black))
+                              "-"
+                              (str (s/replace-re #"Q" "" cur-white) cur-black))
+                       "h1" (if (empty? (str (s/replace-re #"K" "" cur-white) cur-black))
+                              "-"
+                              (str (s/replace-re #"K" "" cur-white) cur-black))
+                       (str cur-white cur-black))
+               (if (= (:turn state) :white)
+
+                 (case (:from move)
+                       "e8" (if (= cur-white "") "-" cur-white)
+                       "a8" (if (empty? (str (s/replace-re #"q" "" cur-black) cur-white))
+                              "-"
+                              (str (s/replace-re #"q" "" cur-black) cur-white))
+                       "h8" (if (empty? (str (s/replace-re #"k" "" cur-black) cur-white))
+                              "-"
+                              (str (s/replace-re #"k" "" cur-black) cur-white))
+                       (str cur-white cur-black))))
+             )
+)))
 
 (defn- update-turn
   "Updates player turn of STATE"
