@@ -308,10 +308,8 @@
   "Predicate to check if given piece can do castling."
   [player side castling]
   (let [piece (if (= player :white)
-                (if (= side QUEEN-SIDE)
-                  \Q \K)
-                (if (= side QUEEN-SIDE)
-                  \q \k))]
+                (if (= side QUEEN-SIDE) \Q \K)
+                (if (= side QUEEN-SIDE) \q \k))]
     (not (nil? (some #{piece} castling)))))
 
 (defn- list-king-moves
