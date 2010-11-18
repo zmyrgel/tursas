@@ -82,6 +82,9 @@
   [depth state]
   (->> state
        gametree
-       (prune depth)
+       ;;(prune depth)
+       ;;(prune-nodes nodes)
+       ;;(prune-depth depth)
+       (take 5)
        (maptree static)
        (trampoline maximise)))
