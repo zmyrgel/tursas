@@ -232,6 +232,12 @@
         (not (board-occupied? board index)) (recur board (+ index inc) inc pieces)
         :else (nil? (some #{(get board index)} pieces))))
 
+(defn- king-index
+  "Gets the kings index in STATE for SIDE."
+  [board player]
+  (let [king (if (= player :black) BLACK-KING WHITE-KING)]
+    (first (filter #(= (get board %) king) (range 128)))))
+
 (declare update-board)
 (defn- threaten-index?
   "Checks if given INDEX in STATE is under threath of enemy."
@@ -280,14 +286,6 @@
                                     nil)
                          player)
            (threaten-index? index player))))))
-
-(defn- king-index
-  "Gets the kings index in STATE for SIDE."
-  [board player]
-  (let [king (if (= player :black)
-               BLACK-KING
-               WHITE-KING)]
-    (first (filter #(= (get board %) king) (range 128)))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
