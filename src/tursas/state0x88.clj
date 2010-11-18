@@ -489,30 +489,22 @@
   "Return new castling string for move
    checks for king or rook moves."
   [move state]
-  (if (= (:castling state) "-")
-    (assoc state :castling "-")
-    (let [cur-white (reduce str (re-seq #"\p{Upper}" (:castling state)))
-          cur-black (reduce str (re-seq #"\p{Lower}" (:castling state)))]
-      (if (= (:turn state) :white)
-        (assoc state :castling
+  (assoc state :castling
+         (if (= (:castling state) "-")
+           "-"
+           (let [cur-white (reduce str (re-seq #"\p{Upper}" (:castling state)))
+                 cur-black (reduce str (re-seq #"\p{Lower}" (:castling state)))
+                 add-castling #(if (empty? %) "-" %)]
+             (if (= (:turn state) :white)
                (case (:from move)
-                     "e1" (if (= cur-black "") "-" cur-black)
-                     "a1" (if (= (str (s/replace-re #"Q" "" cur-white) cur-black) "")
-                            "-"
-                            (str (s/replace-re #"Q" "" cur-white) cur-black))
-                     "h1" (if (= (str (s/replace-re #"K" "" cur-white) cur-black) "")
-                            "-"
-                            (str (s/replace-re #"K" "" cur-white) cur-black))
-                     (str cur-white cur-black)))
-        (assoc state :castling
+                     "e1" (add-castling cur-black)
+                     "a1" (add-castling (str (s/replace-char \Q "" cur-white) cur-black))
+                     "h1" (add-castling (str (s/replace-char \K "" cur-white) cur-black))
+                     (str cur-white cur-black))
                (case (:from move)
-                     "e8" (if (= cur-white "") "-" cur-white)
-                     "a8" (if (= (str (s/replace-re #"q" "" cur-black) cur-white) "")
-                            "-"
-                            (str (s/replace-re #"q" "" cur-black) cur-white))
-                     "h8" (if (= (str (s/replace-re #"k" "" cur-black) cur-white) "")
-                            "-"
-                            (str (s/replace-re #"k" "" cur-black) cur-white))
+                     "e8" (add-castling cur-white)
+                     "a8" (add-castling (str (s/replace-char \q "" cur-black) cur-white))
+                     "h8" (add-castling (str (s/replace-char \k"" "" cur-black) cur-white))
                      (str cur-white cur-black)))))))
 
 (defn- update-turn
