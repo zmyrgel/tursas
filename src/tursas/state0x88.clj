@@ -272,12 +272,11 @@
          (= (get board (+ index NW)) BLACK-PAWN)))
 
 
-   ;; check kings if there's king next to index and
-   ;; it can attack index
+   ;; check if there's king next to index and it can attack index
    (let [player (if (= opponent :white) :black :white)
-         own-king (if (= player :white) WHITE-KING BLACK-KING)
-         enemy-king-index (filter #(= (get board  %) own-king)
-                                  (map #(+ index %) king-movement))]
+         king (if (= player :black) BLACK-KING WHITE-KING)
+         enemy-king-index (first (filter #(= (get board %) king)
+                                         (map #(+ index %) king-movement)))]
      (if (empty? enemy-king-index)
        false
        (-> board
