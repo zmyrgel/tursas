@@ -1,6 +1,6 @@
 (ns tursas.xboard
   (:use [clojure.contrib.string :only [as-str map-str split]]
-        (tursas game move hexmove)))
+        (tursas game)))
 
 (def xboard-supported-features
      {:ping 1
@@ -110,11 +110,6 @@
    discarded by Tursas for now."
   [result])
 
-(defn xboard-hint
-  "Tells the engine to provide a hint for good move."
-  []
-  (io! (println (move->algebraic (get-hint)))))
-
 (defn xboard-bk
   "Tells the XBoard to use Book"
   [])
@@ -163,7 +158,7 @@
         ;;"time" (xboard-set-engine-clock (second command))
         ;;"otim" (xboard-set-opponent-clock (second command))
 
-        "usermove" (make-chess-move (algebraic->move (second command)))
+        "usermove" (make-chess-move (second command))
         "?" (xboard-move-now)
         "ping" (xboard-ping (second command))
 
@@ -177,7 +172,7 @@
         ;;"edit" (xboard-enter-edit-mode)
         ;;"." (xboard-exit-edit-mode)
 
-        "hint" (xboard-hint)
+        "hint" (get-hint)
         "bk" (xboard-bk)
         "undo" (undo-move)
         "remove" (undo-move 2)

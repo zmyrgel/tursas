@@ -1,7 +1,7 @@
 (ns tursas.game
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq])
-  (:use (tursas search eval state state0x88)))
+  (:use (tursas search eval state state0x88 hexmove)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5")
@@ -173,8 +173,8 @@
 
 (defn make-chess-move
   "Make given MOVE in chess game."
-  [move]
-  (let [new-state (apply-move (first @game-state) move)]
+  [algebraic]
+  (let [new-state (apply-move (first @game-state) (algebraic->move algebraic))]
     (if (nil? new-state)
       (io! (println "Invalid move!"))
       (dosync
