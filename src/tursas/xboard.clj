@@ -1,6 +1,6 @@
 (ns tursas.xboard
   (:use [clojure.contrib.string :only [as-str map-str split]]
-        (tursas game move)))
+        (tursas game move hexmove)))
 
 (def xboard-supported-features
      {:ping 1

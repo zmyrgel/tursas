@@ -1,5 +1,5 @@
 (ns tursas.state0x88
-  (:use (tursas state move)
+  (:use (tursas state move hexmove)
         [clojure.contrib.math :only [abs]])
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
@@ -141,21 +141,6 @@
   [board index piece-value]
   (assoc board index piece-value))
 
-(defn- index->algebraic
-  "Converts given index to algebraic representation."
-  [index]
-  (let [coord (format "%02x" index)
-        num (+ (- (int (nth coord 0)) 48) 1)
-        alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
-    (str alpha num)))
-
-(defn- algebraic->index
-  "Converts given algebraic representation to board index value."
-  [algebraic]
-  (let [file (- (int (nth algebraic 0)) 97)
-        rank (- (int (nth algebraic 1)) 48)]
-    (+ (* (dec rank) 16) file)))
-
 (defn piece-value->char
   "Gives piece character representation from its board VALUE."
   [value]
@@ -189,9 +174,9 @@
           [WHITE-ROOK WHITE-KING [0 7] [3 5]]
           [BLACK-ROOK BLACK-KING [112 119] [115 117]])]
     (-> board
-        (clear-square (algebraic->index (:from move)))
+        (clear-square (:from move))
         (clear-square (get from castling-side))
-        (fill-square (algebraic->index (:to move)) king)
+        (fill-square (:to move) king)
         (fill-square (get to castling-side) rook))))
 
 (defn- slide-in-direction
@@ -205,13 +190,9 @@
       moves
       (if (not (board-occupied? board (get board target-index)))
         (recur (+ target-index direction)
-               (cons (make-move (index->algebraic index)
-                                (index->algebraic target-index)
-                                nil)
+               (cons (make-move index target-index nil)
                      moves))
-        (cons (make-move (index->algebraic index)
-                         (index->algebraic target-index)
-                         nil)
+        (cons (make-move index target-index nil)
               moves)))))
 
 (defn- move-to-place
@@ -220,9 +201,7 @@
   (if (and (board-index? place)
            (or (not (board-occupied? board place))
                (occupied-by? board place (opponent player))))
-    (list (make-move (index->algebraic index)
-                     (index->algebraic place)
-                     nil))
+    (list (make-move index place nil))
     '()))
 
 (defn- ray-to-pieces?
@@ -280,9 +259,7 @@
      (if (empty? enemy-king-index)
        false
        (-> board
-           (update-board (make-move (index->algebraic enemy-king-index)
-                                    (index->algebraic index)
-                                    nil)
+           (update-board (make-move enemy-king-index index nil)
                          player)
            (threaten-index? index player))))))
 
@@ -317,16 +294,12 @@
 
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
-                              (make-move (index->algebraic index)
-                                         (index->algebraic (* WEST 2))
-                                         nil)
+                              (make-move index (* WEST 2) nil)
                               '())
 
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index WEST))
-                               (make-move (index->algebraic index)
-                                          (index->algebraic (* EAST 2))
-                                          nil)
+                               (make-move index (* EAST 2) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
@@ -342,21 +315,18 @@
         moves (if (not (board-occupied? board move-index))
                 (if (and move-twice?
                          (not (board-occupied? board (+ move-index direction))))
-                  (list (make-move (index->algebraic index)
-                                   (index->algebraic move-index)
-                                   nil)
-                        (make-move (index->algebraic index)
-                                   (index->algebraic (+ move-index direction))
-                                   nil))
-                  (list (make-move (index->algebraic index)
-                                   (index->algebraic move-index)
-                                   nil)))
+                  (list (make-move index move-index nil)
+                        (make-move index (+ move-index direction) nil))
+                  (list (make-move index move-index nil)))
                 '())
 
         ;; possible capture
         captures (if (= player :white)
                    (list (+ NW index) (+ NE index))
-                   (list (+ SW index) (+ SE index)))]
+                   (list (+ SW index) (+ SE index)))
+        en-passant-index (if (= en-passant "-")
+                           -1
+                           (algebraic->index en-passant))]
 
     ;; check capture points
     (flatten (conj moves
@@ -364,9 +334,7 @@
                                       (= en-passant-index %))
                                  (and (board-occupied? board %)
                                       (not (occupied-by? board % player))))
-                           (list (make-move (index->algebraic index)
-                                            (index->algebraic %)
-                                            nil))
+                           (list (make-move index % nil))
                            '())
                         captures)))))
 
@@ -393,10 +361,10 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (let [moves  (filter #(not (in-check? (apply-move state %)))
-                       (flatten (map #(list-moves-for-piece state %)
-                                     (all-piece-indexes-for (:board state) side))))]
-    moves))
+  (filter #(not (or (in-check? (apply-move state %))
+                    (game-end? (apply-move state %))))
+          (flatten (map #(list-moves-for-piece state %)
+                        (all-piece-indexes-for (:board state) side)))))
 
 (defn- fen-board->0x88board
   [fen-board]
@@ -427,17 +395,16 @@
   "Checks if given move is pawn promotion."
   [piece move]
   (or (and (= piece WHITE-PAWN)
-           (= (row (algebraic->index (:to move))) 7))
+           (= (row (:to move)) 7))
       (and (= piece BLACK-PAWN)
-           (= (row (algebraic->index (:to move))) 0))))
+           (= (row (:to move)) 0))))
 
 (defn castling?
   "Checks given move is castling move."
   [piece move]
   (and (or (= piece WHITE-KING)
            (= piece BLACK-KING))
-       (= (abs (- (algebraic->index (:to move))
-                  (algebraic->index (:from move)))) 2)))
+       (= (abs (- (:to move) (:from move))) 2)))
 
 (defn- get-promotion-piece
   "Helper function to return new piece char.
@@ -454,30 +421,28 @@
   [move state]
   (let [board (:board state)
         player (:tun state)
-        to-index (algebraic->index (:to move))
-        from-index (algebraic->index (:from move))
-        moving-piece (get board from-index)]
+        moving-piece (get board (:from move))]
     (assoc state :board
            (cond (promotion? moving-piece move)
                  (-> board
-                     (clear-square from-index)
-                     (fill-square to-index (piece-char->value
-                                            (get-promotion-piece player move))))
+                     (clear-square (:from move))
+                     (fill-square (:to move)
+                                  (piece-char->value (get-promotion-piece player move))))
                  (castling? moving-piece move)
                  (commit-castle-move player board move
-                                     (if (= column to-index 2)
+                                     (if (= column (:to move) 2)
                                        QUEEN-SIDE
                                        KING-SIDE))
                  :else (-> board
-                           (clear-square from-index)
-                           (fill-square to-index moving-piece))))))
+                           (clear-square (:from move))
+                           (fill-square (:to move) moving-piece))))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
   [piece board move]
   (or (= piece WHITE-PAWN)
       (= piece BLACK-PAWN)
-      (not (= (get board (algebraic->index (:to move))) EMPTY))))
+      (not (= (get board (:to move)) EMPTY))))
 
 (defn- update-castling
   "Return new castling string for move
@@ -497,7 +462,7 @@
                                                   #"\p{Upper}" #"\p{Lower}")
                                                 (:castling state)))
                  opponent-str (s/replace-str player-str "" (:castling state))]
-             (case (:from move)
+             (case (index->algebraic (:from move))
                    king-sq (check-str opponent-str)
                    rook-q-sq (check-str (str (s/replace-char queen "" player-str)
                                              opponent-str))
@@ -517,13 +482,11 @@
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
   [move state]
-  (let [from-index (algebraic->index (:from move))
-        to-index (algebraic->index (:to move))
-        piece (get (:board state) from-index)]
+  (let [piece (get (:board state) (:from move))]
     (assoc state :en-passant (if (and (or (= piece WHITE-PAWN)
                                           (= piece BLACK-PAWN))
-                                      (= (abs (- to-index from-index)) 0x20))
-                               (index->algebraic (/ (+ to-index from-index) 2))
+                                      (= (abs (- (:to move) (:from move))) 0x20))
+                               (index->algebraic (/ (+ (:to move) (:from move)) 2))
                                "-"))))
 
 (defn- allowed-move?
@@ -531,14 +494,13 @@
   [state move]
   (not (nil? (some #(and (= (:from move) (:from %))
                          (= (:to move) (:to %)))
-                   (flatten (list-moves-for-piece state
-                                                  (algebraic->index (:from move))))))))
+                   (flatten (list-moves-for-piece state (:from move)))))))
 
 (defn- update-half-moves
   "Increases STATE half moves count unless the move
    pawn move or a capture."
   [move state]
-  (let [piece (get (:board state) (algebraic->index (:from move)))]
+  (let [piece (get (:board state) (:from move))]
     (assoc state :half-moves
            (if (pawn-or-capture-move? piece (:board state) move)
              0
@@ -577,7 +539,7 @@
     (if (= index 121)
       (zipmap coords pieces)
       (if (board-occupied? (:board state) index)
-        (recur (cons (index->algebraic index) coords)
+        (recur (cons index coords)
                (cons (piece-value->char (get (:board state) index)) pieces)
                (inc index))
         (recur coords pieces (inc index))))))
@@ -593,7 +555,7 @@
           (occupied-by? (:board state) index :white))
   (apply-move [state move]
               (when (and (occupied-by? (:board state)
-                                       (algebraic->index (:from move))
+                                       (:from move)
                                        (:turn state))
                          (not (game-end? state))
                          (allowed-move? state move))
