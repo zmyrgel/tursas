@@ -379,10 +379,13 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (filter #(not (or (in-check? (apply-move state %))
-                    (game-end? (apply-move state %))))
-          (flatten (map #(list-moves-for-piece state %)
-                        (all-piece-indexes-for (:board state) side)))))
+  (reduce concat (map #(list-moves-for-piece state %)
+                      (all-piece-indexes-for (:board state) side))))
+
+(defn- all-states-for
+  "Returns all states attainable by applying move."
+  [state moves]
+  (map #(apply-move state %) moves))
 
 (defn- fen-board->0x88board
   [fen-board]
@@ -595,8 +598,10 @@
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (map (partial apply-move state)
-                     (all-moves-for state (:turn state))))
+                (filter (fn [state] (not (or (in-check? state)
+                                             (game-end? state))))
+                        (map #(apply-move state %)
+                             (all-moves-for state (:turn state)))))
   (get-pieces [state]
               (build-piece-map state)))
 
