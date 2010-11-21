@@ -348,7 +348,7 @@
                          (not (occupied-by? board % player))))
               (list (make-move index % nil))
               '())
-           captures))
+           captures)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
