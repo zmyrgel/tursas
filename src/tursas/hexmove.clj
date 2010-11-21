@@ -21,9 +21,7 @@
   (move->algebraic [move]
                    (str (index->algebraic (:from move))
                         (index->algebraic (:to move))
-                        (if (nil? (:promotion move))
-                          ""
-                          (:promotion move))))
+                        (:promotion move)))
   (from [move]
         (index->algebraic (:from move)))
   (to [move]
@@ -43,9 +41,6 @@
                   (algebraic->index to)
                   promotion)
         :else (println "Invalid move arguments!")))
-
-;;(extend-type HexMove
-;;)
 
 (defprotocol Algebraic
   (algebraic->move [algebraic]))
