@@ -330,21 +330,21 @@
 (defn- list-pawn-capture-moves
   "List of possible capture moves of pawn."
   [player board index en-passant]
-    (let [direction (if (= player :white) NORTH SOUTH)
-          move-index (+ index direction)
-          captures (if (= player :white)
-                     (list (+ NW index) (+ NE index))
-                     (list (+ SW index) (+ SE index)))
-          en-passant-index (if (= en-passant "-")
-                             -1
-                             (algebraic->index en-passant))]
-      (map #(if (or (and (board-index? %)
-                         (= en-passant-index %))
-                    (and (board-occupied? board %)
-                         (not (occupied-by? board % player))))
-              (list (make-move index % nil))
-              '())
-           captures)))
+  (let [direction (if (= player :white) NORTH SOUTH)
+        move-index (+ index direction)
+        captures (if (= player :white)
+                   (list (+ NW index) (+ NE index))
+                   (list (+ SW index) (+ SE index)))
+        en-passant-index (if (= en-passant "-")
+                           -1
+                           (algebraic->index en-passant))]
+    (map #(if (or (and (board-index? %)
+                       (= en-passant-index %))
+                  (and (board-occupied? board %)
+                       (not (occupied-by? board % player))))
+            (list (make-move index % nil))
+            '())
+         captures)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
@@ -368,7 +368,7 @@
 
 (defn- all-piece-indexes-for
   "Gets a list of all board indexes containing
-   SIDE's pieces in given STATE."
+    SIDE's pieces in given STATE."
   [board player]
   (filter #(occupied-by? board % player) (range 128)))
 
@@ -376,7 +376,7 @@
   "Returns a set of all available moves for SIDE in STATE."
   [state]
   (flatten (map #(list-moves-for-piece state %)
-                      (all-piece-indexes-for (:board state) (:turn state)))))
+                (all-piece-indexes-for (:board state) (:turn state)))))
 
 (defn- all-states-for
   "Returns all states attainable by applying move."
@@ -425,7 +425,7 @@
 
 (defn- get-promotion-piece
   "Helper function to return new piece char.
-   Gets the char from move or if nil, defaults to queen."
+    Gets the char from move or if nil, defaults to queen."
   [player move]
   (if (nil? (:promotion move))
     (if (= player :white) \Q \q)
@@ -463,7 +463,7 @@
 
 (defn- update-castling
   "Return new castling string for move
-   checks for king or rook moves."
+    checks for king or rook moves."
   [move state]
   (assoc state :castling
          (if (= (:castling state) "-")
@@ -515,7 +515,7 @@
 
 (defn- update-half-moves
   "Increases STATE half moves count unless the move
-   pawn move or a capture."
+    pawn move or a capture."
   [move state]
   (let [piece (get (:board state) (:from move))]
     (assoc state :half-moves
@@ -548,7 +548,7 @@
 
 (defn- build-piece-map
   "Builds map with algebraic coordinate as keys
-   and values are piece chars of given corresponding index."
+    and values are piece chars of given corresponding index."
   [state]
   (loop [coords '()
          pieces '()
