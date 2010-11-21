@@ -585,8 +585,8 @@
                      (update-move move))))
   (in-check? [state]
              (threaten-index? (:board state)
-                              (king-index (:board state) (:turn state))
-                              (opponent (:turn state))))
+                              (king-index (:board state) (opponent (:turn state)))
+                              (:turn state)))
   (game-end? [state]
              (or (>= (:half-moves state) 50)
                  (nil? (king-index (:board state) (:turn state)))))
