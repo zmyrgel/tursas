@@ -203,7 +203,7 @@
   [board index inc pieces]
   (cond (not (board-index? index)) false
         (not (board-occupied? board index)) (recur board (+ index inc) inc pieces)
-        :else (nil? (some #{(get board index)} pieces))))
+        :else (not (nil? (some #{(get board index)} pieces)))))
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
@@ -214,10 +214,10 @@
 (defn- threaten-by-knight?
   "Can piece in INDEX of BOARD be captured by OPPONENTs knight."
   [board index opponent]
-  (nil? (some #(= (get board %)
-                  (if (= opponent :white)
-                    WHITE-KNIGHT BLACK-KING))
-              (map #(+ index %) knight-movement))))
+  (not (nil? (some #(= (get board %)
+                       (if (= opponent :white)
+                         WHITE-KNIGHT BLACK-KING))
+                   (map #(+ index %) knight-movement)))))
 
 (defn- threaten-by-pawn?
   "Can the piece in INDEX of BOARD be captured by OPPONENTs pawn?"
@@ -229,7 +229,8 @@
         (= (get board (+ index NW)) BLACK-PAWN))))
 
 (defn- threaten-by-queen-or-rook?
-  "Checks for "
+  "Can the piece in INDEX of BOARD be captured
+   by OPPONENTs queen or rook?"
   [board index opponent]
   (not (nil? (some true? (map #(ray-to-pieces? board index %
                                                (if (= opponent :white)
@@ -372,9 +373,9 @@
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
-  [state side]
+  [state]
   (flatten (map #(list-moves-for-piece state %)
-                      (all-piece-indexes-for (:board state) side))))
+                      (all-piece-indexes-for (:board state) (:turn state)))))
 
 (defn- all-states-for
   "Returns all states attainable by applying move."
@@ -591,10 +592,11 @@
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (filter (fn [state] (not (or (in-check? state)
-                                             (game-end? state))))
-                        (map #(apply-move state %)
-                             (all-moves-for state (:turn state)))))
+                (filter #(not (or (in-check? %)
+                                  (game-end? %)))
+                        (->> state
+                             all-moves-for
+                             (all-states-for state))))
   (get-pieces [state]
               (build-piece-map state)))
 
