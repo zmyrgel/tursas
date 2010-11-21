@@ -593,7 +593,8 @@
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (filter #(not (or (in-check? %)
+                (filter #(not (or (nil? (king-index (:board state) (:turn state)))
+                                  (in-check? %)
                                   (game-end? %)))
                         (->> state
                              all-moves-for
