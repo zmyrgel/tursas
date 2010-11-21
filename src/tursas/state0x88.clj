@@ -4,7 +4,6 @@
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
-;; direction vectors
 (def NORTH 16)
 (def NN (+ NORTH NORTH))
 (def SOUTH -16)
@@ -19,7 +18,6 @@
 (def QUEEN-SIDE 0)
 (def KING-SIDE 1)
 
-;; board contents
 (def EMPTY -1)
 (def WHITE-PAWN 0)
 (def BLACK-PAWN 1)
@@ -34,18 +32,15 @@
 (def WHITE-KING 10)
 (def BLACK-KING 11)
 
-;; sliding pieces
 (def rook-directions (list NORTH SOUTH EAST WEST))
 (def bishop-directions (list NW SW NE SE))
 (def queen-directions (concat rook-directions bishop-directions))
 
-;; moving pieces
 (def king-movement queen-directions)
 (def black-pawn-movement (list SE SW SOUTH))
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
-;; base record type
 (defrecord State0x88 [board
                       turn
                       castling
@@ -58,7 +53,6 @@
   (compareTo [this other]
              (compare score (:score other))))
 
-;; Predicates
 (defn- board-index?
   "Does the given INDEX represent a square on the board?"
   [^Byte index]
@@ -323,25 +317,25 @@
         move-index (+ index direction)
         move-twice? (or (and (= player :white) (same-row? index 16))
                         (and (= player :black) (same-row? index 96)))]
-      (if (not (board-occupied? board move-index))
-        (if (and move-twice?
-                 (not (board-occupied? board (+ move-index direction))))
-          (list (make-move index move-index nil)
-                (make-move index (+ move-index direction) nil))
-          (list (make-move index move-index nil)))
-        '())))
+    (if (not (board-occupied? board move-index))
+      (if (and move-twice?
+               (not (board-occupied? board (+ move-index direction))))
+        (list (make-move index move-index nil)
+              (make-move index (+ move-index direction) nil))
+        (list (make-move index move-index nil)))
+      '())))
 
 (defn- list-pawn-capture-moves
   "List of possible capture moves of pawn."
   [player board index en-passant]
     (let [direction (if (= player :white) NORTH SOUTH)
-        move-index (+ index direction)
-        captures (if (= player :white)
-                   (list (+ NW index) (+ NE index))
-                   (list (+ SW index) (+ SE index)))
-        en-passant-index (if (= en-passant "-")
-                           -1
-                           (algebraic->index en-passant))]
+          move-index (+ index direction)
+          captures (if (= player :white)
+                     (list (+ NW index) (+ NE index))
+                     (list (+ SW index) (+ SE index)))
+          en-passant-index (if (= en-passant "-")
+                             -1
+                             (algebraic->index en-passant))]
       (map #(if (or (and (board-index? %)
                          (= en-passant-index %))
                     (and (board-occupied? board %)
@@ -565,7 +559,6 @@
                (inc index))
         (recur coords pieces (inc index))))))
 
-;;;;; TYPE EXTENSIONS ;;;;;;
 (extend-type State0x88
   State
   (occupied? [state index]
