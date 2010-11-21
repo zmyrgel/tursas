@@ -217,51 +217,66 @@
   (let [king (if (= player :black) BLACK-KING WHITE-KING)]
     (first (filter #(= (get board %) king) (range 128)))))
 
+(defn- threaten-by-knight?
+  "Can piece in INDEX be captured by OPPONENTS knight."
+  [board index opponent]
+  (nil? (some #(= (get board %)
+                  (if (= opponent :white)
+                    WHITE-KNIGHT BLACK-KING))
+              (map #(+ index %) knight-movement))))
+
+(defn- threaten-by-pawn?
+  "Check if index is threatened by pawn."
+  [board index opponent]
+  (if (= opponent :white)
+    (or (= (get board (+ index SE)) WHITE-PAWN)
+        (= (get board (+ index SW)) WHITE-PAWN))
+    (or (= (get board (+ index NE)) BLACK-PAWN)
+        (= (get board (+ index NW)) BLACK-PAWN))))
+
+(defn- threaten-by-queen-or-rook?
+  "Checks for "
+  [board index opponent]
+  (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                               (if (= opponent :white)
+                                                 [WHITE-QUEEN WHITE-ROOK]
+                                                 [BLACK-QUEEN BLACK-ROOK]))
+                              [NORTH EAST WEST SOUTH])))))
+
+(defn- threaten-by-queen-or-bishop?
+  "Can the piece in INDEX on BOARD be captured by
+   OPPONENTs queen or bishop?"
+  [board index opponent]
+  (not (nil? (some true? (map #(ray-to-pieces? board index %
+                                               (if (= opponent :white)
+                                                 [WHITE-QUEEN WHITE-BISHOP]
+                                                 [BLACK-QUEEN BLACK-BISHOP]))
+                              [NE NW SW SE])))))
+(declare threaten-index?)
 (declare update-board)
+(defn- threaten-by-king?
+  "Can the piece in INDEX on BOARD be captured by OPPONENTs king."
+  [board index opponent]
+  (let [player (if (= opponent :white) :black :white)
+        king (if (= player :black) BLACK-KING WHITE-KING)
+        enemy-king-index (first (filter #(= (get board %) king)
+                                        (map #(+ index %) king-movement)))]
+    (if (empty? enemy-king-index)
+      false
+      (-> board
+          (update-board (make-move enemy-king-index index nil)
+                        player)
+          (threaten-index? index player)))))
+
 (defn- threaten-index?
   "Checks if given INDEX in STATE is under threath of enemy."
   [board index opponent]
   (or
-   ;; check if opponent's knight can attack index
-   (nil? (some #(= (get board %)
-                   (if (= opponent :white)
-                     WHITE-KNIGHT BLACK-KING))
-               (map #(+ index %) knight-movement)))
-   ;; check if there's ray to opponents queen or
-   ;; bishop diagonally from index
-   (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                (if (= opponent :white)
-                                                  [WHITE-QUEEN WHITE-BISHOP]
-                                                  [BLACK-QUEEN BLACK-BISHOP]))
-                               [NE NW SW SE]))))
-
-   ;; check if there's ray to opponents queen or
-   ;; rook on the same column or row
-   (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                                (if (= opponent :white)
-                                                  [WHITE-QUEEN WHITE-ROOK]
-                                                  [BLACK-QUEEN BLACK-ROOK]))
-                               [NORTH EAST WEST SOUTH]))))
-
-   ;; check pawns
-   (if (= opponent :white)
-     (or (= (get board (+ index SE)) WHITE-PAWN)
-         (= (get board (+ index SW)) WHITE-PAWN))
-     (or (= (get board (+ index NE)) BLACK-PAWN)
-         (= (get board (+ index NW)) BLACK-PAWN)))
-
-
-   ;; check if there's king next to index and it can attack index
-   (let [player (if (= opponent :white) :black :white)
-         king (if (= player :black) BLACK-KING WHITE-KING)
-         enemy-king-index (first (filter #(= (get board %) king)
-                                         (map #(+ index %) king-movement)))]
-     (if (empty? enemy-king-index)
-       false
-       (-> board
-           (update-board (make-move enemy-king-index index nil)
-                         player)
-           (threaten-index? index player))))))
+   (threaten-by-knight? board index opponent)
+   (threaten-by-queen-or-bishop? board index opponent)
+   (threaten-by-queen-or-rook? board index opponent)
+   (threaten-by-pawn? board index opponent)
+   (threaten-by-king? board index opponent)))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
