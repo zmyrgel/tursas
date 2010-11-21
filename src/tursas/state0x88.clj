@@ -298,8 +298,8 @@
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
   [player board index castling]
-  (let [normal-moves (map #(move-to-place board index (+ index %) player)
-                                   king-movement)
+  (let [normal-moves (flatten (map #(move-to-place board index (+ index %) player)
+                                   king-movement))
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index EAST))
                               (make-move index (* WEST 2) nil)
@@ -308,7 +308,7 @@
                                       (legal-castling? player board index WEST))
                                (make-move index (* EAST 2) nil)
                                '())]
-    (reduce concat normal-moves castling-moves-king castling-moves-queen)))
+    (concat normal-moves castling-moves-king castling-moves-queen)))
 
 (defn- list-pawn-normal-moves
   "Lists available moves for PLAYER's pawn in BOARD INDEX."
@@ -373,7 +373,7 @@
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state side]
-  (reduce concat (map #(list-moves-for-piece state %)
+  (flatten (map #(list-moves-for-piece state %)
                       (all-piece-indexes-for (:board state) side))))
 
 (defn- all-states-for
