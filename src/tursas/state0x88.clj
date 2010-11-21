@@ -318,43 +318,48 @@
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
-(defn- list-pawn-moves
-  "Returns a set of available pawn moves from INDEX in given STATE."
-  [player board index en-passant]
+(defn- list-pawn-normal-moves
+  "Lists available moves for PLAYER's pawn in BOARD INDEX."
+  [player board index]
   (let [direction (if (= player :white) NORTH SOUTH)
         move-index (+ index direction)
         move-twice? (or (and (= player :white) (same-row? index 16))
-                        (and (= player :black) (same-row? index 96)))
+                        (and (= player :black) (same-row? index 96)))]
+      (if (not (board-occupied? board move-index))
+        (if (and move-twice?
+                 (not (board-occupied? board (+ move-index direction))))
+          (list (make-move index move-index nil)
+                (make-move index (+ move-index direction) nil))
+          (list (make-move index move-index nil)))
+        '())))
 
-        ;; calculate normal movement
-        moves (if (not (board-occupied? board move-index))
-                (if (and move-twice?
-                         (not (board-occupied? board (+ move-index direction))))
-                  (list (make-move index move-index nil)
-                        (make-move index (+ move-index direction) nil))
-                  (list (make-move index move-index nil)))
-                '())
-
-        ;; possible capture
+(defn- list-pawn-capture-moves
+  "List of possible capture moves of pawn."
+  [player board index en-passant]
+    (let [direction (if (= player :white) NORTH SOUTH)
+        move-index (+ index direction)
         captures (if (= player :white)
                    (list (+ NW index) (+ NE index))
                    (list (+ SW index) (+ SE index)))
         en-passant-index (if (= en-passant "-")
                            -1
                            (algebraic->index en-passant))]
+      (map #(if (or (and (board-index? %)
+                         (= en-passant-index %))
+                    (and (board-occupied? board %)
+                         (not (occupied-by? board % player))))
+              (list (make-move index % nil))
+              '())
+           captures))
 
-    ;; check capture points
-    (flatten (conj moves
-                   (map #(if (or (and (board-index? %)
-                                      (= en-passant-index %))
-                                 (and (board-occupied? board %)
-                                      (not (occupied-by? board % player))))
-                           (list (make-move index % nil))
-                           '())
-                        captures)))))
+(defn- list-pawn-moves
+  "Returns a set of available pawn moves from INDEX in given STATE."
+  [player board index en-passant]
+  (flatten (conj (list-pawn-normal-moves player board index)
+                 (list-pawn-capture-moves player board index en-passant))))
 
 (defn- list-moves-for-piece
-  "Generates a set of all available moves for piece at INDEX in given STATE." ;; XXX: nested empty lists
+  "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index :white) :white :black)]
