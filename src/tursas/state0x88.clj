@@ -201,9 +201,10 @@
 (defn- ray-to-pieces?
   "Checks if there's ray to from INDEX to given PIECES."
   [board index inc pieces]
-  (cond (not (board-index? index)) false
-        (not (board-occupied? board index)) (recur board (+ index inc) inc pieces)
-        :else (not (nil? (some #{(get board index)} pieces)))))
+  (let [new-index (+ index inc)]
+    (cond (not (board-index? new-index)) false
+          (not (board-occupied? board new-index)) (recur board (+ new-index inc) inc pieces)
+          :else (not (nil? (some #(= (get board new-index) %) pieces))))))
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
