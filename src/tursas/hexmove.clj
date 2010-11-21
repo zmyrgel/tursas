@@ -19,11 +19,11 @@
 (defrecord HexMove [from to promotion]
   Move
   (move->algebraic [move]
-                  (str (:from move)
-                       (:to move)
-                       (if (nil? (:promotion move))
-                         ""
-                         (:promotion move))))
+                   (str (index->algebraic (:from move))
+                        (index->algebraic (:to move))
+                        (if (nil? (:promotion move))
+                          ""
+                          (:promotion move))))
   (from [move]
         (index->algebraic (:from move)))
   (to [move]
