@@ -5,9 +5,9 @@
             [clojure.contrib.seq :as seq]))
 
 (def NORTH 16)
-(def NN (+ NORTH NORTH))
+(def NN 32)
 (def SOUTH -16)
-(def SS (+ SOUTH SOUTH))
+(def SS -32)
 (def EAST 1)
 (def WEST -1)
 (def NE 17)
