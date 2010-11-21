@@ -218,7 +218,7 @@
     (first (filter #(= (get board %) king) (range 128)))))
 
 (defn- threaten-by-knight?
-  "Can piece in INDEX be captured by OPPONENTS knight."
+  "Can piece in INDEX of BOARD be captured by OPPONENTs knight."
   [board index opponent]
   (nil? (some #(= (get board %)
                   (if (= opponent :white)
@@ -226,7 +226,7 @@
               (map #(+ index %) knight-movement))))
 
 (defn- threaten-by-pawn?
-  "Check if index is threatened by pawn."
+  "Can the piece in INDEX of BOARD be captured by OPPONENTs pawn?"
   [board index opponent]
   (if (= opponent :white)
     (or (= (get board (+ index SE)) WHITE-PAWN)
