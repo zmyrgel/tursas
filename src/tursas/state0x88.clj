@@ -598,12 +598,12 @@
   (state->fen [state]
               (parse-state state))
   (legal-states [state]
-                (filter #(not (or (nil? (king-index (:board state) (:turn state)))
-                                  (in-check? %)
-                                  (game-end? %)))
-                        (->> state
-                             all-moves-for
-                             (all-states-for state))))
+                (filter #(not (or
+                               (nil? %)
+                               (nil? (king-index (:board state) (:turn state)))
+                               (in-check? %)
+                               (game-end? %)))
+                        (all-states-for state (all-moves-for state))))
   (get-pieces [state]
               (build-piece-map state)))
 
