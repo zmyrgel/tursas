@@ -203,7 +203,7 @@
   [board index inc pieces]
   (let [new-index (+ index inc)]
     (cond (not (board-index? new-index)) false
-          (not (board-occupied? board new-index)) (recur board (+ new-index inc) inc pieces)
+          (not (board-occupied? board new-index)) (recur board new-index inc pieces)
           :else (not (nil? (some #(= (get board new-index) %) pieces))))))
 
 (defn- king-index
