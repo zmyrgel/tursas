@@ -561,6 +561,23 @@
                (inc index))
         (recur coords pieces (inc index))))))
 
+(defn- commit-move
+  "Commit move in state."
+  [state move]
+  (when (and (occupied-by? (:board state) (:from move) (:turn state))
+             (not (game-end? state))
+             (allowed-move? state move))
+    (let [new-state (->> state
+                         (update-board move)
+                         update-turn
+                         (update-castling move)
+                         (update-en-passant move)
+                         (update-half-moves move)
+                         update-full-moves
+                         (update-move move))]
+      (when (not (in-check? new-state))
+        new-state))))
+
 (extend-type State0x88
   State
   (occupied? [state index]
@@ -570,19 +587,7 @@
   (white? [state index]
           (occupied-by? (:board state) index :white))
   (apply-move [state move]
-              (when (and (occupied-by? (:board state)
-                                       (:from move)
-                                       (:turn state))
-                         (not (game-end? state))
-                         (allowed-move? state move))
-                (->> state
-                     (update-board move)
-                     update-turn
-                     (update-castling move)
-                     (update-en-passant move)
-                     (update-half-moves move)
-                     update-full-moves
-                     (update-move move))))
+              (commit-move state move))
   (in-check? [state]
              (threaten-index? (:board state)
                               (king-index (:board state) (opponent (:turn state)))
