@@ -630,4 +630,3 @@
                             (Integer/parseInt (nth fen-list 5))
                             nil
                             nil))))
-
