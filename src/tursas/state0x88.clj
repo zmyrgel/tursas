@@ -605,7 +605,12 @@
                                (game-end? %)))
                         (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-              (build-piece-map state)))
+              (build-piece-map state))
+  (perft [state depth]
+    (if (zero? depth)
+      1
+      (let [states (legal-states state)]
+        (reduce + (map #(perft % (dec depth)) states))))))
 
 (defprotocol Fen
   (fen->state [fen]))
