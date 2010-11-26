@@ -562,8 +562,11 @@
         (recur coords pieces (inc index))))))
 
 (defn- commit-move
-  "Commit move in state."
-  [state move]
+  "Commit move in state if legal move.
+   On legal move function returns new state after move has been
+  applied to previous state.
+  On illegal move this function will return nil value."
+ [state move]
   (when (and (occupied-by? (:board state) (:from move) (:turn state))
              (not (game-end? state))
              (allowed-move? state move))
