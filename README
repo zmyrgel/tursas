@@ -4,18 +4,20 @@ Tursas is a simple chess engine implemented in Clojure.
 
 ## Status
 
-- UCI / XBoard interface : Some implemented
-- Saving / Loading game: done
-- REPL to play with: stubbs
-- State representation: Done with 0x88 board
-- Move generation: Done
-- Search algorithm: Functional minimax algorithm implemented
-- Evaluator: simple, material balance and board location for now
+- UCI / XBoard interface : Some commands implemented, no error detection
+- Saving / Loading game: Completed
+- REPL to play with: some commands exist, has some issues like game doesn't end
+- State representation: Completed with 0x88 board
+- Move generation: Completed although contains some errors, most likely
+                   in special moves and game end detection
+- Search algorithm: WIP version of minimax algorithm
+- Evaluator: Material balance and some board location for now,
+             will work on this once rest is completed and tested
 
-Currently this is not usable. It is very much work in progress code.
-The code compiles and most of the functions seem to work.  Currently
-I'm trying to iron out the runtime bugs in the code and try to get it
-play with XBoard.
+Currently the game is somewhat playable via repl. It is very much work
+in progress code.
+Currently I'm trying to iron out the bugs in the move generation code
+and getting the minimax algorithm to work.
 
 ## Installation
 
