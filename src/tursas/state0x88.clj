@@ -357,7 +357,7 @@
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index :white) :white :black)]
-    (case (Character/toLowerCase (piece-value->char (get board index)))
+    (case (Character/toLowerCase (char (piece-value->char (get board index))))
           \r (map #(slide-in-direction player board index %) rook-directions)
           \b (map #(slide-in-direction player board index %) bishop-directions)
           \q (map #(slide-in-direction player board index %) queen-directions)
@@ -430,8 +430,8 @@
   (if (nil? (:promotion move))
     (if (= player :white) \Q \q)
     (if (= player :white)
-      (Character/toUpperCase (:promotion move))
-      (Character/toLowerCase (:promotion move)))))
+      (Character/toUpperCase (char (:promotion move)))
+      (Character/toLowerCase (char (:promotion move))))))
 
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
