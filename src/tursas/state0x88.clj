@@ -284,7 +284,7 @@
                   (threaten-index? board index player))
             false
             (recur (+ index increment) (dec king-squares)))
-          :else (if (board-occupied? index)
+          :else (if (board-occupied? board index)
                   false
                   (or (= (get board (+ index increment)) WHITE-ROOK)
                       (= (get board (+ index increment)) BLACK-ROOK))))))
