@@ -143,7 +143,7 @@
   [board index piece-value]
   (assoc board index piece-value))
 
-(defn piece-value->char
+(defn piece-name
   "Gives piece character representation from its board VALUE."
   [value]
   (if (= value EMPTY)
@@ -370,7 +370,7 @@
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index :white) :white :black)]
-    (case (Character/toLowerCase (char (piece-value->char (get board index))))
+    (case (Character/toLowerCase (char (piece-name (get board index))))
           \r (map #(slide-in-direction player board index %) rook-directions)
           \b (map #(slide-in-direction player board index %) bishop-directions)
           \q (map #(slide-in-direction player board index %) queen-directions)
@@ -412,7 +412,7 @@
   [board row]
   (s/map-str #(if (= (get % 0) \E) (count %) %)
              (s/partition #"E+"
-                          (s/map-str #(piece-value->char (get board (+ row %)))
+                          (s/map-str #(piece-name (get board (+ row %)))
                                      (range 8)))))
 
 (defn- board->fen-board
@@ -562,7 +562,7 @@
       (zipmap coords pieces)
       (if (board-occupied? (:board state) index)
         (recur (cons index coords)
-               (cons (piece-value->char (get (:board state) index)) pieces)
+               (cons (piece-name (get (:board state) index)) pieces)
                (inc index))
         (recur coords pieces (inc index))))))
 
