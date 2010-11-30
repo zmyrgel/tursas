@@ -572,19 +572,19 @@
   applied to previous state.
   On illegal move this function will return nil value."
  [state move]
-  (when (and (occupied-by? (:board state) (:from move) (:turn state))
-             (not (game-end? state))
-             (allowed-move? state move))
-    (let [new-state (->> state
-                         (update-board move)
-                         update-turn
-                         (update-castling move)
-                         (update-en-passant move)
-                         (update-half-moves move)
-                         update-full-moves
-                         (update-move move))]
-      (when (not (in-check? new-state))
-        new-state))))
+ (when (and (occupied-by? (:board state) (:from move) (:turn state))
+            (not (game-end? state))
+            (allowed-move? state move))
+   (let [new-state (->> state
+                        (update-board move)
+                        update-turn
+                        (update-castling move)
+                        (update-en-passant move)
+                        (update-half-moves move)
+                        update-full-moves
+                        (update-move move))]
+     (when (not (in-check? new-state))
+       new-state))))
 
 (extend-type State0x88
   State
