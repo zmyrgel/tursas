@@ -320,11 +320,11 @@
                                    king-movement))
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
                                      (legal-castling? player board index WEST))
-                              (make-move index (* WEST 2) nil)
+                              (make-move index (+ WEST WEST) nil)
                               '())
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
                                       (legal-castling? player board index EAST))
-                               (make-move index (* EAST 2) nil)
+                               (make-move index (+ EAST EAST) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
