@@ -118,6 +118,14 @@
            (= piece BLACK-KING))
        (= (abs (- (:to move) (:from move))) 2)))
 
+(defn- castle-side?
+  "Predicate to check if given piece can do castling."
+  [player side castling]
+  (let [piece (if (= player :white)
+                (if (= side QUEEN-SIDE) \Q \K)
+                (if (= side QUEEN-SIDE) \q \k))]
+    (not (nil? (some #{piece} castling)))))
+
 (defn- opponent
   "Return opponent of given player"
   [player]
@@ -304,14 +312,6 @@
          (= (get board rook-index)
             (if (= player :white)
               WHITE-ROOK BLACK-ROOK)))))
-
-(defn- castle-side?
-  "Predicate to check if given piece can do castling."
-  [player side castling]
-  (let [piece (if (= player :white)
-                (if (= side QUEEN-SIDE) \Q \K)
-                (if (= side QUEEN-SIDE) \q \k))]
-    (not (nil? (some #{piece} castling)))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
