@@ -476,25 +476,25 @@
          (if (= (:castling state) "-")
            "-"
            (let [player (:turn state)
-                 king (if (= player :white) \K \k)
-                 queen (if (= player :white) \Q \q)
-                 king-sq (if (= player :white) "e1" "e8")
-                 rook-q-sq (if (= player :white) "a1" "a8")
-                 rook-k-sq (if (= player :white) "h1" "h8")
-                 check-str #(if (empty? %) "-" %)
+                 [king queen king-sq rook-q-sq rook-k-sq]
+                 (if (= player :white)
+                   ["K" "Q" 0x05 0x00 0x07]
+                   ["k" "q" 0x75 0x70 0x77])
+                 check-str (fn [x] (if (empty? x) "-" x))
                  player-str (reduce str (re-seq (if (= player :white)
                                                   #"\p{Upper}" #"\p{Lower}")
                                                 (:castling state)))
                  opponent-str (s/replace-str player-str "" (:castling state))]
-             (case (index->algebraic (:from move))
-                   king-sq (check-str opponent-str)
-                   rook-q-sq (check-str (str (s/replace-char queen "" player-str)
-                                             opponent-str))
-                   rook-k-sq (check-str (str (s/replace-char king "" player-str)
-                                             opponent-str))
-                   (if (= player :white)
-                     (str player-str opponent-str)
-                     (str opponent-str player-str)))))))
+             (reduce str (sort
+                          (cond (= (:from move) king-sq)
+                                (check-str opponent-str)
+                                (= (:from move) rook-q-sq)
+                                (check-str (str (s/replace-str queen "" player-str)
+                                                opponent-str))
+                                (= (:from move) rook-k-sq)
+                                (check-str (str (s/replace-str king "" player-str)
+                                                opponent-str))
+                                :else (str player-str opponent-str))))))))
 
 (defn- update-turn
   "Updates player turn of STATE"
