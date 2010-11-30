@@ -521,8 +521,8 @@
   "Increases STATE half moves count unless the move
     pawn move or a capture."
   [move state]
-  (let [piece (get (:board state) (:from move))]
-    (assoc state :half-moves
+  (assoc state :half-moves
+         (let [piece (get (:board state) (:from move))]
            (if (pawn-or-capture-move? piece (:board state) move)
              0
              (inc (:half-moves state))))))
