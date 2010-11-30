@@ -506,12 +506,13 @@
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
   [move state]
-  (let [piece (get (:board state) (:from move))]
-    (assoc state :en-passant (if (and (or (= piece WHITE-PAWN)
-                                          (= piece BLACK-PAWN))
-                                      (= (abs (- (:to move) (:from move))) 0x20))
-                               (index->algebraic (/ (+ (:to move) (:from move)) 2))
-                               "-"))))
+  (assoc state :en-passant
+         (let [piece (get (:board state) (:from move))]
+           (if (and (or (= piece WHITE-PAWN)
+                        (= piece BLACK-PAWN))
+                    (= (abs (- (:to move) (:from move))) 0x20))
+             (index->algebraic (/ (+ (:to move) (:from move)) 2))
+             "-"))))
 
 (defn- allowed-move?
   "Checks if given MOVE is allowed in STATE."
