@@ -112,6 +112,14 @@
          (white-piece? (get board index))
          (black-piece? (get board index)))))
 
+(defn promotion?
+  "Checks if given move is pawn promotion."
+  [piece move]
+  (or (and (= piece WHITE-PAWN)
+           (= (row (:to move)) 7))
+      (and (= piece BLACK-PAWN)
+           (= (row (:to move)) 0))))
+
 (defn- opponent
   "Return opponent of given player"
   [player]
@@ -412,14 +420,6 @@
   [board]
   (s/join "/" (map #(make-fen-row board %)
                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
-
-(defn promotion?
-  "Checks if given move is pawn promotion."
-  [piece move]
-  (or (and (= piece WHITE-PAWN)
-           (= (row (:to move)) 7))
-      (and (= piece BLACK-PAWN)
-           (= (row (:to move)) 0))))
 
 (defn castling?
   "Checks given move is castling move."
