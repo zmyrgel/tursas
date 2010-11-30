@@ -273,7 +273,7 @@
    (threaten-by-pawn? board index opponent)
    (threaten-by-king? board index opponent)))
 
-(defn- legal-castling? ;; XXX: won't work
+(defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index direction]
   (let [king-index-1 (+ index direction)
