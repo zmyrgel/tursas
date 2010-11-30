@@ -18,6 +18,9 @@
 (def QUEEN-SIDE 0)
 (def KING-SIDE 1)
 
+(def WHITE-KING-STORE 0x0c)
+(def BLACK-KING-STORE 0x7c)
+
 (def EMPTY -1)
 (def WHITE-PAWN 0)
 (def BLACK-PAWN 1)
@@ -466,8 +469,8 @@
   "Updates INDEX of given PLAYER's king in outer board."
   [king-index player]
   (if (= player :white)
-    (fill-square board 0x0c king-index)
-    (fill-square board 0x7c king-index)))
+    (fill-square board WHITE-KING-STORE king-index)
+    (fill-square board BLACK-KING-STORE king-index)))
 
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
