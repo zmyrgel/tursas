@@ -184,8 +184,8 @@
   [player board move castling-side]
   (let [[rook king from to]
         (if (= player :white)
-          [WHITE-ROOK WHITE-KING [0 7] [3 5]]
-          [BLACK-ROOK BLACK-KING [112 119] [115 117]])]
+          [WHITE-ROOK WHITE-KING [0x00 0x07] [0x03 0x05]]
+          [BLACK-ROOK BLACK-KING [0x70 0x77] [0x73 0x75]])]
     (-> board
         (clear-square (:from move))
         (clear-square (get from castling-side))
