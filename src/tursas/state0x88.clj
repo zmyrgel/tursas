@@ -462,6 +462,13 @@
       (Character/toUpperCase (char (:promotion move)))
       (Character/toLowerCase (char (:promotion move))))))
 
+(defn- update-king-index
+  "Updates INDEX of given PLAYER's king in outer board."
+  [king-index player]
+  (if (= player :white)
+    (fill-square board 0x0c king-index)
+    (fill-square board 0x7c king-index)))
+
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
   [move state]
