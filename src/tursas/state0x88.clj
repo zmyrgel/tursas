@@ -107,9 +107,9 @@
   "Checks if given move is pawn promotion."
   [piece move]
   (or (and (= piece WHITE-PAWN)
-           (= (row (:to move)) 7))
+           (= (row (:to move)) 0x07))
       (and (= piece BLACK-PAWN)
-           (= (row (:to move)) 0))))
+           (= (row (:to move)) 0x00))))
 
 (defn castling?
   "Checks given move is castling move."
