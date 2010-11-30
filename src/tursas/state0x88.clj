@@ -308,11 +308,11 @@
   (let [normal-moves (flatten (map #(move-to-place board index (+ index %) player)
                                    king-movement))
         castling-moves-king (if (and (castle-side? player KING-SIDE castling)
-                                     (legal-castling? player board index EAST))
+                                     (legal-castling? player board index WEST))
                               (make-move index (* WEST 2) nil)
                               '())
         castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
-                                      (legal-castling? player board index WEST))
+                                      (legal-castling? player board index EAST))
                                (make-move index (* EAST 2) nil)
                                '())]
     (concat normal-moves castling-moves-king castling-moves-queen)))
