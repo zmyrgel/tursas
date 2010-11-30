@@ -333,8 +333,8 @@
   [player board index]
   (let [direction (if (= player :white) NORTH SOUTH)
         move-index (+ index direction)
-        move-twice? (or (and (= player :white) (same-row? index 16))
-                        (and (= player :black) (same-row? index 96)))]
+        move-twice? (or (and (= player :white) (same-row? index 0x10))
+                        (and (= player :black) (same-row? index 0x60)))]
     (if (not (board-occupied? board move-index))
       (if (and move-twice?
                (not (board-occupied? board (+ move-index direction))))
