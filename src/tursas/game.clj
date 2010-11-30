@@ -128,6 +128,16 @@
        legal-moves
        choose-move))
 
+(defn get-score
+  []
+  (io! (println
+        (if (empty? @game-state)
+          "Can't calculate score from empty state!"
+          (->> @game-state
+               first
+               (evaluate (:depth-limit @game-options))
+               )))))
+
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
   []
