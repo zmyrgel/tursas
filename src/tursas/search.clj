@@ -1,5 +1,5 @@
 (ns tursas.search
-  (:use (tursas state eval)))
+  (:use (tursas state eval state0x88)))
 
 (defn- moves
   "Generates nested list of nodes representing possible game states reachable
@@ -8,14 +8,14 @@
   [node]
   (lazy-seq
    (when (not (nil? node))
-     (legal-states (first node)))))
+     (legal-states node))))
 
 (defn walk
-  "Traverses form, an arbitrary data structure. inner and outer are
-   functions. Applies inner to each element of form, building up a
+  "Traverses a tree form. inner and outer are functions.
+   Applies inner to each element of form, building up a
    data structure of the same type, then applies outer to the result.
-   Recognizes all Clojure data structures except sorted-map-by.
-   Consumes seqs as with doall."
+   Recognizes lists and seqs. Consumes seqs as with doall.
+   Stripped down version of clojure.walk/walk"
   [inner outer tree]
   (cond
    (list? tree) (outer (apply list (map inner tree)))
@@ -24,16 +24,15 @@
 
 (defn maptree
   "Performs a depth-first, post-order traversal of form. Calls f on
-   each sub-form, uses f's return value in place of the original.
-   Recognizes all Clojure data structures except sorted-map-by.
-   Consumes seqs as with doall."
+   each sub-form, uses f's return value in place of the original."
   [f tree]
   (walk (partial maptree f) f tree))
 
 (defn- tree-node?
-  "Checks if X is tree node or not."
+  "Predicate to check if given node is a
+   tree node or not."
   [node]
-  (list? node))
+  (= node tursas.state0x88.State0x88))
 
 (defn- gametree
   "Create a full gametree from STATE.
@@ -43,12 +42,10 @@
   (tree-seq tree-node? moves state))
 
 (defn- static
-  "Evaluates the given gametree NODE."
+  "Evaluates heuristic value for
+   the given gametree NODE."
   [node]
-  (do
-    (println "Static got: ")
-    (prn node)
-    (evaluate-state (first node))))
+  (evaluate-state node))
 
 (declare minimise)
 (defn- maximise
@@ -82,4 +79,5 @@
        gametree
        (prune depth)
        (maptree static)
-       (trampoline maximise)))
+       (trampoline maximise)
+       ))
