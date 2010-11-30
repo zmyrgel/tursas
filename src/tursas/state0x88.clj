@@ -332,12 +332,11 @@
   "Lists available moves for PLAYER's pawn in BOARD INDEX."
   [player board index]
   (let [direction (if (= player :white) NORTH SOUTH)
-        move-index (+ index direction)
-        move-twice? (or (and (= player :white) (same-row? index 0x10))
-                        (and (= player :black) (same-row? index 0x60)))]
+        move-index (+ index direction)]
     (if (not (board-occupied? board move-index))
-      (if (and move-twice?
-               (not (board-occupied? board (+ move-index direction))))
+      (if (and (not (board-occupied? board (+ move-index direction)))
+               (or (and (= player :white) (same-row? index 0x10))
+                   (and (= player :black) (same-row? index 0x60))))
         (list (make-move index move-index nil)
               (make-move index (+ move-index direction) nil))
         (list (make-move index move-index nil)))
