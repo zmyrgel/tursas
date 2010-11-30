@@ -47,11 +47,7 @@
                       en-passant
                       half-moves
                       full-moves
-                      prev-move
-                      score]
-  Comparable
-  (compareTo [this other]
-             (compare score (:score other))))
+                      prev-move])
 
 (defn- board-index?
   "Does the given INDEX represent a square on the board?"
@@ -636,5 +632,4 @@
                             (nth fen-list 3)
                             (Integer/parseInt (nth fen-list 4))
                             (Integer/parseInt (nth fen-list 5))
-                            nil
                             nil))))
