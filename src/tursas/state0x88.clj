@@ -371,17 +371,40 @@
   (flatten (conj (list-pawn-normal-moves player board index)
                  (list-pawn-capture-moves player board index en-passant))))
 
+(defn- list-bishop-moves
+  "Returns a list of bishop moves"
+  [player board index]
+  (map #(slide-in-direction player board index %)
+       bishop-directions))
+
+(defn- list-queen-moves
+  "Returns a list of queen moves."
+  [player board index]
+  (map #(slide-in-direction player board index %)
+       queen-directions))
+
+(defn- list-rook-moves
+  "Returns a list of rook moves."
+  [player board index]
+  (map #(slide-in-direction player board index %)
+       rook-directions))
+
+(defn- list-knight-moves
+  "Returns a list of knight moves."
+  (map #(move-to-place board index (+ index %) player)
+       knight-movement))
+
 (defn- list-moves-for-piece
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index :white) :white :black)]
     (case (Character/toLowerCase (char (piece-name (get board index))))
-          \r (map #(slide-in-direction player board index %) rook-directions)
-          \b (map #(slide-in-direction player board index %) bishop-directions)
-          \q (map #(slide-in-direction player board index %) queen-directions)
-          \n (map #(move-to-place board index (+ index %) player) knight-movement)
           \p (list-pawn-moves player board index (:en-passant state))
+          \b (list-bishop-moves player board index)
+          \n (list-knight-moves player board index)
+          \r (list-rook-moves player board index)
+          \q (list-queen-moves player board index)
           \k (list-king-moves player board index (:castling state))
           '())))
 
