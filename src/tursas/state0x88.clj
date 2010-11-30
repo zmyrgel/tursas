@@ -439,10 +439,10 @@
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
   [move state]
-  (let [board (:board state)
-        player (:tun state)
-        moving-piece (get board (:from move))]
-    (assoc state :board
+  (assoc state :board
+         (let [board (:board state)
+               player (:tun state)
+               moving-piece (get board (:from move))]
            (cond (promotion? moving-piece move)
                  (-> board
                      (clear-square (:from move))
