@@ -397,6 +397,8 @@
   (map #(apply-move state %) moves))
 
 (defn- fen-board->0x88board
+  "Converts given FEN board representation
+   to 0x88 board representation."
   [fen-board]
   (reduce (fn [board [index piece]]
             (fill-square board index (piece-char->value piece)))
