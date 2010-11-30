@@ -467,7 +467,7 @@
   [move state]
   (assoc state :board
          (let [board (:board state)
-               player (:tun state)
+               player (:turn state)
                moving-piece (get board (:from move))]
            (cond (promotion? moving-piece move)
                  (-> board
