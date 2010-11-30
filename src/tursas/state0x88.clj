@@ -273,20 +273,26 @@
    (threaten-by-pawn? board index opponent)
    (threaten-by-king? board index opponent)))
 
-(defn- legal-castling?
+(defn- legal-castling? ;; XXX: won't work
   "Predicate to check if castling is possible on the board."
-  [player board index increment]
-  (loop [index (+ index increment)
-         king-squares 2]
-    (cond (> king-squares 0)
-          (if (or (board-occupied? board index)
-                  (threaten-index? board index player))
-            false
-            (recur (+ index increment) (dec king-squares)))
-          :else (if (board-occupied? board index)
-                  false
-                  (or (= (get board (+ index increment)) WHITE-ROOK)
-                      (= (get board (+ index increment)) BLACK-ROOK))))))
+  [player board index direction]
+  (let [king-index-1 (+ index direction)
+        king-index-2 (+ king-index-1 direction)
+        rook-index (if (= direction WEST)
+                     (+ king-index-2 WEST WEST)
+                     (+ king-index-2 EAST))
+        opponent (opponent player)]
+    (and (not (threaten-index? board index opponent))
+         (not (board-occupied? board king-index-1))
+         (not (threaten-index? board king-index-1 opponent))
+         (not (board-occupied? board king-index-2))
+         (not (threaten-index? board king-index-2 opponent))
+         (if (= direction WEST)
+           (not (board-occupied? board (+ king-index-2 direction)))
+           true)
+         (= (get board rook-index)
+            (if (= player :white)
+              WHITE-ROOK BLACK-ROOK)))))
 
 (defn- castle-side?
   "Predicate to check if given piece can do castling."
