@@ -348,8 +348,8 @@
   (let [direction (if (= player :white) NORTH SOUTH)
         move-index (+ index direction)
         captures (if (= player :white)
-                   (list (+ NW index) (+ NE index))
-                   (list (+ SW index) (+ SE index)))
+                   [(+ NW index) (+ NE index)]
+                   [(+ SW index) (+ SE index)])
         en-passant-index (if (= en-passant "-")
                            -1
                            (algebraic->index en-passant))]
