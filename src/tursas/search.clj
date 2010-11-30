@@ -32,7 +32,7 @@
   "Predicate to check if given node is a
    tree node or not."
   [node]
-  (= node tursas.state0x88.State0x88))
+  (satisfies? State node))
 
 (defn- gametree
   "Create a full gametree from STATE.
