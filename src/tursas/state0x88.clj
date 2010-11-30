@@ -79,11 +79,6 @@
   [x y]
   (= (row x) (row y)))
 
-(defn- clear-en-passant
-  "Makes a new state without an en passant move from given STATE."
-  [state]
-  (assoc state :en-passant "-"))
-
 (defn- white-piece?
   "Predicate to check if given piece value belongs to white."
   [piece]
@@ -116,6 +111,13 @@
       (and (= piece BLACK-PAWN)
            (= (row (:to move)) 0))))
 
+(defn castling?
+  "Checks given move is castling move."
+  [piece move]
+  (and (or (= piece WHITE-KING)
+           (= piece BLACK-KING))
+       (= (abs (- (:to move) (:from move))) 2)))
+
 (defn- opponent
   "Return opponent of given player"
   [player]
@@ -128,6 +130,11 @@
   []
   (into (vector-of :byte)
         (vec (replicate 128 -1))))
+
+(defn- clear-en-passant
+  "Makes a new state without an en passant move from given STATE."
+  [state]
+  (assoc state :en-passant "-"))
 
 (defn- clear-square
   "Clears the given square INDEX on the game BOARD."
@@ -418,13 +425,6 @@
   [board]
   (s/join "/" (map #(make-fen-row board %)
                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
-
-(defn castling?
-  "Checks given move is castling move."
-  [piece move]
-  (and (or (= piece WHITE-KING)
-           (= piece BLACK-KING))
-       (= (abs (- (:to move) (:from move))) 2)))
 
 (defn- get-promotion-piece
   "Helper function to return new piece char.
