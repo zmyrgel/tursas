@@ -292,6 +292,12 @@
    (threaten-by-pawn? board index opponent)
    (threaten-by-king? board index opponent)))
 
+(defn- empty-and-safe?
+  "Predicate to see if INDEX is empty and unthreatened."
+  [board index opponent]
+  (and (not (board-occupied? board index))
+       (not (threaten-index? board index opponent))))
+
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index direction]
@@ -302,10 +308,8 @@
                      (+ king-index-2 EAST))
         opponent (opponent player)]
     (and (not (threaten-index? board index opponent))
-         (not (board-occupied? board king-index-1))
-         (not (threaten-index? board king-index-1 opponent))
-         (not (board-occupied? board king-index-2))
-         (not (threaten-index? board king-index-2 opponent))
+         (empty-and-safe? board king-index-1 opponent)
+         (empty-and-safe? board king-index-2 opponent)
          (if (= direction WEST)
            (not (board-occupied? board (+ king-index-2 direction)))
            true)
