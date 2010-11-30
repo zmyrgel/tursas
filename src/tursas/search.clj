@@ -1,24 +1,34 @@
 (ns tursas.search
-  (:require [clojure.walk :as w])
   (:use (tursas state eval)))
 
-;;; Based on 'Why Functional Programming Matters' paper
-;;; http://www.cse.chalmers.se/~rjmh/Papers/whyfp.pdf
-;;; Uses minimax algorithm for now, to be expanded to alphabeta later on
-
 (defn- moves
-  "Generates list of nodes representing possible game states reachable
-  from given gametree NODE."
+  "Generates nested list of nodes representing possible game states reachable
+  from given gametree NODE or nil if no subtree available.
+  ((node1) (node2) (node3) (node4))"
   [node]
-  (map #(cons % nil)
-       (if (nil? (first node))
-         '()
-         (legal-states (first node)))))
+  (lazy-seq
+   (when (not (nil? node))
+     (legal-states (first node)))))
 
-(defn- maptree
-  "Apply f to all elements in form."
+(defn walk
+  "Traverses form, an arbitrary data structure. inner and outer are
+   functions. Applies inner to each element of form, building up a
+   data structure of the same type, then applies outer to the result.
+   Recognizes all Clojure data structures except sorted-map-by.
+   Consumes seqs as with doall."
+  [inner outer tree]
+  (cond
+   (list? tree) (outer (apply list (map inner tree)))
+   (seq? tree) (outer (doall (map inner tree)))
+   :else (outer tree)))
+
+(defn maptree
+  "Performs a depth-first, post-order traversal of form. Calls f on
+   each sub-form, uses f's return value in place of the original.
+   Recognizes all Clojure data structures except sorted-map-by.
+   Consumes seqs as with doall."
   [f tree]
-  (w/walk #(lazy-seq (maptree f %)) identity tree))
+  (walk (partial maptree f) f tree))
 
 (defn- tree-node?
   "Checks if X is tree node or not."
@@ -27,54 +37,42 @@
 
 (defn- gametree
   "Create a full gametree from STATE.
-   For obvious reasons, this need to be lazy."
+   For obvious reasons, this need to be lazy.
+   (root (child1 (grandchild1) (grandchild2)) (child2) (child3 (grandchild4)))"
   [state]
-  (tree-seq tree-node? moves (cons state nil)))
+  (tree-seq tree-node? moves state))
 
 (defn- static
   "Evaluates the given gametree NODE."
   [node]
-  (evaluate-state (first node)))
+  (do
+    (println "Static got: ")
+    (prn node)
+    (evaluate-state (first node))))
 
 (declare minimise)
 (defn- maximise
   "Searches the maximum score from subtree"
   [node]
   (if (nil? (rest node))
-    (:score (first node))
+    (first node)
     #(max (map minimise (rest node)))))
 
 (defn- minimise
   "Searches the minimum score from subtree"
   [node]
   (if (nil? (rest node))
-    (:score (first node))
+    (first node)
     #(min (map maximise (rest node)))))
 
-(defn- prune-depth
-  "Prunes the results of gametree search.
-   Limit the search to certain DEPTH to complete the search
-   in adequote time frame.
-   Don't prune if depth is nil."
-  [depth node]
-  (if (nil? depth)
-    node
-    (cons node (when (not (zero? depth))
-                 (map (partial prune-depth (dec depth)) (next node))))))
-
-(defn- prune-nodes
-  "Prune game tree based on number of nodes processed.
-   No pruning if nil given."
-  [nodes node]
-  (if (nil? nodes)
-    node
-    (cons node (when (not (zero? nodes))
-                 (map (partial prune-nodes (dec nodes)) (rest node))))))
-
 (defn- prune
-  [depth node]
-  (cons node (when (not (zero? depth))
-               (map (partial prune (dec depth)) (rest node)))))
+  "Return a lazy sequence of the nodes in game tree until depth is met
+   or when we hit tree end."
+  [depth tree]
+  (lazy-seq
+   (when (pos? depth)
+     (when-let [s (seq tree)]
+       (cons (first s) (prune (dec depth) (rest s)))))))
 
 (defn evaluate
   "Evaluates given STATE to certain DEPTH.
@@ -82,9 +80,6 @@
   [depth state]
   (->> state
        gametree
-       ;;(prune depth)
-       ;;(prune-nodes nodes)
-       ;;(prune-depth depth)
-       (take 5)
+       (prune depth)
        (maptree static)
        (trampoline maximise)))
