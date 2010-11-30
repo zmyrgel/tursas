@@ -254,14 +254,13 @@
   "Can the piece in INDEX on BOARD be captured by OPPONENTs king."
   [board index opponent]
   (let [player (if (= opponent :white) :black :white)
-        king (if (= player :black) BLACK-KING WHITE-KING)
-        enemy-king-index (first (filter #(= (get board %) king)
-                                        (map #(+ index %) king-movement)))]
+        enemy-king (if (= opponent :black) BLACK-KING WHITE-KING)
+        king-move-indexes (map #(+ index %) king-movement)
+        enemy-king-index (first (filter #(= (get board %) enemy-king)
+                                        king-move-indexes))]
     (if (empty? enemy-king-index)
       false
-      (-> board
-          (update-board (make-move enemy-king-index index nil)
-                        player)
+      (-> (fill-square board index enemy-king)
           (threaten-index? index player)))))
 
 (defn- threaten-index?
