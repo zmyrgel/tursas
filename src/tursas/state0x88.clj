@@ -56,7 +56,7 @@
 
 (defn- board-index?
   "Does the given INDEX represent a square on the board?"
-  [^Byte index]
+  [index]
   (zero? (bit-and index 0x88)))
 
 (defn- empty-square?
