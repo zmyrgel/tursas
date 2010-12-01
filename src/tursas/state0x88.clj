@@ -547,7 +547,8 @@
                player (:turn state)
                moving-piece (get board (:from move))]
            (cond (promotion? moving-piece move)
-                 (promote-piece board index (piece-value (get-promotion-piece player move)))
+                 (promote-piece board (:to move)
+                                (piece-value (get-promotion-piece player move)))
                  (castling? moving-piece move)
                  (commit-castle-move player board move
                                      (if (= column (:to move) 2)
