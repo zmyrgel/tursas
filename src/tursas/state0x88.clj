@@ -155,6 +155,46 @@
   [board index]
   (fill-square board index EMPTY))
 
+(defn- add-piece
+  "Adds given piece to board"
+  [board index piece]
+  (do
+    (if (white-piece? piece)
+      (assoc white-piece-map index piece)
+      (assoc black-piece-map index piece))
+    (fill-square board index piece)))
+
+(defn- remove-piece
+  "Removes piece from board and updates maps accordingly."
+  [board index]
+  (do
+    (if (white-piece? (get board index))
+      (dissoc white-piece-map index)
+      (dissoc black-piece-map index))
+    (clear-square board index)))
+
+(defn- move-piece
+  "Moves piece in the board."
+  [board move]
+  (let [piece (get board (:from move))
+        occupant (get board (:to move))]
+    (do
+      (if (= occupant EMPTY)
+        (do
+          (remove-piece board (:from move))
+          (add-piece board (:to move) piece))
+        (do
+          (remove-piece board (:to move))
+          (remove-piece board (:from move))
+          (add-piece board (:to move) piece))))))
+
+(defn- promote-piece
+  "Promotes piece in INDEX to VALUE."
+  [board index new-piece]
+  (do
+    (remove-piece board index)
+    (add-piece board index new-piece)))
+
 (defn piece-name
   "Gives piece character representation from its board VALUE."
   [value]
