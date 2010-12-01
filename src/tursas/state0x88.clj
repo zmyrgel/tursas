@@ -147,15 +147,15 @@
   [state]
   (assoc state :en-passant "-"))
 
+(defn- fill-square
+  "Return new board with given VALUE added to given BOARD's INDEX."
+  [board index value]
+  (assoc board index value))
+
 (defn- clear-square
   "Clears the given square INDEX on the game BOARD."
   [board index]
-  (assoc board index EMPTY))
-
-(defn- fill-square
-  "Return new board with given PIECE-VALUE added to given BOARD's INDEX."
-  [board index piece-value]
-  (assoc board index piece-value))
+  (fill-square board index EMPTY))
 
 (defn piece-name
   "Gives piece character representation from its board VALUE."
