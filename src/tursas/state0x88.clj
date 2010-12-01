@@ -44,6 +44,9 @@
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
+(def white-piece-map [])
+(def black-piece-map [])
+
 (defrecord State0x88 [board
                       turn
                       castling
@@ -650,7 +653,7 @@
                    (game-end? %)))
             (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-    (build-piece-map state))
+    (concat white-piece-map black-piece-map))
   (perft [state depth]
     (if (zero? depth)
       1
