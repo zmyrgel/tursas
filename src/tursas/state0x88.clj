@@ -687,7 +687,8 @@
                    (game-end? %)))
             (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-    (concat white-piece-map black-piece-map))
+    (merge (get (:board state) WHITE-PIECE-MAP-STORE)
+           (get (:board state) BLACK-PIECE-MAP-STORE)))
   (perft [state depth]
     (if (zero? depth)
       1
