@@ -170,6 +170,13 @@
     (fill-square board store-index
                  (dissoc (get board store-index) index))))
 
+(defn- pmap-get
+  "Returns the players piece-map from board."
+  [board player]
+  (if (= player :white)
+    (get board WHITE-PIECE-MAP-STORE)
+    (get board BLACK-PIECE-MAP-STORE)))
+
 (defn- add-piece
   "Adds given piece to board"
   [board index piece]
@@ -467,7 +474,7 @@
   "Gets a list of all board indexes containing
     SIDE's pieces in given STATE."
   [board player]
-  (filter #(occupied-by? board % player) (range 128)))
+  (keys (pmap-get board player)))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
