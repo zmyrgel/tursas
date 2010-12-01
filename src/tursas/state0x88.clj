@@ -46,9 +46,6 @@
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
-(def white-piece-map {})
-(def black-piece-map {})
-
 (defrecord State0x88 [board
                       turn
                       castling
@@ -157,45 +154,60 @@
   [board index]
   (fill-square board index EMPTY))
 
+(defn- pmap-add
+  "Add piece to player piece-map store on the board."
+  [board player index piece]
+  (let [store-index (if (= player :white)
+                      WHITE-PIECE-MAP-STORE BLACK-PIECE-MAP-STORE)]
+    (fill-square board store-index
+                 (assoc (get board store-index) index piece))))
+
+(defn- pmap-remove
+  "Remove piece from player piece-map store on the board."
+  [board player index]
+  (let [store-index (if (= player :white)
+                      WHITE-PIECE-MAP-STORE BLACK-PIECE-MAP-STORE)]
+    (fill-square board store-index
+                 (dissoc (get board store-index) index))))
+
 (defn- add-piece
   "Adds given piece to board"
   [board index piece]
-  (do
-    (if (white-piece? piece)
-      (assoc white-piece-map index piece)
-      (assoc black-piece-map index piece))
-    (fill-square board index piece)))
+  (let [player (if (white-piece? piece) :white :black)]
+    (-> board
+        (pmap-add player index piece)
+        (fill-square index piece))))
 
 (defn- remove-piece
   "Removes piece from board and updates maps accordingly."
   [board index]
-  (do
-    (if (white-piece? (get board index))
-      (dissoc white-piece-map index)
-      (dissoc black-piece-map index))
-    (clear-square board index)))
+  (let [player (if (white-piece? (get board index))
+                 :white :black)]
+    (-> board
+        (pmap-remove player index)
+        (clear-square index))))
 
 (defn- move-piece
   "Moves piece in the board."
   [board move]
   (let [piece (get board (:from move))
-        occupant (get board (:to move))]
-    (do
-      (if (= occupant EMPTY)
-        (do
-          (remove-piece board (:from move))
-          (add-piece board (:to move) piece))
-        (do
-          (remove-piece board (:to move))
-          (remove-piece board (:from move))
-          (add-piece board (:to move) piece))))))
+        occupant (get board (:to move))
+        player (if (white-piece? piece) :white :black)]
+    (if (= occupant EMPTY)
+      (-> board
+          (remove-piece  (:from move))
+          (add-piece (:to move) piece))
+      (-> board
+          (remove-piece (:to move))
+          (remove-piece (:from move))
+          (add-piece (:to move) piece)))))
 
 (defn- promote-piece
   "Promotes piece in INDEX to VALUE."
   [board index new-piece]
-  (do
-    (remove-piece board index)
-    (add-piece board index new-piece)))
+  (-> board
+      (remove-piece index)
+      (add-piece index new-piece)))
 
 (defn piece-name
   "Gives piece character representation from its board VALUE."
@@ -473,7 +485,7 @@
    to 0x88 board representation."
   [fen-board]
   (reduce (fn [board [index piece]]
-            (fill-square board index (piece-value piece)))
+            (add-piece board index (piece-value piece)))
           (init-game-board)
           (seq/indexed (s/map-str #(str % "EEEEEEEE")
                                   (->> fen-board
@@ -527,18 +539,13 @@
                player (:turn state)
                moving-piece (get board (:from move))]
            (cond (promotion? moving-piece move)
-                 (-> board
-                     (clear-square (:from move))
-                     (fill-square (:to move)
-                                  (piece-value (get-promotion-piece player move))))
+                 (promote-piece board index (piece-value (get-promotion-piece player move)))
                  (castling? moving-piece move)
                  (commit-castle-move player board move
                                      (if (= column (:to move) 2)
                                        QUEEN-SIDE
                                        KING-SIDE))
-                 :else (-> board
-                           (clear-square (:from move))
-                           (fill-square (:to move) moving-piece))))))
+                 :else (move-piece board move)))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
