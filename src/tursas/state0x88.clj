@@ -472,6 +472,13 @@
     (fill-square board WHITE-KING-STORE king-index)
     (fill-square board BLACK-KING-STORE king-index)))
 
+(defn- get-king-index
+  "Returns the king index on the board."
+  [player board]
+  (if (= player :white)
+    (get board WHITE-KING-STORE)
+    (get board BLACK-KING-STORE)))
+
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
   [move state]
