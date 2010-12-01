@@ -44,8 +44,8 @@
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
-(def white-piece-map [])
-(def black-piece-map [])
+(def white-piece-map {})
+(def black-piece-map {})
 
 (defrecord State0x88 [board
                       turn
