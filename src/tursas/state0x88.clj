@@ -453,6 +453,7 @@
 
 (defn- list-knight-moves
   "Returns a list of knight moves."
+  [player board index]
   (map #(move-to-place board index (+ index %) player)
        knight-movement))
 
