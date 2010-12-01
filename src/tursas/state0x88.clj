@@ -142,11 +142,6 @@
   (into (vector-of :byte)
         (vec (replicate 128 -1))))
 
-(defn- clear-en-passant
-  "Makes a new state without an en passant move from given STATE."
-  [state]
-  (assoc state :en-passant "-"))
-
 (defn- fill-square
   "Return new board with given VALUE added to given BOARD's INDEX."
   [board index value]
