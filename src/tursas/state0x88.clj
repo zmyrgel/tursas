@@ -164,7 +164,7 @@
     \E
     (nth "PpRrNnBbQqKk" value)))
 
-(defn piece-char->value
+(defn piece-value
   "Gives pieces character numerical representation from its CHAR."
   [char]
   (case char
@@ -433,7 +433,7 @@
    to 0x88 board representation."
   [fen-board]
   (reduce (fn [board [index piece]]
-            (fill-square board index (piece-char->value piece)))
+            (fill-square board index (piece-value piece)))
           (init-game-board)
           (seq/indexed (s/map-str #(str % "EEEEEEEE")
                                   (->> fen-board
@@ -483,7 +483,7 @@
                  (-> board
                      (clear-square (:from move))
                      (fill-square (:to move)
-                                  (piece-char->value (get-promotion-piece player move))))
+                                  (piece-value (get-promotion-piece player move))))
                  (castling? moving-piece move)
                  (commit-castle-move player board move
                                      (if (= column (:to move) 2)
