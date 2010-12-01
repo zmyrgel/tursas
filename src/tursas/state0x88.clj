@@ -640,21 +640,6 @@
        (:half-moves state) " "
        (:full-moves state)))
 
-(defn- build-piece-map
-  "Builds map with algebraic coordinate as keys
-    and values are piece chars of given corresponding index."
-  [state]
-  (loop [coords '()
-         pieces '()
-         index 0]
-    (if (= index 121)
-      (zipmap coords pieces)
-      (if (board-occupied? (:board state) index)
-        (recur (cons index coords)
-               (cons (piece-name (get (:board state) index)) pieces)
-               (inc index))
-        (recur coords pieces (inc index))))))
-
 (defn- commit-move
   "Commit move in state if legal move.
    On legal move function returns new state after move has been
