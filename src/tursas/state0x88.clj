@@ -215,8 +215,10 @@
 (defn- add-piece
   "Adds given piece to board in state"
   [state index piece]
-  (let [player (if (white-piece? piece) WHITE BLACK)]
-    (fill-square (:board (pmap-add state player index piece)) index piece)))
+  (let [player (if (white-piece? piece) WHITE BLACK)
+        new-board (fill-square (:board state) index piece)
+        new-state (assoc state :board new-board)]
+    (pmap-add new-state index piece)))
 
 (defn- remove-piece
   "Removes piece from board and updates maps accordingly."
