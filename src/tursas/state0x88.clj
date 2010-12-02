@@ -249,12 +249,24 @@
       (remove-piece index)
       (add-piece index new-piece)))
 
-(defn piece-name ;; XXX: fix these for new values!!!
+(defn piece-name
   "Gives piece character representation from its board VALUE."
   [value]
-  (if (= value EMPTY)
-    \E
-    (nth "PpRrNnBbQqKk" value)))
+  (case value
+        BLACK-QUEEN \q
+        BLACK-ROOK \r
+        BLACK-BISHOP \b
+        BLACK-KING \k
+        BLACK-KNIGHT \n
+        BLACK-PAWN \p
+        EMPTY \E
+        WHITE-PAWN \P
+        WHITE-KNIGHT \N
+        WHITE-KING \K
+        WHITE-BISHOP \B
+        WHITE-ROOK \R
+        WHITE-QUEEN \Q
+        "?"))
 
 (defn piece-value
   "Gives pieces character numerical representation from its CHAR."
