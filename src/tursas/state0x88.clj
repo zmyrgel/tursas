@@ -598,11 +598,12 @@
   "Return new castling string for move
     checks for king or rook moves."
   [move state]
-  (assoc state :castling
-         (let [castling (get (:board state) CASTLING-STORE)]
+  (assoc state :board
+         (let [board (:board state)
+               castling (get board CASTLING-STORE)]
            (if (zero? castling)
-           "-"
-           (let [player (:turn state)
+           0
+           (let [player (get board TURN-STORE)
                  [king queen king-sq rook-q-sq rook-k-sq]
                  (if (= player WHITE)
                    ["K" "Q" 0x05 0x00 0x07]
@@ -610,8 +611,8 @@
                  check-str (fn [x] (if (empty? x) "-" x))
                  player-str (reduce str (re-seq (if (= player WHITE)
                                                   #"\p{Upper}" #"\p{Lower}")
-                                                (:castling state)))
-                 opponent-str (s/replace-str player-str "" (:castling state))]
+                                                castling))
+                 opponent-str (s/replace-str player-str "" castling)]
              (reduce str (sort
                           (cond (= (:from move) king-sq)
                                 (check-str opponent-str)
