@@ -734,8 +734,8 @@
   (perft [state depth]
     (if (zero? depth)
       1
-      (let [states (legal-states state)]
-        (reduce + (map #(perft % (dec depth)) states))))))
+      (reduce + (map #(perft % (dec depth))
+                     (legal-states state))))))
 
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
