@@ -626,20 +626,22 @@
 
 (defn- update-turn
   "Updates player turn value on board."
-  [board]
-  (fill-square board TURN-STORE
-               (opponent (get board TURN-STORE))))
+  [state]
+  (assoc state :board
+         (fill-square (:board state) TURN-STORE
+                      (opponent (get (:board state) TURN-STORE)))))
 
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
-  [move board]
-  (fill-square board EN-PASSANT-STORE
-               (let [piece (get board (:from move))]
-                 (if (and (or (= piece WHITE-PAWN)
-                              (= piece BLACK-PAWN))
-                          (= (abs (- (:to move) (:from move))) 0x20))
-                   (/ (+ (:to move) (:from move)) 2)
-                   EMPTY))))
+  [move state]
+  (assoc state :board
+         (fill-square (:board state) EN-PASSANT-STORE
+                      (let [piece (get (:board state) (:from move))]
+                        (if (and (or (= piece WHITE-PAWN)
+                                     (= piece BLACK-PAWN))
+                                 (= (abs (- (:to move) (:from move))) 0x20))
+                          (/ (+ (:to move) (:from move)) 2)
+                          EMPTY)))))
 
 (defn- allowed-move?
   "Checks if given MOVE is allowed in STATE."
