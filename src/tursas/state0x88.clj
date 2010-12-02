@@ -227,27 +227,27 @@
 
 (defn- move-piece
   "Moves piece in the board."
-  [board move]
-  (let [piece (get board (:from move))
-        occupant (get board (:to move))
+  [state move]
+  (let [piece (get (:board state) (:from move))
+        occupant (get (:board state) (:to move))
         player (if (white-piece? piece) WHITE BLACK)]
     (if (= occupant EMPTY)
-      (-> board
-          (remove-piece  (:from move))
+      (-> state
+          (remove-piece (:from move))
           (add-piece (:to move) piece))
-      (-> board
+      (-> state
           (remove-piece (:to move))
           (remove-piece (:from move))
           (add-piece (:to move) piece)))))
 
 (defn- promote-piece
   "Promotes piece in INDEX to VALUE."
-  [board index new-piece]
-  (-> board
+  [state index new-piece]
+  (-> state
       (remove-piece index)
       (add-piece index new-piece)))
 
-(defn piece-name
+(defn piece-name ;; XXX: fix these for new values!!!
   "Gives piece character representation from its board VALUE."
   [value]
   (if (= value EMPTY)
