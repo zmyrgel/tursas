@@ -35,19 +35,19 @@
 (def LAST-MOVE-FROM 0x55)
 (def LAST-MOVE-TO 0x56)
 
-(def EMPTY -1)
-(def WHITE-PAWN 0)
-(def BLACK-PAWN 1)
-(def WHITE-ROOK 2)
-(def BLACK-ROOK 3)
-(def WHITE-KNIGHT 4)
-(def BLACK-KNIGHT 5)
-(def WHITE-BISHOP 6)
-(def BLACK-BISHOP 7)
-(def WHITE-QUEEN 8)
-(def BLACK-QUEEN 9)
-(def WHITE-KING 10)
-(def BLACK-KING 11)
+(def BLACK-QUEEN -7)
+(def BLACK-ROOK -6)
+(def BLACK-BISHOP -5)
+(def BLACK-KING -3)
+(def BLACK-KNIGHT -2)
+(def BLACK-PAWN -1)
+(def EMPTY 0)
+(def WHITE-PAWN 1)
+(def WHITE-KNIGHT 2)
+(def WHITE-KING 3)
+(def WHITE-BISHOP 5)
+(def WHITE-ROOK 6)
+(def WHITE-QUEEN 7)
 
 (def rook-directions (list NORTH SOUTH EAST WEST))
 (def bishop-directions (list NW SW NE SE))
@@ -72,7 +72,7 @@
 (defn- empty-square?
   "Checks if given INDEX on BOARD is empty."
   [board index]
-  (= (get board index) EMPTY))
+  (zero? (get board index)))
 
 (defn- column
   "Get the board column of the given square INDEX."
@@ -97,12 +97,12 @@
 (defn- white-piece?
   "Predicate to check if given piece value belongs to white."
   [piece]
-  (zero? (mod piece 2)))
+  (> piece 0))
 
 (defn- black-piece?
   "Checks if given PIECE value belongs to black."
   [piece]
-  (not (white-piece? piece)))
+  (< piece 0))
 
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
