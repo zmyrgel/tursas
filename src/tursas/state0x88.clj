@@ -523,7 +523,7 @@
    to 0x88 board representation."
   [fen-board]
   (reduce (fn [board [index piece]]
-            (add-piece board index (piece-value piece)))
+            (fill-square board index (piece-value piece)))
           (init-game-board)
           (seq/indexed (s/map-str #(str % "EEEEEEEE")
                                   (->> fen-board
