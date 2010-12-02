@@ -653,26 +653,30 @@
 (defn- update-half-moves
   "Increases half move count on board unless the move
    was pawn or a capture move."
-  [move board]
-  (fill-square board HALF-MOVE-STORE
-               (if (pawn-or-capture-move? board move)
-                 0
-                 (inc (get board HALF-MOVE-STORE)))))
+  [move state]
+  (assoc state :board
+         (fill-square (:board state) HALF-MOVE-STORE
+                      (if (pawn-or-capture-move? (:board state) move)
+                        0
+                        (inc (get (:board state) HALF-MOVE-STORE))))))
 
 (defn- update-full-moves
   "Updates full move count on board."
-  [board]
-  (if (= (get board TURN-STORE BLACK))
-    (fill-square board FULL-MOVE-STORE
-                 (inc (get board FULL-MOVE-STORE)))
-    board))
+  [state]
+  (if (= (get (:board state) TURN-STORE BLACK))
+    (assoc state :board
+           (-> (:board state)
+               (fill-square (:board state) FULL-MOVE-STORE
+                            (inc (get (:board state) FULL-MOVE-STORE)))))
+    state))
 
 (defn- update-move
   "Update the previous move of board."
-  [move board]
-  (-> board
-      (fill-square LAST-MOVE-FROM (:from move))
-      (fill-square LAST-MOVE-TO (:to move))))
+  [move state]
+  (assoc state :board
+         (-> (:board state)
+             (fill-square LAST-MOVE-FROM (:from move))
+             (fill-square LAST-MOVE-TO (:to move)))))
 
 (defn- parse-state
   "Returns FEN representation of given STATE."
