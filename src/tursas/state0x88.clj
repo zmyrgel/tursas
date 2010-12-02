@@ -58,6 +58,10 @@
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
+(def board-indexes (reduce concat
+                           (map #(map (fn [col] (+ col %)) (range 8))
+                                [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
+
 (defrecord State0x88 [board black-piece-map white-piece-map])
 
 (defn- board-index?
