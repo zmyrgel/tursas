@@ -274,16 +274,16 @@
 
 (defn- commit-castle-move
   "Make castling move on board."
-  [player board move castling-side]
+  [player state move castling-side]
   (let [[rook king from to]
         (if (= player WHITE)
           [WHITE-ROOK WHITE-KING [0x00 0x07] [0x03 0x05]]
           [BLACK-ROOK BLACK-KING [0x70 0x77] [0x73 0x75]])]
-    (-> board
-        (clear-square (:from move))
-        (clear-square (get from castling-side))
-        (fill-square (:to move) king)
-        (fill-square (get to castling-side) rook))))
+    (-> state
+        (remove-piece (:from move))
+        (remove-piece (get from castling-side))
+        (add-piece (:to move) king)
+        (add-piece (get to castling-side) rook))))
 
 (defn- slide-in-direction
   "Returns a set of possible moves by sliding piece
