@@ -487,7 +487,7 @@
   (map #(move-to-place board index (+ index %) player)
        knight-movement))
 
-(defn- list-moves-for-piece
+(defn- pseudo-moves-for
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
   (let [board (:board state)
@@ -501,17 +501,17 @@
           \k (list-king-moves player board index)
           '())))
 
-(defn- all-piece-indexes-for
+(defn- piece-indexes
   "Gets a list of all board indexes containing
-    SIDE's pieces in given STATE."
+   player's pieces in given board."
   [board player]
   (keys (pmap-get board player)))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state]
-  (flatten (map #(list-moves-for-piece state %)
-                (all-piece-indexes-for (:board state) (:turn state)))))
+  (flatten (map #(pseudo-moves-for state %)
+                (piece-indexes (:board state) (:turn state)))))
 
 (defn- all-states-for
   "Returns all states attainable by applying move."
@@ -645,7 +645,7 @@
   [state move]
   (not (nil? (some #(and (= (:from move) (:from %))
                          (= (:to move) (:to %)))
-                   (flatten (list-moves-for-piece state (:from move)))))))
+                   (flatten (pseudo-moves-for state (:from move)))))))
 
 (defn- update-half-moves
   "Increases half move count on board unless the move
