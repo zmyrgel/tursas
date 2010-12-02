@@ -746,7 +746,7 @@
 
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
-  [board player]
+  [state player]
   (let [pred? (if (= player WHITE)
                 white-piece? black-piece?)]
     (loop [index 0x77
