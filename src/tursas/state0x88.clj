@@ -35,19 +35,21 @@
 (def LAST-MOVE-FROM 0x55)
 (def LAST-MOVE-TO 0x56)
 
-(def BLACK-QUEEN -7)
-(def BLACK-ROOK -6)
-(def BLACK-BISHOP -5)
-(def BLACK-KING -3)
-(def BLACK-KNIGHT -2)
-(def BLACK-PAWN -1)
-(def EMPTY 0)
+
+
 (def WHITE-PAWN 1)
 (def WHITE-KNIGHT 2)
 (def WHITE-KING 3)
 (def WHITE-BISHOP 5)
 (def WHITE-ROOK 6)
 (def WHITE-QUEEN 7)
+(def EMPTY 10)
+(def BLACK-PAWN 11)
+(def BLACK-KNIGHT 12)
+(def BLACK-KING 13)
+(def BLACK-BISHOP 15)
+(def BLACK-ROOK 16)
+(def BLACK-QUEEN 17)
 
 (def rook-directions (list NORTH SOUTH EAST WEST))
 (def bishop-directions (list NW SW NE SE))
@@ -97,12 +99,12 @@
 (defn- white-piece?
   "Predicate to check if given piece value belongs to white."
   [piece]
-  (> piece 0))
+  (< piece EMPTY))
 
 (defn- black-piece?
   "Checks if given PIECE value belongs to black."
   [piece]
-  (< piece 0))
+  (> piece EMPTY))
 
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
@@ -252,21 +254,7 @@
 (defn piece-name
   "Gives piece character representation from its board VALUE."
   [value]
-  (case value
-        BLACK-QUEEN \q
-        BLACK-ROOK \r
-        BLACK-BISHOP \b
-        BLACK-KING \k
-        BLACK-KNIGHT \n
-        BLACK-PAWN \p
-        EMPTY \E
-        WHITE-PAWN \P
-        WHITE-KNIGHT \N
-        WHITE-KING \K
-        WHITE-BISHOP \B
-        WHITE-ROOK \R
-        WHITE-QUEEN \Q
-        "?"))
+  (nth "EPNKEBRQEEEpnkEbrq" value))
 
 (defn piece-value
   "Gives pieces character numerical representation from its CHAR."
