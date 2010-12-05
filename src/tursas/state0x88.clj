@@ -214,7 +214,12 @@
   "Adds given piece to board in state"
   [state index piece]
   (let [player (if (white-piece? piece) WHITE BLACK)
-        new-board (fill-square (:board state) index piece)
+        new-board  (if (or (= piece BLACK-KING)
+                           (= piece WHITE-KING))
+                     (-> board
+                         (update-king-index index player)
+                         (fill-square index piece))
+                     (fill-square (:board state) index piece))
         new-state (assoc state :board new-board)]
     (pmap-add new-state index piece)))
 
