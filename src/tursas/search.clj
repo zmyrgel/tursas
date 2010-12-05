@@ -1,4 +1,4 @@
-(ns tursas.search2
+(ns tursas.search
   (:use (tursas state eval state0x88)))
 
 ;; treeof X ::= node X (listof (treeof X))
