@@ -12,4 +12,5 @@
   (get-pieces [state])
   (apply-move [state move])
   (perft [state depth])
-  (dynamic? [state]))
+  (dynamic? [state])
+  (full-moves [state]))

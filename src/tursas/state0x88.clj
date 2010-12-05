@@ -776,7 +776,9 @@
       (reduce + (map #(perft % (dec depth))
                      (legal-states state)))))
   (dynamic? [state]
-            false))
+            false)
+  (full-moves [state]
+              (get (:board state) FULL-MOVE-STORE)))
 
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
