@@ -12,7 +12,7 @@
 (def game-state (ref ()))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
-(def game-options (ref {:depth-limit 2
+(def game-options (ref {:depth-limit 4
                         :node-limit 5000
                         :time-limit 15
                         :random-mode false
