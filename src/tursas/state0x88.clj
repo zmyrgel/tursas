@@ -156,14 +156,12 @@
   "Convers castling string to value."
   [castling]
   (let [convert (fn [l v r]
-                  (if (some #(= % l) castling)
-                    (+ r v)
-                    r))]
+                  (if (some #(= % l) castling) (+ r v) r))]
     (->> 0
-        (convert \K 8)
-        (convert \Q 4)
-        (convert \k 2)
-        (convert \q 1))))
+         (convert \K 8)
+         (convert \Q 4)
+         (convert \k 2)
+         (convert \q 1))))
 
 (defn- opponent
   "Return opponent of given player"
