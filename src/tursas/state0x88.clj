@@ -560,7 +560,7 @@
 
 (defn- update-king-index
   "Updates INDEX of given PLAYER's king in outer board."
-  [board king-index player]
+  [board index player]
   (if (= player WHITE)
     (fill-square board WHITE-KING-STORE king-index)
     (fill-square board BLACK-KING-STORE king-index)))
