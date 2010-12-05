@@ -57,7 +57,7 @@
                                 -50 -30 -30 -30 -30 -30 -30 -50])
 (def black-king-table-end-game (reverse white-king-table-end-game))
 
-(defn- piece-value->material-value
+(defn- material-value
   "Gives material value for PIECE."
   [piece]
   (case piece
@@ -75,7 +75,7 @@
         \K KING-VALUE
         0))
 
-(defn- piece-index-score
+(defn- index-score
   "Checks piece-specific index score"
   [piece index game-situation]
   (case piece
@@ -97,7 +97,7 @@
   "Checks which situation, opening, middle or end-game the game is."
   [state pieces]
   (cond (< (count (keys pieces)) 15) :end-game
-        (> (:full-moves state) 10) :middle-game
+        ;;(> (:full-moves state) 10) :middle-game
         :else :opening-game))
 
 (defn evaluate-state
@@ -106,9 +106,11 @@
   [state]
   (let [pieces (get-pieces state)
         situation (check-situation state pieces)]
-    (reduce #(+ (piece-value->material-value (get pieces %))
-                (piece-index-score (get pieces %) % situation))
-            (keys pieces))))
+    10
+    ;;(reduce #(apply + (material-value (get pieces %))
+    ;;(index-score (get pieces %) % situation))
+    ;;(keys pieces))
+    ))
 
 
 
