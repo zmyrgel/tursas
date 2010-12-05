@@ -1,13 +1,12 @@
 (ns tursas.eval
   (:use (tursas state)))
 
-;; piece material values
-(def PAWN-VALUE 10)
-(def BISHOP-VALUE 30)
-(def KNIGHT-VALUE 30)
-(def ROOK-VALUE 50)
-(def QUEEN-VALUE 90)
-(def KING-VALUE 9999)
+(def PAWN-VALUE 100)
+(def BISHOP-VALUE 400)
+(def KNIGHT-VALUE 400)
+(def ROOK-VALUE 600)
+(def QUEEN-VALUE 1200)
+(def KING-VALUE 10000)
 
 (def white-pawn-table [0   0   0   0   0   0   0   0
                        50  50  50  50  50  50  50  50
