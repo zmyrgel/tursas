@@ -1,120 +1,133 @@
 (ns tursas.search
-  (:use (tursas state state0x88)))
+  (:use (tursas state)))
 
-(defrecord Node [label subtree])
+(defrecord TreeNode [label subtree])
 
-(defn- make-applied-node [f label subtree]
-  (do (println "###")
-      (print "MAKE-APPLIED-NODE[f label subtree]:")
-      (prn f label subtree)
-      (println "###"))
-  (Node. (f label) subtree))
+(defn- make-applied-node
+  "Helper function to create a new node with function f
+   applied to label."
+  [f label subtree]
+  (TreeNode. (f label) subtree))
 
-(defn- moves [state]
-  (do (println "###")
-      (print "MOVES[state]: ")
-      (prn state)
-      (println "###")
-      (when (not (nil? state))
-        (legal-states state))))
+(defn- moves
+  "Function to generate all child states for given state.
+   Return nil of nil state given."
+  [state]
+  (when (not (nil? state))
+    (legal-states state)))
 
 (declare redtree)
-(defn- redtree- [f g a subtree]
+(defn- redtree-
+  "Utility function for redtree to work with lists."
+  [f g a subtree]
   (if (empty? (first subtree))
     a
     (g (redtree f g a (first subtree))
        (redtree- f g a (rest subtree)))))
 
-(defn- redtree [f g a node]
-  (f (:label node) (redtree- f g a (:subtree node))))
+(defn- redtree
+  "'Reduce' for trees.
+   This function works only for tree composed of nodes.
+   Uses utility function redtree- to work with lists."
+  [f g a tree]
+  (f (:label tree) (redtree- f g a (:subtree tree))))
 
-(defn- maptree [f node]
-  (redtree (partial make-applied-node f) cons nil node))
+(defn- maptree
+  "Make new game tree out of node by applying f to all labels."
+  [f tree]
+  (redtree (partial make-applied-node f) cons nil tree))
 
 (defn- reptree [f a]
-  (do (println "###")
-      (print "REPTREE[f a]: ")
-      (prn f a)
-      (println "###")
-      (Node. a (lazy-seq (map (partial reptree f) (f a))))))
+  "Creates a tree of nodes from initial value of a by
+   applying f to it.
+   f should be a function of generating children of a."
+  (TreeNode. a (lazy-seq (map (partial reptree f) (f a)))))
 
-(defn- gametree [state]
-  (do (println "###")
-      (print "GAMETREE[state]:")
-      (prn state)
-      (println "###")
-      (reptree moves state)))
+(defn- gametree
+  "Generate infinite tree of nodes from given game state.
+   Uses lazy evaluation to avoid evaluating this immidiately."
+  [state]
+  (reptree moves state))
 
 (declare minimise)
-(defn- maximise [node]
-    (if (empty? (:subtree node))
-      (:label node)
-      (apply max (map minimise (:subtree node)))))
+(defn- maximise
+  "Choose maximum value from tree."
+  [tree]
+  (if (empty? (:subtree tree))
+    (:label tree)
+    (apply max (map minimise (:subtree tree)))))
 
-(defn- minimise [node]
-      (if (empty? (:subtree node))
-        (:label node)
-        (apply min (map maximise (:subtree node)))))
+(defn- minimise
+  "Choose minimum value of tree."
+  [tree]
+  (if (empty? (:subtree tree))
+    (:label tree)
+    (apply min (map maximise (:subtree tree)))))
 
-(defn- prune [depth node]
-  (do (println "###")
-      (print "PRUNE[depth (:label node)]:")
-      (prn depth (:label node))
-      (println "###")
-      (Node. (:label node)
+(defn- prune
+  "Limit given gametree to certain depth.
+   If depth limit is reached, pruning will check if the
+   game state is left in 'dynamic' state and continues search
+   until the dynamic state is resolved."
+  [depth tree]
+  (TreeNode. (:label tree)
              (if (pos? depth)
-               (map (partial prune (dec depth)) (:subtree node))
-               (when (dynamic? (:label node))
-                 (map (partial prune 0) (:subtree node)))))))
+               (map (partial prune (dec depth)) (:subtree tree))
+               (when (dynamic? (:label tree))
+                 (map (partial prune 0) (:subtree tree))))))
 
-(defn evaluate-with-minmax [depth eval-fn state]
+(defn- evaluate-with-minmax
+  "Evaluates given game state with minmax-algorithm."
+  [depth eval-fn state]
   (->> state
        gametree
        (prune depth)
        (maptree eval-fn)
        maximise))
 
-;;;; alpha-beta pruning version ;;;;;
-(defn min-leq? [pot nums]
-  (do (println "###")
-      (print "MIN-LEQ?[pot nums]:")
-      (prn pot nums)
-      (println "###")
-      (cond (empty? nums) false
-            (<= (first nums) pot) true
-            :else (recur pot (rest nums)))))
+(defn- min-leq?
+  "min-leq takes a potential maximum and a list of numbers, and
+   returns true if the minimum of the list of numbers is less than or
+   equal to the potential maximum."
+  [pot nums]
+  (cond (empty? nums) false
+        (<= (first nums) pot) true
+        :else (recur pot (rest nums))))
 
-(defn omit [pot nums]
-  (do (println "###")
-      (print "OMIT[pot nums]:")
-      (prn pot nums)
-      (println "###")
-      (cond (empty? nums) nil
-            (min-leq? pot nums) (omit pot (rest nums))
-            :else (let [minimum (apply min nums)]
-                    (cons minimum
-                          (omit minimum (rest nums)))))))
+(defn- omit
+  "omit is passed a potential maximum - the largest minimum seen
+   so far - and omits any minima which are less than this from nums."
+  [pot nums]
+  (cond (empty? nums) nil
+        (min-leq? pot nums) (omit pot (rest nums))
+        :else (let [minimum (apply min nums)]
+                (cons minimum
+                      (omit minimum (rest nums))))))
 
-(defn mapmin [nums]
-  (do (println "###")
-      (print "MAPMIN[nums]:")
-      (prn nums)
-      (println "###")
-      (let [minimum (apply min nums)]
-        (cons minimum (omit minimum (rest nums))))))
+(defn- mapmin
+  "Makes new list by omitting values."
+  [nums]
+  (let [minimum (apply min nums)]
+    (cons minimum (omit minimum (rest nums)))))
 
 (declare minimise-)
-(defn maximise- [node]
+(defn maximise-
+  "Choose maximise value from node."
+  [node]
   (if (empty? (:subtree node))
     (:label node)
     (mapmin (map minimise- (:subtree node)))))
 
-(defn- minimise- [node]
+(defn- minimise-
+  "Choose minimum value of node."
+  [node]
   (if (empty? (:subtree node))
     (:label node)
     (apply min (map maximise- (:subtree node)))))
 
-(defn evaluate-with-alpha [depth eval-fn state]
+(defn evaluate-with-alpha
+  "Evaluate game tree with alpha-beta."
+  [depth eval-fn state]
   (->> state
        gametree
        (prune depth)
@@ -122,24 +135,30 @@
        maximise-
        (apply max)))
 
-;;;; alpha-beta improvements ;;;;;
-
-(defn higher [node-1 node-2]
+(defn higher?
+  "Predicate to see if first node is larger than second."
+  [node-1 node-2]
   (> (:label node-1)
      (:label node-2)))
 
 (declare lowfirst)
-(defn highfirst [node]
-  (Node. (:label node)
-         (sort higher
-               (map lowfirst (:subtree node)))))
+(defn highfirst
+  "Sorts subtree of tree by putting node with largest node first."
+  [tree]
+  (TreeNode. (:label tree)
+             (sort higher? (map lowfirst (:subtree tree)))))
 
-(defn lowfirst [node]
-  (Node. (:label node)
-         (sort (complement higher)
-               (map highfirst (:subtree node)))))
+(defn lowfirst
+  "Sorts subtree of tree by placing lowest node first."
+  [tree]
+  (TreeNode. (:label tree)
+             (sort (complement higher?) (map highfirst (:subtree tree)))))
 
-(defn evaluate-with-alpha-1 [depth eval-fn state]
+(defn evaluate-with-alpha-1
+  "Alphabeta evaluation as before but improved so that
+   it sorts tree nodes before evaluating them to get
+   better scores sooner which will trigger cutoff's earlier."
+  [depth eval-fn state]
   (->> state
        gametree
        (prune depth)
@@ -148,27 +167,34 @@
        maximise-
        (apply max)))
 
-;;;;; more improvements ;;;;;
+(defn- nodett
+  "Limit nodes subtree of to at most n subnodes."
+  [n label sub]
+  (TreeNode. label (take n sub)))
 
-(defn nodett [n label sub]
-  (Node. label (take n sub)))
+(defn- taketree
+  "Function replaces all the nodes in a tree with
+   nodes with at most n subnodes."
+  [n tree]
+  (redtree (partial nodett n) cons nil tree))
 
-(defn taketree [n node]
-  (redtree (partial nodett n) cons nil node))
-
-(defn evaluate-with-alpha-2 [depth eval-fn state]
+(defn- evaluate-with-alpha-2
+  "Alphabeta evaluating which sorts nodes while
+   evaluating and looks at most 3 CPU moves to
+   limit searching."
+  [depth eval-fn state]
   (->> state
        gametree
        (prune depth)
        (maptree eval-fn)
        highfirst
        (taketree 3)
-        maximise-
-        (apply max)))
+       maximise-
+       (apply max)))
 
 (defn evaluate [depth eval-fn state]
-  ;;(time (evaluate-with-minmax depth eval-fn state))
-  (time (evaluate-with-alpha depth eval-fn state))
+  (time (evaluate-with-minmax depth eval-fn state))
+  ;;(time (evaluate-with-alpha depth eval-fn state))
   ;;(time (evaluate-with-alpha-1 depth eval-fn state))
   ;;(time (evaluate-with-alpha-2 depth eval-fn state))
   ;;(time (evaluate-with-alpha-3 depth eval-fn state))
