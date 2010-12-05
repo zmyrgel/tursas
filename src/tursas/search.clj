@@ -111,7 +111,7 @@
     (cons minimum (omit minimum (rest nums)))))
 
 (declare minimise-)
-(defn maximise-
+(defn- maximise-
   "Choose maximise value from node."
   [node]
   (if (empty? (:subtree node))
@@ -125,7 +125,7 @@
     (:label node)
     (apply min (map maximise- (:subtree node)))))
 
-(defn evaluate-with-alpha
+(defn- evaluate-with-alpha
   "Evaluate game tree with alpha-beta."
   [depth eval-fn state]
   (->> state
@@ -135,26 +135,26 @@
        maximise-
        (apply max)))
 
-(defn higher?
+(defn- higher?
   "Predicate to see if first node is larger than second."
   [node-1 node-2]
   (> (:label node-1)
      (:label node-2)))
 
 (declare lowfirst)
-(defn highfirst
+(defn- highfirst
   "Sorts subtree of tree by putting node with largest node first."
   [tree]
   (TreeNode. (:label tree)
              (sort higher? (map lowfirst (:subtree tree)))))
 
-(defn lowfirst
+(defn- lowfirst
   "Sorts subtree of tree by placing lowest node first."
   [tree]
   (TreeNode. (:label tree)
              (sort (complement higher?) (map highfirst (:subtree tree)))))
 
-(defn evaluate-with-alpha-1
+(defn- evaluate-with-alpha-1
   "Alphabeta evaluation as before but improved so that
    it sorts tree nodes before evaluating them to get
    better scores sooner which will trigger cutoff's earlier."
