@@ -699,7 +699,6 @@
   On illegal move this function will return nil value."
   [state move]
   (when (and (occupied-by? (:board state) (:from move) (:turn state))
-             (not (game-end? state))
              (allowed-move? state move))
     (let [new-state (->> state
                          (update-board move)
@@ -709,8 +708,37 @@
                          (update-half-moves move)
                          update-full-moves
                          (update-move move))]
-      (when (not (in-check? new-state))
+      (when (and (not (check? new-state))
+                 (not (draw? new-state)))
         new-state))))
+
+(defn- fifty-move-rule?
+  "Checks if state is draw according to 50-move rule."
+  [state]
+  (>= (:half-moves state) 50))
+
+(defn- stalemate?
+  "Check if given state is in stalemate."
+  [state]
+  (and (empty? (legal-states state))
+       (check? state)))
+
+(defn- fide-draw?
+  "Checks if state is draw according to FIDE rules:
+   - Both sides have only king piece.
+   - One side has king and bishop or knight vs. others king
+   - One sides king and two knights agains others bare king
+   - Both sides have only bishop of same color besides kings"
+  [state]
+  (let [piece-count (count (keys (get-pieces state)))]
+    (and (=< piece-count 4)
+         (or (= piece-count 2)
+             (and (= piece-count 3)
+                  (or (not (nil? (some #(= \n )))))
+                  (or (not (nil? (some #(= \n ))))))
+             (and (= piece-count 4)
+                  (or ))
+             ))))
 
 (extend-type State0x88
   State
@@ -722,22 +750,23 @@
     (occupied-by? (:board state) index WHITE))
   (apply-move [state move]
     (commit-move state move))
-  (in-check? [state]
-    (threaten-index? (:board state)
-                     (king-index (:board state) (opponent (:turn state)))
-                     (:turn state)))
-  (game-end? [state]
-    (or (>= (:half-moves state) 50)
-        (nil? (king-index (:board state) (:turn state)))))
+  (check? [state]
+          (threaten-index? (:board state)
+                           (king-index (:board state) (opponent (:turn state)))
+                           (:turn state)))
+  (mate? [state]
+         false)
+  (draw? [state]
+         (or (fifty-move-rule? state)
+             (stalemate? state)
+             (fide-draw? state)))
   (state->fen [state]
     (parse-state state))
   (legal-states [state]
-    (filter #(not (or
-                   (nil? %)
-                   (nil? (king-index (:board state) (:turn state)))
-                   (in-check? %)
-                   (game-end? %)))
-            (all-states-for state (all-moves-for state))))
+                (filter #(not (or (nil? %)
+                                  (nil? (king-index (:board state) (:turn state)))
+                                  (check? %)))
+                        (all-states-for state (all-moves-for state))))
   (get-pieces [state]
     (merge (get (:white-piece-map state))
            (get (:black-piece-map state))))
@@ -755,10 +784,12 @@
     (loop [index 0x77
            piece-map {}]
       (if (= index -1)
-        piece-map
+        (if (= player WHITE)
+          (assoc state :white-piece-map piece-map)
+          (assoc state :black-piece-map piece-map))
         (recur (dec index)
-               (if (pred? (get board index))
-                 (assoc piece-map index (get board index))
+               (if (pred? (get (:board state) index))
+                 (assoc piece-map index (get (:board state) index))
                  piece-map))))))
 
 (defprotocol Fen
