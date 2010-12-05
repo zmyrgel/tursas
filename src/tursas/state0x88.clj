@@ -768,8 +768,8 @@
                                   (check? %)))
                         (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-    (merge (get (:white-piece-map state))
-           (get (:black-piece-map state))))
+    (merge (:white-piece-map state)
+           (:black-piece-map state)))
   (perft [state depth]
     (if (zero? depth)
       1
