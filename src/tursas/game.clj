@@ -131,8 +131,7 @@
           "Can't calculate score from empty state!"
           (->> @game-state
                first
-               (evaluate (:depth-limit @game-options))
-               )))))
+               (evaluate (:depth-limit @game-options)))))))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
