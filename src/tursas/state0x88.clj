@@ -185,6 +185,20 @@
   [board index]
   (fill-square board index EMPTY))
 
+(defn- update-king-index
+  "Updates INDEX of given PLAYER's king in outer board."
+  [board index player]
+  (if (= player WHITE)
+    (fill-square board WHITE-KING-STORE index)
+    (fill-square board BLACK-KING-STORE index)))
+
+(defn- get-king-index
+  "Returns the king index on the board."
+  [player board]
+  (if (= player WHITE)
+    (get board WHITE-KING-STORE)
+    (get board BLACK-KING-STORE)))
+
 (defn- pmap-add
   "Add piece to player piece-map store on the board."
   [state player index piece]
@@ -557,20 +571,6 @@
     (if (= player WHITE)
       (Character/toUpperCase (char (:promotion move)))
       (Character/toLowerCase (char (:promotion move))))))
-
-(defn- update-king-index
-  "Updates INDEX of given PLAYER's king in outer board."
-  [board index player]
-  (if (= player WHITE)
-    (fill-square board WHITE-KING-STORE king-index)
-    (fill-square board BLACK-KING-STORE king-index)))
-
-(defn- get-king-index
-  "Returns the king index on the board."
-  [player board]
-  (if (= player WHITE)
-    (get board WHITE-KING-STORE)
-    (get board BLACK-KING-STORE)))
 
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
