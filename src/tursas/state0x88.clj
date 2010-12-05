@@ -228,12 +228,12 @@
   "Adds given piece to board in state"
   [state index piece]
   (let [player (if (white-piece? piece) WHITE BLACK)
-        new-board  (if (or (= piece BLACK-KING)
-                           (= piece WHITE-KING))
-                     (-> board
+        new-board (if (or (= piece BLACK-KING)
+                          (= piece WHITE-KING))
+                    (-> (:board state)
                          (update-king-index index player)
                          (fill-square index piece))
-                     (fill-square (:board state) index piece))
+                    (fill-square (:board state) index piece))
         new-state (assoc state :board new-board)]
     (pmap-add new-state index piece)))
 
@@ -731,7 +731,7 @@
    - Both sides have only bishop of same color besides kings"
   [state]
   (let [piece-count (count (keys (get-pieces state)))]
-    (and (=< piece-count 4)
+    (and (<= piece-count 4)
          (or (= piece-count 2)
              (and (= piece-count 3)
                   (or (not (nil? (some #(= \n )))))
