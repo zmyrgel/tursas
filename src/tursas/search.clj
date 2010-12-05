@@ -62,10 +62,10 @@
       (prn depth (:label node))
       (println "###")
       (Node. (:label node)
-             (lazy-seq (if (pos? depth)
-                         (map (partial prune (dec depth)) (:subtree node))
-                         (when (dynamic? (:label node))
-                           (map (partial prune 0) (:subtree node))))))))
+             (if (pos? depth)
+               (map (partial prune (dec depth)) (:subtree node))
+               (when (dynamic? (:label node))
+                 (map (partial prune 0) (:subtree node)))))))
 
 (defn evaluate-with-minmax [depth eval-fn state]
   (->> state
@@ -75,7 +75,6 @@
        maximise))
 
 ;;;; alpha-beta pruning version ;;;;;
-
 (defn min-leq? [pot nums]
   (do (println "###")
       (print "MIN-LEQ?[pot nums]:")
