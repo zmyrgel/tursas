@@ -13,7 +13,7 @@
   "Function to generate all child states for given state.
    Return nil of nil state given."
   [state]
-  (when (not (nil? state))
+  (when-not (nil? state)
     (legal-states state)))
 
 (declare redtree)
