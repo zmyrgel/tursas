@@ -11,4 +11,5 @@
   (state->fen [state])
   (legal-states [state])
   (get-pieces [state])
-  (perft [state depth]))
+  (perft [state depth])
+  (dynamic? [state]))
