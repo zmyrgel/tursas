@@ -166,23 +166,10 @@
         maximise-
         (apply max)))
 
-;;;; dynamic position consideration ;;;;;
-
-(defn- evaluate-with-alpha-3 [depth eval-fn state]
-  (->> state
-       gametree
-       (prune depth)
-       (maptree eval-fn)
-       highfirst
-       (taketree 3)
-       maximise-
-       (apply max)))
-
 (defn evaluate [depth eval-fn state]
-  (time (evaluate-with-minmax depth eval-fn state))
-  ;;(time (evaluate-with-alpha depth eval-fn state))
+  ;;(time (evaluate-with-minmax depth eval-fn state))
+  (time (evaluate-with-alpha depth eval-fn state))
   ;;(time (evaluate-with-alpha-1 depth eval-fn state))
   ;;(time (evaluate-with-alpha-2 depth eval-fn state))
-  ;;(time (evaluate-with-alpha-3 depth eval-fn state))
   ;;(time (evaluate-with-alpha-3 depth eval-fn state))
   )
