@@ -35,13 +35,14 @@
 (defn- maptree
   "Make new game tree out of node by applying f to all labels."
   [f tree]
-  (redtree (partial make-applied-node f) cons nil tree))
+  (lazy-seq (redtree (partial make-applied-node f) cons nil tree)))
 
-(defn- reptree [f a]
+(defn- reptree
   "Creates a tree of nodes from initial value of a by
    applying f to it.
    f should be a function of generating children of a."
-  (TreeNode. a (lazy-seq (map (partial reptree f) (f a)))))
+  [f a]
+   (lazy-seq (TreeNode. a (map (partial reptree f) (f a)))))
 
 (defn- gametree
   "Generate infinite tree of nodes from given game state.
@@ -70,11 +71,12 @@
    game state is left in 'dynamic' state and continues search
    until the dynamic state is resolved."
   [depth tree]
-  (TreeNode. (:label tree)
-             (if (pos? depth)
-               (map (partial prune (dec depth)) (:subtree tree))
-               (when (dynamic? (:label tree))
-                 (map (partial prune 0) (:subtree tree))))))
+  (lazy-seq
+   (TreeNode. (:label tree)
+              (if (pos? depth)
+                (map (partial prune (dec depth)) (:subtree tree))
+                (when (dynamic? (:label tree))
+                  (map (partial prune 0) (:subtree tree)))))))
 
 (defn- evaluate-with-minmax
   "Evaluates given game state with minmax-algorithm."
