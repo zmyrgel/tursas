@@ -42,7 +42,7 @@
    applying f to it.
    f should be a function of generating children of a."
   [f a]
-   (lazy-seq (TreeNode. a (map (partial reptree f) (f a)))))
+  (lazy-seq (TreeNode. a (map (partial reptree f) (f a)))))
 
 (defn- gametree
   "Generate infinite tree of nodes from given game state.
