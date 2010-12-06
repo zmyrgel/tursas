@@ -88,9 +88,8 @@
        maximise))
 
 (defn- min-leq?
-  "min-leq takes a potential maximum and a list of numbers, and
-   returns true if the minimum of the list of numbers is less than or
-   equal to the potential maximum."
+  "Returns true if the minimum of the list of numbers given is less than or
+   equal to the given potential maximum."
   [pot nums]
   (cond (empty? nums) false
         (<= (first nums) pot) true
@@ -120,7 +119,7 @@
 
 (declare minimise-)
 (defn- maximise-
-  "Choose maximise value from node."
+  "Choose maximum value from node."
   [node]
   (if (empty? (:subtree node))
     (:label node)
