@@ -105,7 +105,7 @@
    Simply calculates the material balance of the board."
   [state]
   (let [pieces (get-pieces state)]
-    (reduce + (map (partial material-value) (vals pieces)))))
+    (reduce + (map #(material-value %) (vals pieces)))))
 
 
 
