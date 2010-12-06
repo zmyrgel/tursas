@@ -99,7 +99,7 @@
   "omit is passed a potential maximum - the largest minimum seen
    so far - and omits any minima which are less than this from nums."
   [pot nums]
-  (cond (empty? nums) nil
+  (cond (empty? nums) nums
         (min-leq? pot nums) (omit pot (rest nums))
         :else (let [minimum (apply min nums)]
                 (cons minimum
