@@ -155,8 +155,10 @@
 (defn- castling-value
   "Convers castling string to value."
   [castling]
-  (let [convert (fn [l v r]
-                  (if (some #(= % l) castling) (+ r v) r))]
+  (letfn [(convert [letter value result]
+                  (if (some #(= % letter) castling)
+                    (+ result value)
+                    result))]
     (->> 0
          (convert \K 8)
          (convert \Q 4)
