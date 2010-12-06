@@ -112,6 +112,12 @@
   (let [minimum (apply min nums)]
     (cons minimum (omit minimum (rest nums)))))
 
+(defn- mapmax
+  "Makes new list by omitting values."
+  [nums]
+  (let [maximum (apply max nums)]
+    (cons maximum (omit maximum (rest nums)))))
+
 (declare minimise-)
 (defn- maximise-
   "Choose maximise value from node."
@@ -125,7 +131,7 @@
   [node]
   (if (empty? (:subtree node))
     (:label node)
-    (apply min (map maximise- (:subtree node)))))
+    (mapmax (map maximise- (:subtree node)))))
 
 (defn- evaluate-with-alpha
   "Evaluate game tree with alpha-beta."
