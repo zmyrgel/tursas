@@ -54,16 +54,16 @@
 (defn- maximise
   "Choose maximum value from tree."
   [tree]
-  (if (empty? (:subtree tree))
-    (:label tree)
-    (apply max (map minimise (:subtree tree)))))
+  (if-let [subtree (seq (:subtree tree))]
+    (apply max (map minimise subtree))
+    (:label tree)))
 
 (defn- minimise
   "Choose minimum value of tree."
   [tree]
-  (if (empty? (:subtree tree))
-    (:label tree)
-    (apply min (map maximise (:subtree tree)))))
+  (if-let [subtree (seq (:subtree tree))]
+    (apply min (map maximise subtree))
+    (:label tree)))
 
 (defn- prune
   "Limit given gametree to certain depth.
@@ -121,16 +121,16 @@
 (defn- maximise-
   "Choose maximum value from node."
   [node]
-  (if (empty? (:subtree node))
-    (:label node)
-    (mapmin (map minimise- (:subtree node)))))
+  (if-let [subtree (seq (:subtree node))]
+    (mapmin (map minimise- subtree))
+    (:label node)))
 
 (defn- minimise-
   "Choose minimum value of node."
   [node]
-  (if (empty? (:subtree node))
-    (:label node)
-    (mapmax (map maximise- (:subtree node)))))
+  (if-let [subtree (seq (:subtree node))]
+    (mapmax (map maximise- subtree))
+    (:label node)))
 
 (defn- evaluate-with-alpha
   "Evaluate game tree with alpha-beta."
