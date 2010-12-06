@@ -20,13 +20,14 @@
 (defn- redtree-
   "Utility function for redtree to work with lists."
   [f g a subtree]
-  (if (empty? (first subtree))
-    a
-    (g (redtree f g a (first subtree))
-       (redtree- f g a (rest subtree)))))
+  (lazy-seq
+   (if-let [[x & xs] (seq subtree)]
+     (g (redtree f g a x)
+        (redtree- f g a xs))
+     a)))
 
 (defn- redtree
-  "'Reduce' for trees.
+  "a 'Reduce' for trees.
    This function works only for tree composed of nodes.
    Uses utility function redtree- to work with lists."
   [f g a tree]
@@ -35,14 +36,14 @@
 (defn- maptree
   "Make new game tree out of node by applying f to all labels."
   [f tree]
-  (lazy-seq (redtree (partial make-applied-node f) cons nil tree)))
+  (redtree (partial make-applied-node f) cons nil tree))
 
 (defn- reptree
   "Creates a tree of nodes from initial value of a by
    applying f to it.
    f should be a function of generating children of a."
   [f a]
-  (lazy-seq (TreeNode. a (map (partial reptree f) (f a)))))
+  (TreeNode. a (lazy-seq (map (partial reptree f) (f a)))))
 
 (defn- gametree
   "Generate infinite tree of nodes from given game state.
@@ -71,8 +72,8 @@
    game state is left in 'dynamic' state and continues search
    until the dynamic state is resolved."
   [depth tree]
-  (lazy-seq
-   (TreeNode. (:label tree)
+  (TreeNode. (:label tree)
+             (lazy-seq
               (if (pos? depth)
                 (map (partial prune (dec depth)) (:subtree tree))
                 (when (dynamic? (:label tree))
