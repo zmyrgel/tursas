@@ -154,13 +154,15 @@
   "Sorts subtree of tree by putting node with largest node first."
   [tree]
   (TreeNode. (:label tree)
-             (sort higher? (map lowfirst (:subtree tree)))))
+             (lazy-seq (sort higher?
+                             (map lowfirst (:subtree tree))))))
 
 (defn- lowfirst
   "Sorts subtree of tree by placing lowest node first."
   [tree]
   (TreeNode. (:label tree)
-             (sort (complement higher?) (map highfirst (:subtree tree)))))
+             (lazy-seq (sort (complement higher?)
+                             (map highfirst (:subtree tree))))))
 
 (defn- evaluate-with-alpha-1
   "Alphabeta evaluation as before but improved so that
