@@ -552,7 +552,7 @@
   "Returns a set of all available moves for SIDE in STATE."
   [state]
   (flatten (map #(pseudo-moves-for state %)
-                (piece-indexes (:board state) (:turn state)))))
+                (piece-indexes (:board state) (turn state)))))
 
 (defn- all-states-for
   "Returns all states attainable by applying move."
@@ -601,7 +601,7 @@
   [move state]
   (assoc state :board
          (let [board (:board state)
-               player (:turn state)
+               player (turn state)
                moving-piece (get board (:from move))]
            (cond (promotion? moving-piece move)
                  (promote-piece board (:to move)
@@ -655,7 +655,7 @@
   [state]
   (assoc state :board
          (fill-square (:board state) TURN-STORE
-                      (opponent (get (:board state) TURN-STORE)))))
+                      (opponent (turn state)))))
 
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
@@ -689,7 +689,7 @@
 (defn- update-full-moves
   "Updates full move count on board."
   [state]
-  (if (= (get (:board state) TURN-STORE BLACK))
+  (if (= (turn state) BLACK)
     (assoc state :board
            (-> (:board state)
                (fill-square (:board state) FULL-MOVE-STORE
@@ -709,7 +709,7 @@
   [state]
   (let [board (:board state)]
     (str (board->fen-board board) " "
-         (if (= (get board TURN-STORE) WHITE) "w" "b") " "
+         (if (= (turn state) WHITE) "w" "b") " "
          (castling-str board) " "
          (index->algebraic (get board EN-PASSANT-STORE)) " "
          (get board HALF-MOVE-STORE) " "
@@ -721,7 +721,9 @@
   applied to previous state.
   On illegal move this function will return nil value."
   [state move]
-  (when (and (occupied-by? (:board state) (:from move) (:turn state))
+  (when (and (occupied-by? (:board state)
+                           (:from move)
+                           (turn state))
              (allowed-move? state move))
     (let [new-state (->> state
                          (update-board move)
@@ -773,12 +775,10 @@
           (occupied-by? (:board state) index BLACK))
   (white? [state index]
           (occupied-by? (:board state) index WHITE))
-  (apply-move [state move]
-              (commit-move state move))
   (check? [state]
           (threaten-index? (:board state)
-                           (king-index (:board state) (opponent (:turn state)))
-                           (:turn state)))
+                           (king-index (:board state) (opponent (turn state)))
+                           (turn state)))
   (mate? [state]
          false)
   (draw? [state]
@@ -787,14 +787,18 @@
              (stalemate? state)))
   (state->fen [state]
               (parse-state state))
+  (apply-move [state move]
+              (commit-move state move))
   (legal-states [state]
                 (filter #(not (or (nil? %)
-                                  (nil? (king-index (:board state) (:turn state)))
+                                  (nil? (king-index (:board state) (turn state)))
                                   (check? %)))
                         (all-states-for state (all-moves-for state))))
   (get-pieces [state]
               (merge (:white-pieces state)
                      (:black-pieces state)))
+  (turn [state]
+        (get (:board state) TURN-STORE))
   (perft [state depth]
          (if (zero? depth)
            1
