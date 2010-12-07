@@ -108,8 +108,7 @@
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
   [board index]
-  (and (board-index? index)
-       (not (empty-square? board index))))
+  (not (empty-square? board index)))
 
 (defn- occupied-by?
   "Checks if given BOARD INDEX is occupied by PLAYER."
