@@ -19,9 +19,9 @@
 (declare redtree)
 (defn- redtree-
   "Utility function for redtree to work with lists."
-  [f g a subtree]
+  [f g a tree]
   (lazy-seq
-   (if-let [[x & xs] (seq subtree)]
+   (if-let [[x & xs] (seq tree)]
      (g (redtree f g a x)
         (redtree- f g a xs))
      a)))
