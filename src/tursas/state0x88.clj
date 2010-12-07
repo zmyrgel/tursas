@@ -34,6 +34,7 @@
 (def EN-PASSANT-STORE 0x59)
 (def LAST-MOVE-FROM 0x7a)
 (def LAST-MOVE-TO 0x7b)
+(def DYNAMIC-STORE 0x5a)
 
 (def WHITE-PAWN 1)
 (def WHITE-KNIGHT 2)
@@ -226,6 +227,12 @@
     (:white-piece-map state)
     (:black-piece-map state)))
 
+(defn- set-dynamic
+  "Sets the states dynamic value, now only set on captures."
+  [state value]
+  (assoc state :board
+         (fill-square (:board state) DYNAMIC-STORE value)))
+
 (defn- add-piece
   "Adds given piece to board in state"
   [state index piece]
@@ -255,11 +262,13 @@
     (if (= occupant EMPTY)
       (-> state
           (remove-piece (:from move))
-          (add-piece (:to move) piece))
+          (add-piece (:to move) piece)
+          (set-dynamic 0))
       (-> state
           (remove-piece (:to move))
           (remove-piece (:from move))
-          (add-piece (:to move) piece)))))
+          (add-piece (:to move) piece)
+          (set-dynamic 1)))))
 
 (defn- promote-piece
   "Promotes piece in INDEX to VALUE."
@@ -778,7 +787,7 @@
       (reduce + (map #(perft % (dec depth))
                      (legal-states state)))))
   (dynamic? [state]
-            false)
+    (= (get (:board state) DYNAMIC-STORE) 1))
   (full-moves [state]
               (get (:board state) FULL-MOVE-STORE)))
 
