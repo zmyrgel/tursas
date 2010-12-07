@@ -604,10 +604,9 @@
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
   [board move]
-  (let [piece (get board (:from move))]
-    (or (= piece WHITE-PAWN)
-        (= piece BLACK-PAWN)
-        (not (= (get board (:to move)) EMPTY)))))
+  (or (= (get board (:from move)) WHITE-PAWN)
+      (= (get board (:from move)) BLACK-PAWN)
+      (not (= (get board (:to move)) EMPTY))))
 
 (defn- update-castling
   "Return new castling string for move
