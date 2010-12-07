@@ -316,16 +316,16 @@
   "Returns a set of possible moves by sliding piece
    from INDEX to DIRECTION in given STATE."
   [player board index direction]
-  (loop [target-index (+ index direction)
+  (loop [new-index (+ index direction)
          moves ()]
-    (if (or (not (board-index? target-index))
-            (occupied-by? board target-index player))
+    (if (or (not (board-index? new-index))
+            (occupied-by? board new-index player))
       moves
-      (if (not (board-occupied? board (get board target-index)))
-        (recur (+ target-index direction)
-               (cons (make-move index target-index nil)
+      (if (not (board-occupied? board (get board new-index)))
+        (recur (+ new-index direction)
+               (cons (make-move index new-index nil)
                      moves))
-        (cons (make-move index target-index nil)
+        (cons (make-move index new-index nil)
               moves)))))
 
 (defn- move-to-place
