@@ -717,7 +717,7 @@
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
   [state]
-  (>= (:half-moves state) 50))
+  (>= (get (:board state) HALF-MOVE-STORE) 50))
 
 (defn- stalemate?
   "Check if given state is in stalemate."
