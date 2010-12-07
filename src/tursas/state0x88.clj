@@ -63,7 +63,7 @@
                            (map #(map (fn [col] (+ col %)) (range 8))
                                 [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
-(defrecord State0x88 [board black-piece-map white-piece-map])
+(defrecord State0x88 [board black-pieces white-pieces])
 
 (defn- board-index?
   "Does the given INDEX represent a square on the board?"
@@ -205,26 +205,26 @@
   "Add piece to player piece-map store on the board."
   [state player index piece]
   (if (= player WHITE)
-    (assoc state :white-piece-map
-           (assoc (:white-piece-map state) index piece))
-    (assoc state :black-piece-map
-           (assoc (:black-piece-map state) index piece))))
+    (assoc state :white-pieces
+           (assoc (:white-pieces state) index piece))
+    (assoc state :black-pieces
+           (assoc (:black-pieces state) index piece))))
 
 (defn- pmap-remove
   "Remove piece from player piece-map store on the board."
   [state player index]
   (if (= player WHITE)
-    (assoc state :white-piece-map
-           (dissoc (:white-piece-map state) index))
-    (assoc state :black-piece-map
-           (dissoc (:black-piece-map state) index))))
+    (assoc state :white-pieces
+           (dissoc (:white-pieces state) index))
+    (assoc state :black-pieces
+           (dissoc (:black-pieces state) index))))
 
 (defn- pmap-get
   "Returns the players piece-map from board."
   [state player]
   (if (= player WHITE)
-    (:white-piece-map state)
-    (:black-piece-map state)))
+    (:white-pieces state)
+    (:black-pieces state)))
 
 (defn- set-dynamic
   "Sets the states dynamic value, now only set on captures."
@@ -793,8 +793,8 @@
                                   (check? %)))
                         (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-              (merge (:white-piece-map state)
-                     (:black-piece-map state)))
+              (merge (:white-pieces state)
+                     (:black-pieces state)))
   (perft [state depth]
          (if (zero? depth)
            1
@@ -807,19 +807,21 @@
 
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
-  [state player]
-  (let [pred? (if (= player WHITE)
-                white-piece? black-piece?)]
-    (loop [index 0x77
-           piece-map {}]
-      (if (= index -1)
-        (if (= player WHITE)
-          (assoc state :white-piece-map piece-map)
-          (assoc state :black-piece-map piece-map))
-        (recur (dec index)
-               (if (pred? (get (:board state) index))
-                 (assoc piece-map index (get (:board state) index))
-                 piece-map))))))
+  [state]
+  (loop [index 0x77
+         blacks {}
+         whites {}]
+    (if (= index -1)
+      (-> state
+          (assoc :white-pieces whites)
+          (assoc :black-pieces blacks))
+      (recur (dec index)
+             (if (black-piece? (get (:board state) index))
+               (assoc blacks index (get (:board state) index))
+               blacks)
+             (if (white-piece? (get (:board state) index))
+               (assoc whites index (get (:board state) index))
+               whites)))))
 
 (defprotocol Fen
   (fen->state [fen]))
@@ -840,5 +842,4 @@
                                     (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
                                 nil
                                 nil)
-                    (add-pieces :white)
-                    (add-pieces :black)))))
+                    (add-pieces)))))
