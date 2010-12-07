@@ -3,16 +3,15 @@
 
 (defn- tree-reduce
   "Apply function f to each label of tree."
-  [f g a tree]
-  (if-let [[x & xs] (seq tree)]
-    (f x (map (partial tree-reduce f g a) xs))
-    a))
+  [f g tree]
+  (when-let [[x & xs] (seq tree)]
+    (f x (map (partial tree-reduce f g) xs))))
 
 (defn- maptree
   "Make new gametree by applying f to all labels of current tree."
   [f tree]
   (lazy-seq
-   (tree-reduce (partial (fn [f x y] (cons (f x) y)) f) cons nil tree)))
+   (tree-reduce (partial (fn [f x y] (cons (f x) y)) f) cons tree)))
 
 (defn- reptree
   "Creates a tree of nodes from initial value of a by
