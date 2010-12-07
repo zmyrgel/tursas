@@ -11,8 +11,7 @@
 (defn- maptree
   "Make new gametree by applying f to all labels of current tree."
   [f tree]
-  (lazy-seq
-   (tree-reduce (partial (fn [f x y] (cons (f x) y)) f) tree)))
+  (tree-reduce (partial (fn [f x y] (cons (f x) y)) f) tree))
 
 (defn- reptree
   "Creates a tree of nodes from initial value of a by
