@@ -458,7 +458,8 @@
   [player board index]
   (let [direction (if (= player WHITE) NORTH SOUTH)
         move-index (+ index direction)]
-    (if (not (board-occupied? board move-index))
+    (if (and (board-index? move-index)
+             (not (board-occupied? board move-index)))
       (if (and (not (board-occupied? board (+ move-index direction)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
@@ -478,7 +479,8 @@
         en-passant-index (get board EN-PASSANT-STORE)]
     (map #(if (or (and (board-index? %)
                        (= en-passant-index %))
-                  (and (board-occupied? board %)
+                  (and (board-index? %)
+                       (board-occupied? board %)
                        (not (occupied-by? board % player))))
             (list (make-move index % nil))
             '())
