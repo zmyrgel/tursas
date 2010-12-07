@@ -769,8 +769,8 @@
          false)
   (draw? [state]
          (or (fifty-move-rule? state)
-             (stalemate? state)
-             (fide-draw? state)))
+             (fide-draw? state)
+             (stalemate? state)))
   (state->fen [state]
     (parse-state state))
   (legal-states [state]
