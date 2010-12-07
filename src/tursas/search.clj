@@ -4,8 +4,9 @@
 (defn- tree-reduce
   "Apply function f to each label of tree."
   [f g tree]
-  (when-let [[x & xs] (seq tree)]
-    (f x (map (partial tree-reduce f g) xs))))
+  (lazy-seq
+   (when-let [[x & xs] (seq tree)]
+     (f x (map (partial tree-reduce f g) xs)))))
 
 (defn- maptree
   "Make new gametree by applying f to all labels of current tree."
