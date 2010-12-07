@@ -3,12 +3,6 @@
 
 (defrecord TreeNode [label subtree])
 
-(defn- make-applied-node
-  "Helper function to create a new node with function f
-   applied to label."
-  [f label subtree]
-  (TreeNode. (f label) subtree))
-
 (defn- moves
   "Function to generate all child states for given state.
    Return nil of nil state given."
@@ -36,7 +30,7 @@
 (defn- maptree
   "Make new game tree out of node by applying f to all labels."
   [f tree]
-  (redtree (partial make-applied-node f) cons nil tree))
+  (redtree (partial (fn [f x y] (TreeNode. (f x) y)) f) cons nil tree))
 
 (defn- reptree
   "Creates a tree of nodes from initial value of a by
