@@ -156,9 +156,9 @@
   "Convers castling string to value."
   [castling]
   (letfn [(convert [letter value result]
-                  (if (some #(= % letter) castling)
-                    (+ result value)
-                    result))]
+                   (if (some #(= % letter) castling)
+                     (+ result value)
+                     result))]
     (->> 0
          (convert \K 8)
          (convert \Q 4)
@@ -239,8 +239,8 @@
         new-board (if (or (= piece BLACK-KING)
                           (= piece WHITE-KING))
                     (-> (:board state)
-                         (update-king-index index player)
-                         (fill-square index piece))
+                        (update-king-index index player)
+                        (fill-square index piece))
                     (fill-square (:board state) index piece))
         new-state (assoc state :board new-board)]
     (pmap-add new-state index piece)))
@@ -615,27 +615,27 @@
          (let [board (:board state)
                castling (get board CASTLING-STORE)]
            (if (zero? castling)
-           0
-           (let [player (get board TURN-STORE)
-                 [king queen king-sq rook-q-sq rook-k-sq]
-                 (if (= player WHITE)
-                   ["K" "Q" 0x05 0x00 0x07]
-                   ["k" "q" 0x75 0x70 0x77])
-                 check-str (fn [x] (if (empty? x) "-" x))
-                 player-str (reduce str (re-seq (if (= player WHITE)
-                                                  #"\p{Upper}" #"\p{Lower}")
-                                                castling))
-                 opponent-str (s/replace-str player-str "" castling)]
-             (reduce str (sort
-                          (cond (= (:from move) king-sq)
-                                (check-str opponent-str)
-                                (= (:from move) rook-q-sq)
-                                (check-str (str (s/replace-str queen "" player-str)
-                                                opponent-str))
-                                (= (:from move) rook-k-sq)
-                                (check-str (str (s/replace-str king "" player-str)
-                                                opponent-str))
-                                :else (str player-str opponent-str)))))))))
+             0
+             (let [player (get board TURN-STORE)
+                   [king queen king-sq rook-q-sq rook-k-sq]
+                   (if (= player WHITE)
+                     ["K" "Q" 0x05 0x00 0x07]
+                     ["k" "q" 0x75 0x70 0x77])
+                   check-str (fn [x] (if (empty? x) "-" x))
+                   player-str (reduce str (re-seq (if (= player WHITE)
+                                                    #"\p{Upper}" #"\p{Lower}")
+                                                  castling))
+                   opponent-str (s/replace-str player-str "" castling)]
+               (reduce str (sort
+                            (cond (= (:from move) king-sq)
+                                  (check-str opponent-str)
+                                  (= (:from move) rook-q-sq)
+                                  (check-str (str (s/replace-str queen "" player-str)
+                                                  opponent-str))
+                                  (= (:from move) rook-k-sq)
+                                  (check-str (str (s/replace-str king "" player-str)
+                                                  opponent-str))
+                                  :else (str player-str opponent-str)))))))))
 
 (defn- update-turn
   "Updates player turn value on board."
@@ -740,26 +740,28 @@
    - One sides king and two knights agains others bare king
    - Both sides have only bishop of same color besides kings"
   [state]
-  (let [piece-count (count (keys (get-pieces state)))]
-    (and (<= piece-count 4)
-         (or (= piece-count 2)
-             (and (= piece-count 3)
-                  (or (not (nil? (some #(= \n )))))
-                  (or (not (nil? (some #(= \n ))))))
-             (and (= piece-count 4)
-                  (or ))
-             ))))
+  false
+  ;; (let [piece-count (count (keys (get-pieces state)))]
+  ;;   (and (<= piece-count 4)
+  ;;        (or (= piece-count 2)
+  ;;            (and (= piece-count 3)
+  ;;                 (or (not (nil? (some #(= \n ) ))))
+  ;;                 (or (not (nil? (some #(= \n ))))))
+  ;;            (and (= piece-count 4)
+  ;;                 )
+  ;;            )))
+  )
 
 (extend-type State0x88
   State
   (occupied? [state index]
-    (board-occupied? (:board state) index))
+             (board-occupied? (:board state) index))
   (black? [state index]
-    (occupied-by? (:board state) index BLACK))
+          (occupied-by? (:board state) index BLACK))
   (white? [state index]
-    (occupied-by? (:board state) index WHITE))
+          (occupied-by? (:board state) index WHITE))
   (apply-move [state move]
-    (commit-move state move))
+              (commit-move state move))
   (check? [state]
           (threaten-index? (:board state)
                            (king-index (:board state) (opponent (:turn state)))
@@ -771,22 +773,22 @@
              (fide-draw? state)
              (stalemate? state)))
   (state->fen [state]
-    (parse-state state))
+              (parse-state state))
   (legal-states [state]
                 (filter #(not (or (nil? %)
                                   (nil? (king-index (:board state) (:turn state)))
                                   (check? %)))
                         (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-    (merge (:white-piece-map state)
-           (:black-piece-map state)))
+              (merge (:white-piece-map state)
+                     (:black-piece-map state)))
   (perft [state depth]
-    (if (zero? depth)
-      1
-      (reduce + (map #(perft % (dec depth))
-                     (legal-states state)))))
+         (if (zero? depth)
+           1
+           (reduce + (map #(perft % (dec depth))
+                          (legal-states state)))))
   (dynamic? [state]
-    (= (get (:board state) DYNAMIC-STORE) 1))
+            (= (get (:board state) DYNAMIC-STORE) 1))
   (full-moves [state]
               (get (:board state) FULL-MOVE-STORE)))
 
@@ -812,18 +814,18 @@
 (extend-type String
   Fen
   (fen->state [fen]
-    (when-let [fen-list (re-seq #"\S+" fen)]
-      (-> (State0x88. (-> (fen-board->0x88board (first fen-list))
-                          (fill-square TURN-STORE (if (= (second fen-list) "w")
-                                                    WHITE BLACK))
-                          (fill-square CASTLING-STORE (castling-value
-                                                       (nth fen-list 2)))
-                          (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
-                                                          EN-PASSANT-STORE
-                                                          (algebraic->index (nth fen-list 3))))
-                          (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-                          (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
-                      nil
-                      nil)
-          (add-pieces :white)
-          (add-pieces :black)))))
+              (when-let [fen-list (re-seq #"\S+" fen)]
+                (-> (State0x88. (-> (fen-board->0x88board (first fen-list))
+                                    (fill-square TURN-STORE (if (= (second fen-list) "w")
+                                                              WHITE BLACK))
+                                    (fill-square CASTLING-STORE (castling-value
+                                                                 (nth fen-list 2)))
+                                    (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
+                                                                    EN-PASSANT-STORE
+                                                                    (algebraic->index (nth fen-list 3))))
+                                    (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
+                                    (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
+                                nil
+                                nil)
+                    (add-pieces :white)
+                    (add-pieces :black)))))
