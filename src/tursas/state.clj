@@ -11,6 +11,7 @@
   (legal-states [state])
   (get-pieces [state])
   (apply-move [state move])
+  (turn [state])
   (perft [state depth])
   (dynamic? [state])
   (full-moves [state]))
