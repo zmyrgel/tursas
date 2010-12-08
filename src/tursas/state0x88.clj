@@ -168,20 +168,21 @@
   "Checks if state is draw according to FIDE rules:
    - Both sides have only king piece.
    - One side has king and bishop or knight vs. others king
-   - One sides king and two knights agains others bare king
-   - Both sides have only bishop of same color besides kings"
+   - One sides king and two knights agains others bare king (not yet)
+   - Both sides have only bishop of same color besides kings (not yet)"
   [state]
-  false
-  ;; (let [piece-count (count (keys (get-pieces state)))]
-  ;;   (and (<= piece-count 4)
-  ;;        (or (= piece-count 2)
-  ;;            (and (= piece-count 3)
-  ;;                 (or (not (nil? (some #(= \n ) ))))
-  ;;                 (or (not (nil? (some #(= \n ))))))
-  ;;            (and (= piece-count 4)
-  ;;                 )
-  ;;            )))
-  )
+  (let [pieces (get-pieces state)
+        piece-count (count (keys pieces))]
+    (and (<= piece-count 4)
+         (or (= piece-count 2)
+             (and (= piece-count 3)
+                  (or (not (nil? (some #(= BLACK-KNIGHT %) pieces))))
+                  (or (not (nil? (some #(= BLACK-BISHOP %) pieces))))
+                  (or (not (nil? (some #(= WHITE-KNIGHT %) pieces))))
+                  (or (not (nil? (some #(= WHITE-BISHOP %) pieces)))))
+             ;;(and (= piece-count 4)
+             ;;(or ))
+             ))))
 
 (defn- castling-str
   "Converts internal castling representation to string."
