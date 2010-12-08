@@ -841,12 +841,12 @@
                          (fill-square TURN-STORE (if (= (second fen-list) "w")
                                                    WHITE BLACK))
                          (fill-square CASTLING-STORE (castling-value
-                                                      (nth fen-list 2)))
-                         (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
+                                                      (get fen-list 2)))
+                         (fill-square EN-PASSANT-STORE (if (= (get fen-list 3) "-")
                                                          EN-PASSANT-STORE
-                                                         (algebraic->index (nth fen-list 3))))
-                         (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-                         (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
+                                                         (algebraic->index (get fen-list 3))))
+                         (fill-square HALF-MOVE-STORE (Integer/parseInt (get fen-list 4)))
+                         (fill-square FULL-MOVE-STORE (Integer/parseInt (get fen-list 5))))
                      nil
                      nil)
                     (add-pieces)))))
