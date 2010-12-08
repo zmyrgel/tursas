@@ -32,9 +32,14 @@
 (def FULL-MOVE-STORE 0x3a)
 (def CASTLING-STORE 0x58)
 (def EN-PASSANT-STORE 0x59)
+(def DYNAMIC-STORE 0x5a)
+(def GAME-STATUS-STORE 0x5b)
 (def LAST-MOVE-FROM 0x7a)
 (def LAST-MOVE-TO 0x7b)
-(def DYNAMIC-STORE 0x5a)
+
+(def MATE-BIT 4)
+(def CHECK-BIT 2)
+(def DRAW-BIT 1)
 
 (def BLACK-QUEEN -6)
 (def BLACK-ROOK -5)
@@ -141,6 +146,43 @@
                 (if (= side KING-SIDE) 2 1))]
     (pos? (bit-and value castling))))
 
+(defn- pawn-or-capture-move?
+  "Predicate to see if move was pawn move or a capture"
+  [board move]
+  (or (= (get board (:from move)) WHITE-PAWN)
+      (= (get board (:from move)) BLACK-PAWN)
+      (not (= (get board (:to move)) EMPTY))))
+
+(defn- fifty-move-rule?
+  "Checks if state is draw according to 50-move rule."
+  [state]
+  (>= (get (:board state) HALF-MOVE-STORE) 50))
+
+(defn- stalemate?
+  "Check if given state is in stalemate."
+  [state]
+  (and (not (check? state))
+       (empty? (legal-states state))))
+
+(defn- fide-draw?
+  "Checks if state is draw according to FIDE rules:
+   - Both sides have only king piece.
+   - One side has king and bishop or knight vs. others king
+   - One sides king and two knights agains others bare king
+   - Both sides have only bishop of same color besides kings"
+  [state]
+  false
+  ;; (let [piece-count (count (keys (get-pieces state)))]
+  ;;   (and (<= piece-count 4)
+  ;;        (or (= piece-count 2)
+  ;;            (and (= piece-count 3)
+  ;;                 (or (not (nil? (some #(= \n ) ))))
+  ;;                 (or (not (nil? (some #(= \n ))))))
+  ;;            (and (= piece-count 4)
+  ;;                 )
+  ;;            )))
+  )
+
 (defn- castling-str
   "Converts internal castling representation to string."
   [board]
@@ -156,9 +198,9 @@
   "Convers castling string to value."
   [castling]
   (letfn [(convert [letter value result]
-                   (if (some #(= % letter) castling)
-                     (+ result value)
-                     result))]
+            (if (some #(= % letter) castling)
+              (+ result value)
+              result))]
     (->> 0
          (convert \K 8)
          (convert \Q 4)
@@ -561,6 +603,13 @@
   [state moves]
   (map #(apply-move state %) moves))
 
+(defn- allowed-move?
+  "Checks if given MOVE is allowed in STATE."
+  [state move]
+  (not (nil? (some #(and (= (:from move) (:from %))
+                         (= (:to move) (:to %)))
+                   (flatten (pseudo-moves-for state (:from move)))))))
+
 (defn- fen-board->0x88board
   "Converts given FEN board representation
    to 0x88 board representation."
@@ -587,6 +636,17 @@
   [board]
   (s/join "/" (map #(make-fen-row board %)
                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
+
+(defn- parse-state
+  "Returns FEN representation of given STATE."
+  [state]
+  (let [board (:board state)]
+    (str (board->fen-board board) " "
+         (if (= (turn state) WHITE) "w" "b") " "
+         (castling-str board) " "
+         (index->algebraic (get board EN-PASSANT-STORE)) " "
+         (get board HALF-MOVE-STORE) " "
+         (get board FULL-MOVE-STORE))))
 
 (defn- get-promotion-piece
   "Helper function to return new piece char.
@@ -615,14 +675,6 @@
                                        QUEEN-SIDE
                                        KING-SIDE)))
           :else (move-piece state move))))
-
-
-(defn- pawn-or-capture-move?
-  "Predicate to see if move was pawn move or a capture"
-  [board move]
-  (or (= (get board (:from move)) WHITE-PAWN)
-      (= (get board (:from move)) BLACK-PAWN)
-      (not (= (get board (:to move)) EMPTY))))
 
 (defn- update-castling
   "Updates states castling value for move
@@ -664,13 +716,6 @@
                           (/ (+ (:to move) (:from move)) 2)
                           EMPTY)))))
 
-(defn- allowed-move?
-  "Checks if given MOVE is allowed in STATE."
-  [state move]
-  (not (nil? (some #(and (= (:from move) (:from %))
-                         (= (:to move) (:to %)))
-                   (flatten (pseudo-moves-for state (:from move)))))))
-
 (defn- update-half-moves
   "Increases half move count on board unless the move
    was pawn or a capture move."
@@ -698,16 +743,40 @@
              (fill-square LAST-MOVE-FROM (:from move))
              (fill-square LAST-MOVE-TO (:to move)))))
 
-(defn- parse-state
-  "Returns FEN representation of given STATE."
+(defn- update-game-status
+  "Updates MATE, DRAW and CHECK status bit on the state."
   [state]
-  (let [board (:board state)]
-    (str (board->fen-board board) " "
-         (if (= (turn state) WHITE) "w" "b") " "
-         (castling-str board) " "
-         (index->algebraic (get board EN-PASSANT-STORE)) " "
-         (get board HALF-MOVE-STORE) " "
-         (get board FULL-MOVE-STORE))))
+  (assoc state :board
+         (let [in-check? (threaten-index? (:board state)
+                                          (king-index (:board state) (opponent (turn state)))
+                                          (turn state))]
+           (cond
+            (and in-check?
+                 (empty? (legal-states state)))
+            (fill-square (:board state) GAME-STATUS-STORE
+                         (+ MATE-BIT CHECK-BIT))
+            (or (fifty-move-rule? state)
+                (fide-draw? state)
+                (stalemate? state))
+            (fill-square (:board state) GAME-STATUS-STORE
+                         DRAW-BIT)
+            in-check?
+            (fill-square (:board state) GAME-STATUS-STORE
+                         CHECK-BIT)
+            :else (fill-square (:board state) GAME-STATUS-STORE 0)))))
+
+(defn- update-state
+  "Updates game state to reflect changes from move."
+  [old-state move]
+  (->> old-state
+       (update-board move)
+       update-turn
+       (update-castling move)
+       (update-en-passant move)
+       (update-half-moves move)
+       update-full-moves
+       (update-move move)
+       update-game-status))
 
 (defn- commit-move
   "Commit move in state if legal move.
@@ -719,89 +788,48 @@
                            (:from move)
                            (turn state))
              (allowed-move? state move))
-    (let [new-state (->> state
-                         (update-board move)
-                         update-turn
-                         (update-castling move)
-                         (update-en-passant move)
-                         (update-half-moves move)
-                         update-full-moves
-                         (update-move move))]
+    (let [new-state (update-state state move)]
       (when (and (not (check? new-state))
                  (not (draw? new-state)))
         new-state))))
 
-(defn- fifty-move-rule?
-  "Checks if state is draw according to 50-move rule."
-  [state]
-  (>= (get (:board state) HALF-MOVE-STORE) 50))
-
-(defn- stalemate?
-  "Check if given state is in stalemate."
-  [state]
-  (and (empty? (legal-states state))
-       (check? state)))
-
-(defn- fide-draw?
-  "Checks if state is draw according to FIDE rules:
-   - Both sides have only king piece.
-   - One side has king and bishop or knight vs. others king
-   - One sides king and two knights agains others bare king
-   - Both sides have only bishop of same color besides kings"
-  [state]
-  false
-  ;; (let [piece-count (count (keys (get-pieces state)))]
-  ;;   (and (<= piece-count 4)
-  ;;        (or (= piece-count 2)
-  ;;            (and (= piece-count 3)
-  ;;                 (or (not (nil? (some #(= \n ) ))))
-  ;;                 (or (not (nil? (some #(= \n ))))))
-  ;;            (and (= piece-count 4)
-  ;;                 )
-  ;;            )))
-  )
-
 (extend-type State0x88
   State
   (occupied? [state index]
-             (board-occupied? (:board state) index))
+    (board-occupied? (:board state) index))
   (black? [state index]
-          (occupied-by? (:board state) index BLACK))
+    (occupied-by? (:board state) index BLACK))
   (white? [state index]
-          (occupied-by? (:board state) index WHITE))
+    (occupied-by? (:board state) index WHITE))
   (check? [state]
-          (threaten-index? (:board state)
-                           (king-index (:board state) (opponent (turn state)))
-                           (turn state)))
+    (= (get (:board state) GAME-STATUS-STORE) CHECK-BIT))
   (mate? [state]
-         false)
+    (= (get (:board state) GAME-STATUS-STORE) MATE-BIT))
   (draw? [state]
-         (or (fifty-move-rule? state)
-             (fide-draw? state)
-             (stalemate? state)))
+    (= (get (:board state) GAME-STATUS-STORE) DRAW-BIT))
   (state->fen [state]
-              (parse-state state))
+    (parse-state state))
   (apply-move [state move]
-              (commit-move state move))
+    (commit-move state move))
   (legal-states [state]
-                (filter #(not (or (nil? %)
-                                  (nil? (king-index (:board state) (turn state)))
-                                  (check? %)))
-                        (all-states-for state (all-moves-for state))))
+    (filter #(not (or (nil? %)
+                      (nil? (king-index (:board state) (turn state)))
+                      (check? %)))
+            (all-states-for state (all-moves-for state))))
   (get-pieces [state]
-              (merge (:white-pieces state)
-                     (:black-pieces state)))
+    (merge (:white-pieces state)
+           (:black-pieces state)))
   (turn [state]
-        (get (:board state) TURN-STORE))
+    (get (:board state) TURN-STORE))
   (perft [state depth]
-         (if (zero? depth)
-           1
-           (reduce + (map #(perft % (dec depth))
-                          (legal-states state)))))
+    (if (zero? depth)
+      1
+      (reduce + (map #(perft % (dec depth))
+                     (legal-states state)))))
   (dynamic? [state]
-            (= (get (:board state) DYNAMIC-STORE) 1))
+    (= (get (:board state) DYNAMIC-STORE) 1))
   (full-moves [state]
-              (get (:board state) FULL-MOVE-STORE)))
+    (get (:board state) FULL-MOVE-STORE)))
 
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
