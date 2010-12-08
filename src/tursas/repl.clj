@@ -5,21 +5,22 @@
 (defn- print-usage
   "Prints the available commands of the repl."
   []
-  (io! (string/map-str
-        println
-        '("Available general commands:"
-          "help - display this help"
-          "load - load the last saved game from file"
-          "save - store the current game to file"
-          "bd - display the board on the screen"
-          "uci - enable uci mode"
-          "xboard - ebable xboard mode"
-          "quit - quite the Tursas engine"
-          ""))
-       (when (= (get-active-repl) :uci)
-         (print-uci-usage))
-       (when (= (get-active-repl) :xboard)
-         (print-xboard-usage))))
+  (do
+    (string/map-str
+     println
+     '("Available general commands:"
+       "help - display this help"
+       "load - load the last saved game from file"
+       "save - store the current game to file"
+       "bd - display the board on the screen"
+       "uci - enable uci mode"
+       "xboard - ebable xboard mode"
+       "quit - quite the Tursas engine"
+       ""))
+    (when (= (get-active-repl) :uci)
+      (print-uci-usage))
+    (when (= (get-active-repl) :xboard)
+      (print-xboard-usage))))
 
 
 (defn process-command
