@@ -406,9 +406,10 @@
 
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
-  [board player]
+  [state player]
   (get board (if (= player WHITE)
-               WHITE-KING-STORE BLACK-KING-STORE)))
+               WHITE-KING-STORE
+               BLACK-KING-STORE)))
 
 (defn- threaten-by-knight?
   "Can piece in INDEX of BOARD be captured by OPPONENTs knight."
