@@ -625,34 +625,25 @@
       (not (= (get board (:to move)) EMPTY))))
 
 (defn- update-castling
-  "Return new castling string for move
+  "Updates states castling value for move
     checks for king or rook moves."
   [move state]
   (assoc state :board
-         (let [board (:board state)
-               castling (get board CASTLING-STORE)]
-           (if (zero? castling)
-             0
-             (let [player (get board TURN-STORE)
-                   [king queen king-sq rook-q-sq rook-k-sq]
-                   (if (= player WHITE)
-                     ["K" "Q" 0x05 0x00 0x07]
-                     ["k" "q" 0x75 0x70 0x77])
-                   check-str (fn [x] (if (empty? x) "-" x))
-                   player-str (reduce str (re-seq (if (= player WHITE)
-                                                    #"\p{Upper}" #"\p{Lower}")
-                                                  castling))
-                   opponent-str (s/replace-str player-str "" castling)]
-               (reduce str (sort
+         (fill-square (:board state) CASTLING-STORE
+                      (let [castling (get (:board state) CASTLING-STORE)]
+                        (if (zero? castling)
+                          0
+                          (let [[k-mask qr-mask kr-mask king-sq rook-q-sq rook-k-sq]
+                                (if (= (turn state) WHITE)
+                                  [ 3 11  7 0x05 0x00 0x07]
+                                  [12 14 13 0x75 0x70 0x77])]
                             (cond (= (:from move) king-sq)
-                                  (check-str opponent-str)
+                                  (bit-and castling k-mask)
                                   (= (:from move) rook-q-sq)
-                                  (check-str (str (s/replace-str queen "" player-str)
-                                                  opponent-str))
+                                  (bit-and castling qr-mask)
                                   (= (:from move) rook-k-sq)
-                                  (check-str (str (s/replace-str king "" player-str)
-                                                  opponent-str))
-                                  :else (str player-str opponent-str)))))))))
+                                  (bit-and castling kr-mask)
+                                  :else castling)))))))
 
 (defn- update-turn
   "Updates player turn value on board."
