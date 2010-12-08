@@ -190,12 +190,12 @@
   "Converts internal castling representation to string."
   [board]
   (let [castling (get board CASTLING-STORE)
-        add-char (fn [castling value letter]
+        to-char (fn [castling value letter]
                    (when (pos? (bit-and castling value)) letter))]
-    (str (add-char castling 8 \K)
-         (add-char castling 4 \Q)
-         (add-char castling 2 \k)
-         (add-char castling 1 \q))))
+    (str (to-char castling 8 \K)
+         (to-char castling 4 \Q)
+         (to-char castling 2 \k)
+         (to-char castling 1 \q))))
 
 (defn- castling-value
   "Convers castling string to value."
