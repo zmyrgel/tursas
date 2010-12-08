@@ -59,24 +59,24 @@
 (defn display-board
   "Displays the current chess board in ASCII."
   []
-  (io! (println
-        (if (empty? @game-state)
-          "Can't print empty board!"
-          (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
-                turn (second fen-list)]
-            (str (s/map-str (fn [[index piece]]
-                              (str (- 8 index) "|" piece "\n"))
-                            (seq/indexed (->> fen-list
-                                              first
-                                              (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                              (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                              (s/split #"/+"))))
-                 "------------------\n"
-                 " | a b c d e f g h\n"
-                 (if (= turn "w")
-                   "  WHITE"
-                   "  BLACK")
-                 " TO MOVE"))))))
+  (println
+   (if (empty? @game-state)
+     "Can't print empty board!"
+     (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
+           turn (second fen-list)]
+       (str (s/map-str (fn [[index piece]]
+                         (str (- 8 index) "|" piece "\n"))
+                       (seq/indexed (->> fen-list
+                                         first
+                                         (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                         (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                         (s/split #"/+"))))
+            "------------------\n"
+            " | a b c d e f g h\n"
+            (if (= turn "w")
+              "  WHITE"
+              "  BLACK")
+            " TO MOVE")))))
 
 (defn display-fen
   "Display FEN of currect game state."
@@ -84,8 +84,7 @@
   (->> @game-state
        first
        state->fen
-       println
-       io!))
+       println))
 
 (defn list-moves
   "List all available moves from currect state."
@@ -126,34 +125,33 @@
 
 (defn get-score
   []
-  (io! (println
-        (if (empty? @game-state)
-          "Can't calculate score from empty state!"
-          (->> @game-state
-               first
-               (evaluate (:depth-limit @game-options) evaluate-state))))))
+  (println
+   (if (empty? @game-state)
+     "Can't calculate score from empty state!"
+     (->> @game-state
+          first
+          (evaluate (:depth-limit @game-options) evaluate-state)))))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
   []
-  (io! (println
-        (if (empty? @game-state)
-          "Can't calculate legal moves from empty state!"
-          (->> @game-state
-               first
-               legal-moves
-               (take 5)
-               rand-nth
-               :prev-move)))))
+  (println
+   (if (empty? @game-state)
+     "Can't calculate legal moves from empty state!"
+     (->> @game-state
+          first
+          legal-moves
+          (take 5)
+          rand-nth
+          :prev-move))))
 
 (defn set-game
   "Sets game to given FEN state."
   [fen]
-  (dosync
-   (ref-set game-state
-            (cond (= fen "startpos") (list (fen->state startpos))
-                  (= fen "check") (list (fen->state check-fen))
-                  :else (list (fen->state fen))))))
+  (add-game-state
+   (cond (= fen "startpos") (fen->state startpos)
+         (= fen "check") (fen->state check-fen)
+         :else (fen->state fen))))
 
 (defn set-clock!
   "Sets PLAYER's clock to TIME."
