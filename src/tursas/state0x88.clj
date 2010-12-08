@@ -601,19 +601,21 @@
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
   [move state]
-  (assoc state :board
-         (let [board (:board state)
-               player (turn state)
-               moving-piece (get board (:from move))]
-           (cond (promotion? moving-piece move)
+  (let [board (:board state)
+        player (turn state)
+        moving-piece (get board (:from move))]
+    (cond (promotion? moving-piece move)
+          (assoc state :board
                  (promote-piece board (:to move)
-                                (piece-value (get-promotion-piece player move)))
-                 (castling? moving-piece move)
+                                (piece-value (get-promotion-piece player move))))
+          (castling? moving-piece move)
+          (assoc state :board
                  (commit-castle-move player board move
                                      (if (= column (:to move) 2)
                                        QUEEN-SIDE
-                                       KING-SIDE))
-                 :else (move-piece state move)))))
+                                       KING-SIDE)))
+          :else (move-piece state move))))
+
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
