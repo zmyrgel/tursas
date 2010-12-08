@@ -613,7 +613,7 @@
                                      (if (= column (:to move) 2)
                                        QUEEN-SIDE
                                        KING-SIDE))
-                 :else (move-piece board move)))))
+                 :else (move-piece state move)))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
