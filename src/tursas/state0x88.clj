@@ -249,8 +249,10 @@
   "Removes piece from board and updates maps accordingly."
   [state index]
   (let [player (if (white-piece? (get (:board state) index))
-                 WHITE BLACK)]
-    (clear-square (:board (pmap-remove state player index)) index)))
+                 WHITE BLACK)
+        cleared-board (clear-square (:board state) index)
+        new-state (assoc state :board cleared-board)]
+    (pmap-remove new-state player index)))
 
 (defn- move-piece
   "Moves piece in the board."
