@@ -592,14 +592,14 @@
 (defn- piece-indexes
   "Gets a list of all board indexes containing
    player's pieces in given board."
-  [board player]
-  (keys (pmap-get board player)))
+  [state player]
+  (keys (pmap-get state player)))
 
 (defn- all-moves-for
   "Returns a set of all available moves for SIDE in STATE."
   [state]
   (flatten (map #(pseudo-moves-for state %)
-                (piece-indexes (:board state) (turn state)))))
+                (piece-indexes state (turn state)))))
 
 (defn- all-states-for
   "Returns all states attainable by applying move."
