@@ -243,7 +243,7 @@
                         (fill-square index piece))
                     (fill-square (:board state) index piece))
         new-state (assoc state :board new-board)]
-    (pmap-add new-state index piece)))
+    (pmap-add new-state player index piece)))
 
 (defn- remove-piece
   "Removes piece from board and updates maps accordingly."
