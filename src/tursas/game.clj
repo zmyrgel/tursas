@@ -37,6 +37,11 @@
   [repl]
   (dosync (ref-set active-repl repl)))
 
+(defn- add-game-state
+  "Adds given state to game state."
+  [new-state]
+  (dosync (ref-set game-state (cons new-state @game-state))))
+
 (defn quit
   "Function to handle closing the engine."
   []
@@ -177,11 +182,6 @@
   "Toggles the value of given game option, only for boolean."
   [option]
   (set-game-option option (not (= (get-game-option option) true))))
-
-(defn- add-game-state
-  "Adds given state to game state."
-  [new-state]
-  (dosync (ref-set game-state (cons new-state @game-state))))
 
 (defn make-chess-move
   "Make given MOVE in chess game."
