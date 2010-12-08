@@ -178,14 +178,29 @@
   [option]
   (set-game-option option (not (= (get-game-option option) true))))
 
+(defn- add-game-state
+  "Adds given state to game state."
+  [new-state]
+  (dosync (ref-set game-state (cons new-state @game-state))))
+
 (defn make-chess-move
   "Make given MOVE in chess game."
   [algebraic]
   (let [new-state (apply-move (first @game-state) (algebraic->move algebraic))]
-    (if (nil? new-state)
-      (io! (println "Invalid move!"))
-      (dosync
-       (ref-set game-state (cons new-state @game-state))))))
+    (cond (nil? new-state) (println "Invalid move!")
+          (check? new-state) (if (= (turn new-state) 0)
+                               (do (println "BLACK CHECKED!")
+                                   (add-game-state new-state))
+                               (do (println "WHITE CHECKED!")
+                                   (add-game-state new-state)))
+          (mate? new-state) (if (= (turn new-state) 0)
+                              (do (println "BLACK MATED, GAME OVER!")
+                                  (quit))
+                              (do (println "WHITE MATED, GAME OVER!")
+                                  (quit)))
+          (draw? new-state) (do (println "GAME RESULTED IN DRAW!")
+                                (quit))
+          :else (add-game-state new-state))))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
