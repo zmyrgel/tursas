@@ -85,32 +85,32 @@
                        (recur (rest command)))
         (println "BAA!")))
 
-  (defn print-uci-usage
+(defn print-uci-usage
   "Prints the available commands of the repl."
   []
-  (io! (string/map-str
-        println
-        '("Available UCI commands are:"
-          "debug [ on | off ] - print debug messages"
-          "isready - Prompts the engine if its ready"
-          "setoption name <id> [value <x>]"
-          "register [later | name <x> | code <x> ] - register values with engine"
-          "ucinewgame - start a new game"
-          "position [fen <fenstring> | startpos ] moves <move1> .... <movei>"
-          "go [searchmoves <move1> .... <movei>]"
-          "   ponder - startpos searching in pondering mode"
-          "   wtime <x> - white has x msec left on the clock"
-          "   btime <x> - black has x msec left on the clock"
-          "   winc <x> - white increment per move in mseconds if x > 0"
-          "   binc <x> - black increment per move in mseconds if x > 0"
-          "   movestogo <x> - there are x moves to next time control"
-          "   depth <x> - search x plies only"
-          "   nodes <x> - search x nodes only"
-          "   movetime <x> - search exactly x mseconds"
-          "   infinite - search until 'stop' command is sent"
-          " stop - stop calculating as soon as possible"
-          " ponderhit - the user has played the expected move."
-          " quit - quit the program as soon as possible"))))
+  (string/map-str
+   println
+   '("Available UCI commands are:"
+     "debug [ on | off ] - print debug messages"
+     "isready - Prompts the engine if its ready"
+     "setoption name <id> [value <x>]"
+     "register [later | name <x> | code <x> ] - register values with engine"
+     "ucinewgame - start a new game"
+     "position [fen <fenstring> | startpos ] moves <move1> .... <movei>"
+     "go [searchmoves <move1> .... <movei>]"
+     "   ponder - startpos searching in pondering mode"
+     "   wtime <x> - white has x msec left on the clock"
+     "   btime <x> - black has x msec left on the clock"
+     "   winc <x> - white increment per move in mseconds if x > 0"
+     "   binc <x> - black increment per move in mseconds if x > 0"
+     "   movestogo <x> - there are x moves to next time control"
+     "   depth <x> - search x plies only"
+     "   nodes <x> - search x nodes only"
+     "   movetime <x> - search exactly x mseconds"
+     "   infinite - search until 'stop' command is sent"
+     " stop - stop calculating as soon as possible"
+     " ponderhit - the user has played the expected move."
+     " quit - quit the program as soon as possible")))
 
 (defn- uci-set-option
   "Sets UCI specific game options:
@@ -131,9 +131,9 @@
                   (map println (supported-uci-options))
                   (println "uciok"))
         "debug" (set-game-option :debug
-                            (if (= (second command) "on")
-                              true
-                              false))
+                                 (if (= (second command) "on")
+                                   true
+                                   false))
         "isready" (println "readyok")
         "setoption" (uci-set-option (rest command))
         "register" (register (rest command))
