@@ -686,9 +686,8 @@
   [state]
   (if (= (turn state) BLACK)
     (assoc state :board
-           (-> (:board state)
-               (fill-square (:board state) FULL-MOVE-STORE
-                            (inc (get (:board state) FULL-MOVE-STORE)))))
+           (fill-square (:board state) FULL-MOVE-STORE
+                        (inc (get (:board state) FULL-MOVE-STORE))))
     state))
 
 (defn- update-move
