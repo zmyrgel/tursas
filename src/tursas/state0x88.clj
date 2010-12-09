@@ -599,7 +599,10 @@
        knight-movement))
 
 (defn- pseudo-moves
-  "Generates a set of all available moves for piece at INDEX in given STATE."
+  "Generates a set of all available moves for piece at INDEX in given STATE.
+   Still doesn't live up to its name as all moves returned are also
+   legal.  Later the move generation should be separated to pseudo
+   moves and legal moves."
   [state index]
   (let [board (:board state)
         player (if (occupied-by? board index WHITE) WHITE BLACK)]
