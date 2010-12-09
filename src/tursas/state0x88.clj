@@ -429,9 +429,9 @@
 (defn- king-index
   "Gets the kings index in STATE for SIDE."
   [state player]
-  (get board (if (= player WHITE)
-               WHITE-KING-STORE
-               BLACK-KING-STORE)))
+  (get (:board state) (if (= player WHITE)
+                        WHITE-KING-STORE
+                        BLACK-KING-STORE)))
 
 (defn- threaten-by-knight?
   "Can piece in INDEX of BOARD be captured by OPPONENTs knight."
@@ -780,7 +780,7 @@
   [state]
   (assoc state :board
          (let [in-check? (threaten-index? (:board state)
-                                          (king-index (:board state) (opponent (turn state)))
+                                          (king-index state (opponent (turn state)))
                                           (turn state))]
            (cond
             (and in-check?
@@ -845,7 +845,7 @@
     (commit-move state move))
   (legal-states [state]
     (filter #(not (or (nil? %)
-                      (nil? (king-index (:board state) (turn state)))
+                      (nil? (king-index state (turn state)))
                       (check? %)))
             (all-states-for state (all-moves-for state))))
   (get-pieces [state]
