@@ -9,6 +9,7 @@
   (draw? [state])
   (state->fen [state])
   (legal-states [state])
+  (legal-moves [state])
   (get-pieces [state])
   (apply-move [state move])
   (turn [state])

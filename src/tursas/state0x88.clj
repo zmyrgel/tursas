@@ -844,7 +844,12 @@
   (apply-move [state move]
     (commit-move state move))
   (legal-states [state]
-    (states state (moves state)))
+    (->> state
+        legal-moves
+        (states state)))
+  (legal-moves [state]
+    (filter #(not (check? (apply-move state %)))
+            (moves state)))
   (get-pieces [state]
     (merge (:white-pieces state)
            (:black-pieces state)))
