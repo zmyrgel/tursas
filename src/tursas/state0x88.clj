@@ -598,7 +598,7 @@
   (map #(move-to-place board index (+ index %) player)
        knight-movement))
 
-(defn- pseudo-moves-for
+(defn- pseudo-moves
   "Generates a set of all available moves for piece at INDEX in given STATE."
   [state index]
   (let [board (:board state)
@@ -621,7 +621,7 @@
 (defn- moves
   "Returns a set of all available moves for SIDE in STATE."
   [state]
-  (flatten (map #(pseudo-moves-for state %)
+  (flatten (map #(pseudo-moves state %)
                 (piece-indexes state (turn state)))))
 
 (defn- states
@@ -637,7 +637,7 @@
   [state move]
   (not (nil? (some #(and (= (:from move) (:from %))
                          (= (:to move) (:to %)))
-                   (flatten (pseudo-moves-for state (:from move)))))))
+                   (flatten (pseudo-moves state (:from move)))))))
 
 (defn- fen-board->0x88board
   "Converts given FEN board representation
