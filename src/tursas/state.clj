@@ -14,4 +14,6 @@
   (turn [state])
   (perft [state depth])
   (dynamic? [state])
-  (full-moves [state]))
+  (full-moves [state])
+  (last-move [state])
+  (revert [state]))
