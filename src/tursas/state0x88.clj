@@ -183,10 +183,12 @@
    - Both sides have only king piece.
    - One side has king and bishop or knight vs. others king
    - One sides king and two knights agains others bare king
-   - Both sides have only bishop of same color besides kings (not yet)"
+   - Both sides have only bishop of same color besides kings"
   [state]
   (let [pieces (get-pieces state)
-        piece-count (count (keys pieces))]
+        keys (keys pieces)
+        vals (vals pieces)
+        piece-count (count keys)]
     (and (<= piece-count 4)
          (or (= piece-count 2)
              (and (= piece-count 3)
@@ -195,11 +197,16 @@
                                    (= BLACK-BISHOP %)
                                    (= WHITE-KNIGHT %)
                                    (= WHITE-BISHOP %))
-                              pieces))))
+                              vals))))
              (and (= piece-count 4)
-             (or (= (count (filter #(= BLACK-KNIGHT %) pieces)) 2)
-                 (= (count (filter #(= WHITE-KNIGHT %) pieces)) 2)))
-             ))))
+                  (or (= (count (filter #(= BLACK-KNIGHT %) vals)) 2)
+                      (= (count (filter #(= WHITE-KNIGHT %) vals)) 2)
+                      (let [bishops (filter #(or (= BLACK-BISHOP (get pieces %))
+                                                 (= WHITE-BISHOP (get pieces %)))
+                                            keys)]
+                        (cond (< (count bishops) 2) false
+                              :else (same-color? (first (keys bishops))
+                                                 (second (keys bishops)))))))))))
 
 (defn- castling-str
   "Converts internal castling representation to string."
