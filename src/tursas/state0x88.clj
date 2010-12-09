@@ -618,7 +618,7 @@
   [state player]
   (keys (pmap-get state player)))
 
-(defn- all-moves-for
+(defn- moves
   "Returns a set of all available moves for SIDE in STATE."
   [state]
   (flatten (map #(pseudo-moves-for state %)
@@ -847,7 +847,7 @@
     (filter #(not (or (nil? %)
                       (nil? (king-index state (turn state)))
                       (check? %)))
-            (all-states-for state (all-moves-for state))))
+            (all-states-for state (moves state))))
   (get-pieces [state]
     (merge (:white-pieces state)
            (:black-pieces state)))
