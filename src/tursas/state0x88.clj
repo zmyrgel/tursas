@@ -68,6 +68,15 @@
                            (map #(map (fn [col] (+ col %)) (range 8))
                                 [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
+(def board-color [1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
+                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
+                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
+                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
+                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
+                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
+                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
+                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2])
+
 (defrecord State0x88 [board black-pieces white-pieces])
 
 (defn- board-index?
@@ -109,6 +118,11 @@
   "Checks if given PIECE value belongs to black."
   [piece]
   (< piece EMPTY))
+
+(defn- same-color?
+  "Check if two squares are same color."
+  [sq1 sq2]
+  (= (get board-color sq1) (get board-color sq2)))
 
 (defn- board-occupied?
   "Checks if BOARD INDEX is occupied by piece."
