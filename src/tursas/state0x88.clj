@@ -34,12 +34,14 @@
 (def EN-PASSANT-STORE 0x59)
 (def DYNAMIC-STORE 0x5a)
 (def GAME-STATUS-STORE 0x5b)
-(def LAST-MOVE-FROM 0x7a)
-(def LAST-MOVE-TO 0x7b)
+(def PREV-MOVE-FROM 0x6a)
+(def PREV-MOVE-TO 0x6b)
+(def PREV-PIECE 0x6c)
+(def PREV-CAPTURED 0x6d)
+(def PREV-CASTLING 0x6e)
+(def PREV-EN-PASSANT 0x6f)
 
-(def MATE-BIT 4)
-(def CHECK-BIT 2)
-(def DRAW-BIT 1)
+(def CHECK-BIT 1)
 
 (def BLACK-QUEEN -6)
 (def BLACK-ROOK -5)
@@ -779,30 +781,19 @@
   [move state]
   (assoc state :board
          (-> (:board state)
-             (fill-square LAST-MOVE-FROM (:from move))
-             (fill-square LAST-MOVE-TO (:to move)))))
+             (fill-square PREV-MOVE-FROM (:from move))
+             (fill-square PREV-MOVE-TO (:to move)))))
 
-(defn- update-game-status
-  "Updates MATE, DRAW and CHECK status bit on the state."
+(defn- update-check
+  "Updates CHECK status bit on the state."
   [state]
   (assoc state :board
-         (let [in-check? (threaten-index? (:board state)
-                                          (king-index state (opponent (turn state)))
-                                          (turn state))]
-           (cond
-            (and in-check?
-                 (empty? (legal-states state)))
-            (fill-square (:board state) GAME-STATUS-STORE
-                         (+ MATE-BIT CHECK-BIT))
-            (or (fifty-move-rule? state)
-                (fide-draw? state)
-                (stalemate? state))
-            (fill-square (:board state) GAME-STATUS-STORE
-                         DRAW-BIT)
-            in-check?
-            (fill-square (:board state) GAME-STATUS-STORE
-                         CHECK-BIT)
-            :else (fill-square (:board state) GAME-STATUS-STORE 0)))))
+         (fill-square (:board state) GAME-STATUS-STORE
+                      (if (threaten-index? (:board state)
+                                           (king-index state (opponent (turn state)))
+                                           (turn state))
+                        CHECK-BIT
+                        0))))
 
 (defn- update-state
   "Updates game state to reflect changes from move."
@@ -815,7 +806,7 @@
        (update-half-moves move)
        update-full-moves
        (update-move move)
-       update-game-status))
+       update-check))
 
 (defn- commit-move
   "Commit move in state if legal move.
@@ -828,8 +819,7 @@
                            (turn state))
              (allowed-move? state move))
     (let [new-state (update-state state move)]
-      (when (and (not (check? new-state))
-                 (not (draw? new-state)))
+      (when (and (not (check? new-state)))
         new-state))))
 
 (extend-type State0x88
@@ -843,9 +833,12 @@
   (check? [state]
     (= (get (:board state) GAME-STATUS-STORE) CHECK-BIT))
   (mate? [state]
-    (= (get (:board state) GAME-STATUS-STORE) MATE-BIT))
+    (and (check? state)
+         (empty? (legal-states state))))
   (draw? [state]
-    (= (get (:board state) GAME-STATUS-STORE) DRAW-BIT))
+    (or (fifty-move-rule? state)
+        (fide-draw? state)
+        (stalemate? state)))
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
@@ -857,6 +850,10 @@
            (:black-pieces state)))
   (turn [state]
     (get (:board state) TURN-STORE))
+  (last-move [state]
+    false)
+  (revert [state]
+    false)
   (perft [state depth]
     (if (zero? depth)
       1
