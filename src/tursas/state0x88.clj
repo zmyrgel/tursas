@@ -851,9 +851,13 @@
   (turn [state]
     (get (:board state) TURN-STORE))
   (last-move [state]
-    false)
-  (revert [state]
-    false)
+    (let [board (:board state)
+          prev-piece (get board PREV-PIECE)
+          piece (get board PREV-MOVE-TO)]
+          (make-move (get board PREV-MOVE-FROM)
+                     (get board PREV-MOVE-TO)
+                     (when-not (= prev-piece piece)
+                       piece))))
   (perft [state depth]
     (if (zero? depth)
       1

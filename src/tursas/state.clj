@@ -15,5 +15,4 @@
   (perft [state depth])
   (dynamic? [state])
   (full-moves [state])
-  (last-move [state])
-  (revert [state]))
+  (last-move [state]))
