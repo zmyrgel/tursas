@@ -853,7 +853,7 @@
   (last-move [state]
     (let [board (:board state)
           prev-piece (get board PREV-PIECE)
-          piece (get board PREV-MOVE-TO)]
+          piece (get board (get board PREV-MOVE-TO))]
           (make-move (get board PREV-MOVE-FROM)
                      (get board PREV-MOVE-TO)
                      (when-not (= prev-piece piece)
