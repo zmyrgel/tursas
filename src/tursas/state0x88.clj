@@ -848,7 +848,9 @@
         legal-moves
         (states state)))
   (legal-moves [state]
-    (filter #(not (check? (apply-move state %)))
+    (filter #(or (not (nil? %))
+                 (not (nil? (apply-move state %)))
+                 (not (check? (apply-move state %))))
             (moves state)))
   (get-pieces [state]
     (merge (:white-pieces state)
