@@ -838,8 +838,7 @@
   (draw? [state]
     (or (fifty-move-rule? state)
         (fide-draw? state)
-        ;;(stalemate? state)
-        ))
+        (stalemate? state)))
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
