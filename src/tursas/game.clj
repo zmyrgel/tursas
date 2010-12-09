@@ -114,7 +114,7 @@
          :total-random (rand-nth states)
          (last (sort states)))))
 
-(defn- legal-moves
+(defn- all-moves
   "Generates all available moves from given STATE."
   [state]
   (map (partial evaluate (:depth-limit @game-options) evaluate-state)
@@ -125,7 +125,7 @@
   []
   (->> @game-state
        first
-       legal-moves
+       all-moves
        choose-move))
 
 (defn get-score
@@ -145,7 +145,7 @@
      "Can't calculate legal moves from empty state!"
      (->> @game-state
           first
-          legal-moves
+          all-moves
           (take 5)
           rand-nth
           :prev-move))))
