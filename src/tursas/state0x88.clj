@@ -404,7 +404,7 @@
     (if (or (not (board-index? new-index))
             (occupied-by? board new-index player))
       moves
-      (if (not (board-occupied? board (get board new-index)))
+      (if (not (board-occupied? board new-index))
         (recur (+ new-index direction)
                (cons (make-move index new-index nil)
                      moves))
