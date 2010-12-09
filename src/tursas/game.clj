@@ -94,10 +94,10 @@
 (defn list-moves
   "List all available moves from currect state."
   []
-  (io! (doall (map #(println (:prev-move %))
-                   (->> @game-state
-                        first
-                        legal-states)))))
+  (doall (map #(println (:prev-move %))
+              (->> @game-state
+                   first
+                   legal-states))))
 
 (defn- valid-coord?
   "Check that given coord is valid on chess board."
