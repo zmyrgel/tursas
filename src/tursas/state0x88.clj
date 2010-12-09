@@ -182,7 +182,7 @@
   "Checks if state is draw according to FIDE rules:
    - Both sides have only king piece.
    - One side has king and bishop or knight vs. others king
-   - One sides king and two knights agains others bare king (not yet)
+   - One sides king and two knights agains others bare king
    - Both sides have only bishop of same color besides kings (not yet)"
   [state]
   (let [pieces (get-pieces state)
@@ -196,8 +196,9 @@
                                    (= WHITE-KNIGHT %)
                                    (= WHITE-BISHOP %))
                               pieces))))
-             ;;(and (= piece-count 4)
-             ;;(or ))
+             (and (= piece-count 4)
+             (or (= (count (filter #(= BLACK-KNIGHT %) pieces)) 2)
+                 (= (count (filter #(= WHITE-KNIGHT %) pieces)) 2)))
              ))))
 
 (defn- castling-str
