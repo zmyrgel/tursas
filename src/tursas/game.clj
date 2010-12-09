@@ -94,7 +94,7 @@
 (defn list-moves
   "List all available moves from currect state."
   []
-  (doall (map #(println (:prev-move %))
+  (doall (map #(println (last-move %))
               (->> @game-state
                    first
                    legal-states))))
