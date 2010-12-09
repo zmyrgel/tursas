@@ -624,10 +624,13 @@
   (flatten (map #(pseudo-moves-for state %)
                 (piece-indexes state (turn state)))))
 
-(defn- all-states-for
-  "Returns all states attainable by applying move."
+(defn- states
+  "Returns all legal states attainable by applying move."
   [state moves]
-  (map #(apply-move state %) moves))
+  (filter #(not (or (nil? %)
+                    (nil? (king-index state (turn state)))
+                    (check? %)))
+          (map #(apply-move state %) moves)))
 
 (defn- allowed-move?
   "Checks if given MOVE is allowed in STATE."
@@ -844,10 +847,7 @@
   (apply-move [state move]
     (commit-move state move))
   (legal-states [state]
-    (filter #(not (or (nil? %)
-                      (nil? (king-index state (turn state)))
-                      (check? %)))
-            (all-states-for state (moves state))))
+    (states state (moves state)))
   (get-pieces [state]
     (merge (:white-pieces state)
            (:black-pieces state)))
