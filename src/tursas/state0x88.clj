@@ -266,9 +266,23 @@
 (defn- get-king-index
   "Returns the king index on the board."
   [player board]
-  (if (= player WHITE)
-    (get board WHITE-KING-STORE)
-    (get board BLACK-KING-STORE)))
+  (get board (if (= player WHITE)
+               WHITE-KING-STORE
+               BLACK-KING-STORE)))
+
+(defn- find-king-index
+  "Seeks king's index from piece-map."
+  [state player]
+  (let [piece-map (if (= player WHITE)
+                    (:white-pieces state)
+                    (:black-pieces state))
+        king (if (= player WHITE)
+               WHITE-KING
+               BLACK-KING)]
+    (loop [pieces (seq piece-map)]
+      (cond (empty? pieces) nil
+            (= (second pieces) king) (first pieces)
+            :else (recur (rest pieces))))))
 
 (defn- pmap-add
   "Add piece to player piece-map store on the board."
