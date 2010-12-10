@@ -281,7 +281,7 @@
                BLACK-KING)]
     (loop [pieces (seq piece-map)]
       (cond (empty? pieces) nil
-            (= (second pieces) king) (first pieces)
+            (= (second (first pieces)) king) (ffirst pieces)
             :else (recur (rest pieces))))))
 
 (defn- pmap-add
