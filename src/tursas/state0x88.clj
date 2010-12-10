@@ -900,6 +900,16 @@
                (assoc whites index (get (:board state) index))
                whites)))))
 
+(defn- add-king-indexes
+  "Adds king indexes to state."
+  [state]
+  (assoc state :board
+         (let [black-king (find-king-index state BLACK)
+               white-king (find-king-index state WHITE)]
+           (-> (:board state)
+               (update-king-index black-king BLACK)
+               (update-king-index white-king WHITE)))))
+
 (defprotocol Fen
   (fen->state [fen]))
 
