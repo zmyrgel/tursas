@@ -930,4 +930,6 @@
                (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
            nil
            nil)
-          (add-pieces)))))
+          add-pieces
+          add-king-indexes
+          update-check))))
