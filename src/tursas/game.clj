@@ -81,7 +81,11 @@
             (if (= turn "w")
               "  WHITE"
               "  BLACK")
-            " TO MOVE")))))
+            " TO MOVE"
+            (when (check? (first @game-state))
+              (if (= (turn (first @game-state)) :white)
+                " BLACK CHECKED!"
+                " WHITE CHECKED!")))))))
 
 (defn display-fen
   "Display FEN of currect game state."
@@ -186,21 +190,14 @@
 (defn make-chess-move
   "Make given MOVE in chess game."
   [algebraic]
-  (let [new-state (apply-move (first @game-state) (algebraic->move algebraic))]
-    (cond (nil? new-state) (println "Invalid move!")
-          (check? new-state) (if (= (turn new-state) 0)
-                               (do (println "BLACK CHECKED!")
-                                   (add-game-state new-state))
-                               (do (println "WHITE CHECKED!")
-                                   (add-game-state new-state)))
-          (mate? new-state) (if (= (turn new-state) 0)
-                              (do (println "BLACK MATED, GAME OVER!")
-                                  (quit))
-                              (do (println "WHITE MATED, GAME OVER!")
-                                  (quit)))
-          (draw? new-state) (do (println "GAME RESULTED IN DRAW!")
-                                (quit))
-          :else (add-game-state new-state))))
+  (let [state (first @game-state)]
+    (cond (mate? state) (println (if (= (turn state) :white)
+                                   "BLACK MATED, GAME OVER!"
+                                   "WHITE MATED, GAME OVER!"))
+          (draw? state) (println "GAME RESULTED IN DRAW!")
+          :else (if-let [new-state (apply-move state (algebraic->move algebraic))]
+                  (add-game-state new-state)
+                  (println "Invalid move!")))))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
