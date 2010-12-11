@@ -113,7 +113,7 @@
 (defn choose-move
   "Let AI to choose a move from STATE with given STRATEGY."
   [states & strategy]
-  (:prev-mode
+  (last-move
    (case strategy
          :total-random (rand-nth states)
          (last (sort states)))))
