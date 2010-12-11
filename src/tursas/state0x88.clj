@@ -750,7 +750,7 @@
   [state]
   (assoc state :board
          (fill-square (:board state) TURN-STORE
-                      (opponent (turn state)))))
+                      (opponent (get (:board state) TURN-STORE)))))
 
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
