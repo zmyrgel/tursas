@@ -98,7 +98,7 @@
 (defn list-moves
   "List all available moves from currect state."
   []
-  (doall (map #(println (move->algebraic (last-move %)))
+  (dorun (map #(println (move->algebraic (last-move %)))
               (->> @game-state
                    first
                    legal-states))))

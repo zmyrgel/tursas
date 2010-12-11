@@ -858,8 +858,10 @@
         moves
         (states state)))
   (get-pieces [state]
-    (merge (:white-pieces state)
-           (:black-pieces state)))
+    (let [pieces (merge (:white-pieces state)
+                        (:black-pieces state))]
+      (zipmap (keys pieces)
+              (map #(piece-name %) (vals pieces)))))
   (turn [state]
     (if (= (get (:board state) TURN-STORE) WHITE) :white :black))
   (last-move [state]
