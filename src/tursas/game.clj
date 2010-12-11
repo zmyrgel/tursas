@@ -1,7 +1,7 @@
 (ns tursas.game
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq])
-  (:use (tursas search eval state state0x88 move hexmove)))
+  (:use (tursas search state state0x88 move hexmove)))
 
 (def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 (def check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5")
