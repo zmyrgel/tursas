@@ -734,7 +734,7 @@
                         (if (zero? castling)
                           0
                           (let [[k-mask qr-mask kr-mask king-sq rook-q-sq rook-k-sq]
-                                (if (= (get (:board state TURN-STORE)) WHITE)
+                                (if (= (get (:board state) TURN-STORE) WHITE)
                                   [ 3 11  7 0x05 0x00 0x07]
                                   [12 14 13 0x75 0x70 0x77])]
                             (cond (= (:from move) king-sq)
