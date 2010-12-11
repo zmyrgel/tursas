@@ -121,7 +121,7 @@
 (defn- all-moves
   "Generates all available moves from given STATE."
   [state]
-  (map (partial evaluate (:depth-limit @game-options) evaluate-state)
+  (map (partial minmax (:depth-limit @game-options) evaluate)
        (legal-states state)))
 
 (defn get-move
@@ -139,7 +139,7 @@
      "Can't calculate score from empty state!"
      (->> @game-state
           first
-          (evaluate (:depth-limit @game-options) evaluate-state)))))
+          (minmax (:depth-limit @game-options) evaluate)))))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."

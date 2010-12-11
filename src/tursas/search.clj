@@ -53,7 +53,7 @@
            (when (dynamic? (first tree))
              (map (partial prune 0) (rest tree)))))))
 
-(defn- evaluate-with-minmax
+(defn minmax
   "Evaluates given game state with minmax-algorithm."
   [depth eval-fn state]
   (->> state
@@ -61,6 +61,3 @@
        (prune depth)
        (maptree eval-fn)
        maximise))
-
-(defn evaluate [depth eval-fn state]
-  (evaluate-with-minmax depth eval-fn state))
