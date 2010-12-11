@@ -503,12 +503,11 @@
 (defn- threaten-index?
   "Checks if given INDEX in STATE is under threath of enemy."
   [board index opponent]
-  (or
-   (threaten-by-knight? board index opponent)
-   (threaten-by-queen-or-bishop? board index opponent)
-   (threaten-by-queen-or-rook? board index opponent)
-   (threaten-by-pawn? board index opponent)
-   (threaten-by-king? board index opponent)))
+  (or (threaten-by-knight? board index opponent)
+      (threaten-by-queen-or-bishop? board index opponent)
+      (threaten-by-queen-or-rook? board index opponent)
+      (threaten-by-pawn? board index opponent)
+      (threaten-by-king? board index opponent)))
 
 (defn- empty-and-safe?
   "Predicate to see if INDEX is empty and unthreatened."
