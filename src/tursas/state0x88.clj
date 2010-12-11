@@ -689,7 +689,7 @@
   [state]
   (let [board (:board state)]
     (str (board->fen-board board) " "
-         (if (= (turn state) WHITE) "w" "b") " "
+         (if (= (get board TURN-STORE) WHITE) "w" "b") " "
          (castling-str board) " "
          (index->algebraic (get board EN-PASSANT-STORE)) " "
          (get board HALF-MOVE-STORE) " "
@@ -709,7 +709,7 @@
   "Returns state with new board after applying MOVE to STATE."
   [move state]
   (let [board (:board state)
-        player (turn state)
+        player (get board TURN-STORE)
         moving-piece (get board (:from move))]
     (cond (promotion? moving-piece move)
           (assoc state :board
@@ -733,7 +733,7 @@
                         (if (zero? castling)
                           0
                           (let [[k-mask qr-mask kr-mask king-sq rook-q-sq rook-k-sq]
-                                (if (= (turn state) WHITE)
+                                (if (= (get (:board state TURN-STORE)) WHITE)
                                   [ 3 11  7 0x05 0x00 0x07]
                                   [12 14 13 0x75 0x70 0x77])]
                             (cond (= (:from move) king-sq)
@@ -776,7 +776,7 @@
 (defn- update-full-moves
   "Updates full move count on board."
   [state]
-  (if (= (turn state) BLACK)
+  (if (= (get (:board state) TURN-STORE) BLACK)
     (assoc state :board
            (fill-square (:board state) FULL-MOVE-STORE
                         (inc (get (:board state) FULL-MOVE-STORE))))
@@ -794,12 +794,14 @@
   "Updates CHECK status bit on the state."
   [state]
   (assoc state :board
-         (fill-square (:board state) GAME-STATUS-STORE
-                      (if (threaten-index? (:board state)
-                                           (king-index state (opponent (turn state)))
-                                           (turn state))
+         (let [board (:board state)
+               player (get board TURN-STORE)]
+           (fill-square board GAME-STATUS-STORE
+                        (if (threaten-index? board
+                                           (king-index state (opponent player))
+                                           player)
                         CHECK-BIT
-                        0))))
+                        0)))))
 
 (defn- update-state
   "Updates game state to reflect changes from move."
@@ -822,7 +824,7 @@
   [state move]
   (when (and (occupied-by? (:board state)
                            (:from move)
-                           (turn state))
+                           (get (:board state) TURN-STORE))
              (allowed-move? state move))
     (let [new-state (update-state state move)]
       (when (and (not (check? new-state)))
@@ -851,18 +853,13 @@
     (commit-move state move))
   (legal-states [state]
     (->> state
-        legal-moves
+        moves
         (states state)))
-  (legal-moves [state]
-    (filter #(or (not (nil? %))
-                 (not (nil? (apply-move state %)))
-                 (not (check? (apply-move state %))))
-            (moves state)))
   (get-pieces [state]
     (merge (:white-pieces state)
            (:black-pieces state)))
   (turn [state]
-    (get (:board state) TURN-STORE))
+    (if (= (get (:board state) TURN-STORE) WHITE) :white :black))
   (last-move [state]
     (let [board (:board state)
           prev-piece (get board PREV-PIECE)
