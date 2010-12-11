@@ -244,7 +244,8 @@
    - One sides king and two knights agains others bare king
    - Both sides have only bishop of same color besides kings"
   [state]
-  (let [pieces (get-pieces state)
+  (let [pieces (merge (:white-pieces state)
+                      (:black-pieces state))
         keys (keys pieces)
         vals (vals pieces)
         piece-count (count keys)]
