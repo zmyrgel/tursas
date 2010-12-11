@@ -639,8 +639,9 @@
 (defn- moves
   "Returns a set of all available moves for SIDE in STATE."
   [state]
-  (flatten (map #(pseudo-moves state %)
-                (piece-indexes state (turn state)))))
+  (filter #(not (nil? %))
+          (flatten (map #(pseudo-moves state %)
+                        (piece-indexes state (turn state))))))
 
 (defn- states
   "Returns all legal states attainable by applying move."
