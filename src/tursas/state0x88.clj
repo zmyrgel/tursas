@@ -952,16 +952,12 @@
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
-    (commit-move state move))
+    (when (satisfies? Move move)
+      (commit-move state move)))
   (legal-states [state]
     (->> state
-        moves
-        (states state)))
-  (get-pieces [state]
-    (let [pieces (merge (:white-pieces state)
-                        (:black-pieces state))]
-      (zipmap (keys pieces)
-              (map #(piece-name %) (vals pieces)))))
+         moves
+         (states state)))
   (turn [state]
     (if (= (get (:board state) TURN-STORE) WHITE) :white :black))
   (last-move [state]
