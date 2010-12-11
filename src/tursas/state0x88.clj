@@ -641,13 +641,14 @@
   [state]
   (filter #(not (nil? %))
           (flatten (map #(pseudo-moves state %)
-                        (piece-indexes state (turn state))))))
+                        (piece-indexes state
+                                       (get (:board state) TURN-STORE))))))
 
 (defn- states
   "Returns all legal states attainable by applying move."
   [state moves]
   (filter #(not (or (nil? %)
-                    (nil? (king-index state (turn state)))
+                    (nil? (king-index state (get (:board state) TURN-STORE)))
                     (check? %)))
           (map #(apply-move state %) moves)))
 
