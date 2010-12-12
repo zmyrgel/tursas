@@ -553,19 +553,21 @@
         king-move-indexes (map #(+ index %) king-movement)
         enemy-king-index (first (filter #(= (get board %) enemy-king)
                                         king-move-indexes))]
-    (if (empty? enemy-king-index)
+    (if (nil? enemy-king-index)
       false
       (-> (fill-square board index enemy-king)
           (threaten-index? index player)))))
 
 (defn- threaten-index?
-  "Checks if given INDEX in STATE is under threath of enemy."
+  "Checks if given INDEX in STATE is under threath of enemy.
+   Inf loop with king-index check"
   [board index opponent]
   (or (threaten-by-knight? board index opponent)
       (threaten-by-queen-or-bishop? board index opponent)
       (threaten-by-queen-or-rook? board index opponent)
       (threaten-by-pawn? board index opponent)
-      (threaten-by-king? board index opponent)))
+      ;;(threaten-by-king? board index opponent)
+      ))
 
 (defn- empty-and-safe?
   "Predicate to see if INDEX is empty and unthreatened."
