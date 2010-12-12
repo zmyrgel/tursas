@@ -160,6 +160,8 @@
   (add-game-state
    (cond (= fen "startpos") (fen->state startpos)
          (= fen "check") (fen->state check-fen)
+         (= fen "cast") (fen->state cast-fen)
+         (= fen "prom") (fen->state prom-fen)
          :else (fen->state fen))))
 
 (defn set-clock!
