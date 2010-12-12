@@ -587,10 +587,7 @@
          (empty-and-safe? board king-index-2 opponent)
          (if (= direction WEST)
            (not (board-occupied? board (+ king-index-2 direction)))
-           true)
-         (= (get board rook-index)
-            (if (= player WHITE)
-              WHITE-ROOK BLACK-ROOK)))))
+           true))))
 
 (defn- list-king-moves
   "Resolves all available moves for king in given INDEX of STATE."
