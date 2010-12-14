@@ -1,5 +1,6 @@
-(ns tursas.movegen0x88
-  (:use (tursas state move hexmove common0x88 util0x88)
+(ns tursas.state.movegen0x88
+  (:use (tursas state move hexmove)
+        (tursas.state common0x88 util0x88)
         [clojure.contrib.math :only [abs]]))
 
 (def NORTH 16)

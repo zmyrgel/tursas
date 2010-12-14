@@ -1,4 +1,4 @@
-(ns tursas.common0x88)
+(ns tursas.state.common0x88)
 
 (def WHITE-KING-STORE 0x0c)
 (def BLACK-KING-STORE 0x7c)

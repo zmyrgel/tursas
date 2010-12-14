@@ -1,5 +1,6 @@
-(ns tursas.eval0x88
-  (:use (tursas state common0x88)))
+(ns tursas.state.eval0x88
+  (:use (tursas state)
+        (tursas.state common0x88)))
 
 (def PAWN-VALUE 100)
 (def BISHOP-VALUE 400)

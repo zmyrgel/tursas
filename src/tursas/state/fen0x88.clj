@@ -1,6 +1,7 @@
-(ns tursas.fen0x88
-  (:use (tursas common0x88 util0x88 hexmove movegen0x88))
-  (:import (tursas common0x88.State0x88))
+(ns tursas.state.fen0x88
+  (:use (tursas hexmove)
+        (tursas.state common0x88 util0x88 movegen0x88))
+  (:import (tursas.state common0x88.State0x88))
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 

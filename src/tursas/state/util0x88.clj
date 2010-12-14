@@ -1,5 +1,5 @@
-(ns tursas.util0x88
-  (:use (tursas common0x88)))
+(ns tursas.state.util0x88
+  (:use (tursas.state common0x88)))
 
 (def board-indexes (reduce concat
                                (map #(map (fn [col] (+ col %)) (range 8))

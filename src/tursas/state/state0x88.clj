@@ -1,8 +1,8 @@
-(ns tursas.state0x88
-  (:use (tursas state common0x88 move hexmove
-                eval0x88 movegen0x88 util0x88 fen0x88)
+(ns tursas.state.state0x88
+  (:use (tursas state  move hexmove)
+        (tursas.state eval0x88 movegen0x88 util0x88 fen0x88 common0x88)
         [clojure.contrib.math :only [abs]])
-  (:import (tursas common0x88.State0x88)))
+  (:import (tursas.state common0x88.State0x88)))
 
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
