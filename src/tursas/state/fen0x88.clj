@@ -1,7 +1,7 @@
 (ns tursas.state.fen0x88
   (:use (tursas hexmove)
-        (tursas.state common0x88 util0x88 movegen0x88))
-  (:import (tursas.state common0x88.State0x88))
+        (tursas.state common0x88 util0x88 movegen0x88)
+        [tursas.state.state0x88 :only [make-state update-check]])
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
@@ -70,17 +70,6 @@
   (s/join "/" (map #(make-fen-row board %)
                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
-(defn parse-state
-  "Returns FEN representation of given STATE."
-  [state]
-  (let [board (:board state)]
-    (str (board->fen-board board) " "
-         (if (= (get board TURN-STORE) WHITE) "w" "b") " "
-         (castling-str board) " "
-         (index->algebraic (get board EN-PASSANT-STORE)) " "
-         (get board HALF-MOVE-STORE) " "
-         (get board FULL-MOVE-STORE))))
-
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
   [state]
@@ -109,40 +98,35 @@
                (update-king-index black-king BLACK)
                (update-king-index white-king WHITE)))))
 
-;; XXX: duplicated from state0x88, figure out better way to handle
-(defn- update-check
-  "Updates CHECK status bit on the state."
+(defn fen->state
+  "Convert given FEN to state representation."
+  [fen]
+  (when-let [fen-list (re-seq #"\S+" fen)]
+    (-> (make-state
+         (-> (fen-board->0x88board (first fen-list))
+             (fill-square TURN-STORE (if (= (second fen-list) "w")
+                                       WHITE BLACK))
+             (fill-square CASTLING-STORE (castling-value
+                                          (nth fen-list 2)))
+             (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
+                                             EN-PASSANT-STORE
+                                             (algebraic->index (nth fen-list 3))))
+             (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
+             (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
+         nil
+         nil)
+        add-pieces
+        add-king-indexes
+        update-check)))
+
+(defn parse-state
+  "Returns FEN representation of given STATE."
   [state]
-  (assoc state :board
-         (let [board (:board state)
-               player (get board TURN-STORE)]
-           (fill-square board GAME-STATUS-STORE
-                        (if (threaten-index? board
-                                             (king-index state (opponent player))
-                                             player)
-                          CHECK-BIT
-                          0)))))
+  (let [board (:board state)]
+    (str (board->fen-board board) " "
+         (if (= (get board TURN-STORE) WHITE) "w" "b") " "
+         (castling-str board) " "
+         (index->algebraic (get board EN-PASSANT-STORE)) " "
+         (get board HALF-MOVE-STORE) " "
+         (get board FULL-MOVE-STORE))))
 
-(defprotocol Fen
-  (fen->state [fen]))
-
-(extend-type String
-  Fen
-  (fen->state [fen]
-    (when-let [fen-list (re-seq #"\S+" fen)]
-      (-> (State0x88.
-           (-> (fen-board->0x88board (first fen-list))
-               (fill-square TURN-STORE (if (= (second fen-list) "w")
-                                         WHITE BLACK))
-               (fill-square CASTLING-STORE (castling-value
-                                            (nth fen-list 2)))
-               (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
-                                               EN-PASSANT-STORE
-                                               (algebraic->index (nth fen-list 3))))
-               (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-               (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
-           nil
-           nil)
-          add-pieces
-          add-king-indexes
-          update-check))))

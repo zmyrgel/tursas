@@ -42,4 +42,3 @@
 (def WHITE-ROOK 5)
 (def WHITE-QUEEN 6)
 
-(defrecord State0x88 [board black-pieces white-pieces])

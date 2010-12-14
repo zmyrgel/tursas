@@ -1,8 +1,8 @@
 (ns tursas.state.state0x88
   (:use (tursas state  move hexmove)
-        (tursas.state eval0x88 movegen0x88 util0x88 fen0x88 common0x88)
-        [clojure.contrib.math :only [abs]])
-  (:import (tursas.state common0x88.State0x88)))
+        (tursas.state eval0x88 movegen0x88 util0x88 common0x88)
+        [tursas.state.fen0x88 :only [parse-state]]
+        [clojure.contrib.math :only [abs]]))
 
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
@@ -56,7 +56,7 @@
       (Character/toLowerCase (char (:promotion move))))))
 
 (defn- commit-castle-move
-  "Make castling move on board."
+  "Helper function for update-board to make castling move on board."
   [player state move castling-side]
   (let [[rook king from to]
         (if (= player WHITE)
@@ -160,7 +160,7 @@
              (fill-square PREV-MOVE-FROM (:from move))
              (fill-square PREV-MOVE-TO (:to move)))))
 
-(defn- update-check
+(defn update-check
   "Updates CHECK status bit on the state."
   [state]
   (assoc state :board
@@ -186,7 +186,11 @@
        (update-move move)
        update-check))
 
-(extend-type State0x88
+(defn make-state
+  [board whites blacks]
+  (State0x88. board whites blacks))
+
+(defrecord State0x88 [board black-pieces white-pieces]
   State
   (occupied? [state index]
     (board-occupied? (:board state) index))
