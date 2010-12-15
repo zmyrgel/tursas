@@ -153,7 +153,7 @@
           all-moves
           (take 5)
           rand-nth
-          :prev-move))))
+          last-move))))
 
 (defn set-game
   "Sets game to given FEN state."
