@@ -224,7 +224,8 @@
       ))
 
 (defn- empty-and-safe?
-  "Predicate to see if INDEX is empty and unthreatened."
+  "Predicate to see if given index is empty
+   and unthreatened by opponent."
   [board index opponent]
   (and (not (board-occupied? board index))
        (not (threaten-index? board index opponent))))
@@ -246,7 +247,8 @@
            true))))
 
 (defn- list-king-moves
-  "Resolves all available moves for king in given INDEX of STATE.
+  "Returns a list of  all available moves for players king
+   in given index on the board.
    TODO: get rid of flatten call"
   [player board index]
   (let [castling (get board CASTLING-STORE)
