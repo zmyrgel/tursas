@@ -246,7 +246,8 @@
            true))))
 
 (defn- list-king-moves
-  "Resolves all available moves for king in given INDEX of STATE."
+  "Resolves all available moves for king in given INDEX of STATE.
+   TODO: get rid of flatten call"
   [player board index]
   (let [castling (get board CASTLING-STORE)
         normal-moves (flatten (map #(move-to-place board index (+ index %) player)
@@ -295,7 +296,8 @@
          captures)))
 
 (defn- list-pawn-moves
-  "Returns a set of available pawn moves from INDEX in given STATE."
+  "Returns a set of available pawn moves from INDEX in given STATE.
+   TODO: get rid of flatten call"
   [player board index]
   (flatten (conj (list-pawn-normal-moves player board index)
                  (list-pawn-capture-moves player board index))))
@@ -342,7 +344,8 @@
           '())))
 
 (defn moves
-  "Returns a set of all available moves for SIDE in STATE."
+  "Returns a set of all available moves for SIDE in STATE.
+   TODO: get rid of flatten call"
   [state]
   (filter #(not (nil? %))
           (flatten (map #(pseudo-moves state %)
@@ -358,7 +361,8 @@
           (map #(apply-move state %) moves)))
 
 (defn allowed-move?
-  "Checks if given MOVE is allowed in STATE."
+  "Checks if given MOVE is allowed in STATE.
+   TODO: get rid of flatten call"
   [state move]
   (and (occupied-by? (:board state)
                      (:from move)
