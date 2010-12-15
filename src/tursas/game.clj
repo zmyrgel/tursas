@@ -195,8 +195,8 @@
   [algebraic]
   (let [state (first @game-state)]
     (cond (mate? state) (println (if (= (turn state) :white)
-                                   "BLACK MATED, GAME OVER!"
-                                   "WHITE MATED, GAME OVER!"))
+                                   "BLACK IN CHECK-MATE, GAME OVER!"
+                                   "WHITE IN CHECK-MATE, GAME OVER!"))
           (draw? state) (println "GAME RESULTED IN DRAW!")
           :else (if-let [new-state (apply-move state (algebraic->move algebraic))]
                   (add-game-state new-state)
