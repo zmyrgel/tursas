@@ -107,7 +107,7 @@
     (mapmax (map maximise- subtree))
     (first tree)))
 
-(defn- alphabeta
+(defn alphabeta
   "Evaluate game tree using the alpha-beta search."
   [depth eval-fn state]
   (->> state
@@ -137,7 +137,7 @@
                   (sort (complement higher?)
                         (map highfirst (rest tree))))))
 
-(defn- alphabeta-mark-1
+(defn alphabeta-mark-1
   "Alphabeta evaluation as before but improved so that
    it sorts tree nodes before evaluating them to get
    better scores sooner which will trigger cutoff's earlier."
