@@ -1,7 +1,6 @@
 (ns tursas.state.fen0x88
   (:use (tursas hexmove)
-        (tursas.state common0x88 util0x88 movegen0x88)
-        [tursas.state.state0x88 :only [make-state update-check]])
+        (tursas.state common0x88 util0x88 movegen0x88))
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
@@ -98,26 +97,23 @@
                (update-king-index black-king BLACK)
                (update-king-index white-king WHITE)))))
 
-(defn fen->state
-  "Convert given FEN to state representation."
-  [fen]
+(defn parse-fen
+  "Parses information from given FEN and applies it to given state."
+  [fen state]
   (when-let [fen-list (re-seq #"\S+" fen)]
-    (-> (make-state
-         (-> (fen-board->0x88board (first fen-list))
-             (fill-square TURN-STORE (if (= (second fen-list) "w")
-                                       WHITE BLACK))
-             (fill-square CASTLING-STORE (castling-value
-                                          (nth fen-list 2)))
-             (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
-                                             EN-PASSANT-STORE
-                                             (algebraic->index (nth fen-list 3))))
-             (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-             (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5))))
-         nil
-         nil)
+    (-> (assoc state :board
+               (-> (fen-board->0x88board (first fen-list))
+                   (fill-square TURN-STORE (if (= (second fen-list) "w")
+                                             WHITE BLACK))
+                   (fill-square CASTLING-STORE (castling-value
+                                                (nth fen-list 2)))
+                   (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
+                                                   EN-PASSANT-STORE
+                                                   (algebraic->index (nth fen-list 3))))
+                   (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
+                   (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5)))))
         add-pieces
-        add-king-indexes
-        update-check)))
+        add-king-indexes)))
 
 (defn parse-state
   "Returns FEN representation of given STATE."

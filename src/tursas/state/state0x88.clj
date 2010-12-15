@@ -1,7 +1,6 @@
 (ns tursas.state.state0x88
   (:use (tursas state  move hexmove)
-        (tursas.state eval0x88 movegen0x88 util0x88 common0x88)
-        [tursas.state.fen0x88 :only [parse-state]]
+        (tursas.state eval0x88 movegen0x88 util0x88 common0x88 fen0x88)
         [clojure.contrib.math :only [abs]]))
 
 (defn- fifty-move-rule?
@@ -160,7 +159,7 @@
              (fill-square PREV-MOVE-FROM (:from move))
              (fill-square PREV-MOVE-TO (:to move)))))
 
-(defn update-check
+(defn- update-check
   "Updates CHECK status bit on the state."
   [state]
   (assoc state :board
@@ -185,10 +184,6 @@
        update-full-moves
        (update-move move)
        update-check))
-
-(defn make-state
-  [board whites blacks]
-  (State0x88. board whites blacks))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
@@ -240,3 +235,12 @@
     (heuristic-value state))
   (full-moves [state]
     (get (:board state) FULL-MOVE-STORE)))
+
+(defn make-state
+  [board blacks whites]
+  (State0x88. board blacks whites))
+
+(defn fen->state
+  "Convert given FEN to state representation."
+  [fen]
+  (update-check (parse-fen fen (State0x88. nil nil nil))))
