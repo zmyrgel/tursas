@@ -265,7 +265,8 @@
     (concat normal-moves castling-moves-king castling-moves-queen)))
 
 (defn- list-pawn-normal-moves
-  "Lists available moves for PLAYER's pawn in BOARD INDEX."
+  "Returns lists of normail pawn moves available
+   for player in board index."
   [player board index]
   (let [direction (if (= player WHITE) NORTH SOUTH)
         move-index (+ index direction)]
