@@ -35,6 +35,7 @@
           "fd" (display-fen)
           "lm" (list-moves)
           "gs" (get-score)
+          "es" (eval-current-state)
           "uci"  (set-active-repl :uci)
           "xboard" (set-active-repl :xboard)
           "quit" (quit)
