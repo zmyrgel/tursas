@@ -75,7 +75,7 @@
         moving-piece (get board (:from move))]
     (cond (promotion? moving-piece move)
           (assoc state :board
-                 (promote-piece board (:to move)
+                 (promote-piece state (:to move)
                                 (piece-value (get-promotion-piece player move))))
           (castling? moving-piece move)
           (assoc state :board
