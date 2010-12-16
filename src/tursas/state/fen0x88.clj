@@ -75,17 +75,19 @@
   (loop [index 0x77
          blacks {}
          whites {}]
-    (if (= index -1)
-      (-> state
-          (assoc :white-pieces whites)
-          (assoc :black-pieces blacks))
-      (recur (dec index)
-             (if (black-piece? (get (:board state) index))
-               (assoc blacks index (get (:board state) index))
-               blacks)
-             (if (white-piece? (get (:board state) index))
-               (assoc whites index (get (:board state) index))
-               whites)))))
+    (cond (= index -1) (-> state
+                           (assoc :white-pieces whites)
+                           (assoc :black-pieces blacks))
+          (not (board-index? index)) (recur (dec index)
+                                            blacks
+                                            whites)
+          :else (recur (dec index)
+                       (if (black-piece? (get (:board state) index))
+                         (assoc blacks index (get (:board state) index))
+                         blacks)
+                       (if (white-piece? (get (:board state) index))
+                         (assoc whites index (get (:board state) index))
+                         whites)))))
 
 (defn- add-king-indexes
   "Adds king indexes to state."
