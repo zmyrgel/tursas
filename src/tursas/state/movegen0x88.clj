@@ -256,11 +256,10 @@
   [player board index]
   (let [castling (get board CASTLING-STORE)
         castling-moves (fn [side direction]
-                         (if (and (= (column index) 4)
-                                  (castle-side? player side castling)
-                                  (legal-castling? player board index direction))
-                           (make-move index (+ direction direction) nil)
-                           '()))]
+                         (when (and (= (column index) 4)
+                                    (castle-side? player side castling)
+                                    (legal-castling? player board index direction))
+                           (make-move index (+ direction direction) nil)))]
     (reduce concat
             (flatten (map #(move-to-place board index (+ index %) player)
                           king-movement))
