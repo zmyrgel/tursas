@@ -274,7 +274,8 @@
         move-index (+ index direction)]
     (if (and (board-index? move-index)
              (not (board-occupied? board move-index)))
-      (if (and (not (board-occupied? board (+ move-index direction)))
+      (if (and (board-index? (+ move-index direction))
+               (not (board-occupied? board (+ move-index direction)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
         (list (make-move index move-index nil)
