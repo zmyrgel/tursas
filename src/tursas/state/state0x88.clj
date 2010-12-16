@@ -87,7 +87,8 @@
 
 (defn- update-castling
   "Updates states castling value for move
-    checks for king or rook moves."
+    checks for king or rook moves.
+   TODO: add check to see if either rook gets captured."
   [move state]
   (assoc state :board
          (fill-square (:board state) CASTLING-STORE
