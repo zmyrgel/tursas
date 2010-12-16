@@ -78,11 +78,10 @@
                  (promote-piece state (:to move)
                                 (piece-value (get-promotion-piece player move))))
           (castling? moving-piece move)
-          (assoc state :board
-                 (commit-castle-move player board move
-                                     (if (= column (:to move) 2)
-                                       QUEEN-SIDE
-                                       KING-SIDE)))
+          (commit-castle-move player board move
+                              (if (= column (:to move) 2)
+                                QUEEN-SIDE
+                                KING-SIDE))
           :else (move-piece state move))))
 
 (defn- update-castling
