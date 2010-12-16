@@ -255,17 +255,17 @@
    TODO: get rid of flatten call"
   [player board index]
   (let [castling (get board CASTLING-STORE)
-        normal-moves (flatten (map #(move-to-place board index (+ index %) player)
-                                   king-movement))
-        castling-moves-king (if (and (castle-side? player KING-SIDE castling)
-                                     (legal-castling? player board index WEST))
-                              (make-move index (+ WEST WEST) nil)
-                              '())
-        castling-moves-queen (if (and (castle-side? player QUEEN-SIDE castling)
-                                      (legal-castling? player board index EAST))
-                               (make-move index (+ EAST EAST) nil)
-                               '())]
-    (concat normal-moves castling-moves-king castling-moves-queen)))
+        castling-moves (fn [side direction]
+                         (if (and (= (column index) 4)
+                                  (castle-side? player side castling)
+                                  (legal-castling? player board index direction))
+                           (make-move index (+ direction direction) nil)
+                           '()))]
+    (reduce concat
+            (flatten (map #(move-to-place board index (+ index %) player)
+                          king-movement))
+            (castling-moves KING-SIDE WEST)
+            (castling-moves QUEEN-SIDE EAST))))
 
 (defn- list-pawn-normal-moves
   "Returns lists of normail pawn moves available
