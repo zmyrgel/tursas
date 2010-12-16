@@ -231,7 +231,10 @@
        (not (threaten-index? board index opponent))))
 
 (defn- legal-castling?
-  "Predicate to check if castling is possible on the board."
+  "Predicate to check if castling is possible on the board.
+   XXX: incorrect index given when calculating score from position: startpos
+        gives index as 2 but castle-side? should return false in that case.
+        related to fact that castling won't get updated if rooks are captured?"
   [player board index direction]
   (let [king-index-1 (+ index direction)
         king-index-2 (+ king-index-1 direction)
