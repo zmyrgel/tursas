@@ -87,24 +87,23 @@
 
 (defn- update-castling
   "Updates states castling value for move
-    checks for king or rook moves.
-   TODO: add check to see if either rook gets captured."
+    checks for king or rook moves."
   [move state]
   (assoc state :board
          (fill-square (:board state) CASTLING-STORE
                       (let [castling (get (:board state) CASTLING-STORE)]
                         (if (zero? castling)
                           0
-                          (let [[k-mask qr-mask kr-mask king-sq rook-q-sq rook-k-sq]
+                          (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
+                                 rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
                                 (if (= (get (:board state) TURN-STORE) WHITE)
-                                  [ 3 11  7 0x04 0x00 0x07]
-                                  [12 14 13 0x74 0x70 0x77])]
-                            (cond (= (:from move) king-sq)
-                                  (bit-and castling k-mask)
-                                  (= (:from move) rook-q-sq)
-                                  (bit-and castling qr-mask)
-                                  (= (:from move) rook-k-sq)
-                                  (bit-and castling kr-mask)
+                                  [ 3 11  7 0x04 0x00 0x07 14 13 0x70 0x77]
+                                  [12 14 13 0x74 0x70 0x77 11 7 0x00 0x07])]
+                            (cond (= (:from move) king-sq) (bit-and castling k-mask)
+                                  (= (:from move) rook-q-sq) (bit-and castling qr-mask)
+                                  (= (:from move) rook-k-sq) (bit-and castling kr-mask)
+                                  (= (:to move) opp-rk-q-sq) (bit-and castling opp-rkq-mask)
+                                  (= (:to move) opp-rk-k-sq) (bit-and castling opp-rkk-mask)
                                   :else castling)))))))
 
 (defn- update-turn
