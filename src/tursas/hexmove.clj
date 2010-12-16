@@ -42,15 +42,11 @@
                   promotion)
         :else (println "Invalid move arguments!")))
 
-(defprotocol Algebraic
-  (algebraic->move [algebraic]))
-
-(extend-type String
-  Algebraic
-  (algebraic->move [algebraic]
-                   (let [from (str (get algebraic 0)
-                                   (get algebraic 1))
-                         to (str (get algebraic 2)
-                                 (get algebraic 3))
-                         promotion (str (get algebraic 4))]
-                     (make-move from to promotion))))
+(defn algebraic->move
+  [algebraic]
+  (let [from (str (get algebraic 0)
+                  (get algebraic 1))
+        to (str (get algebraic 2)
+                (get algebraic 3))
+        promotion (str (get algebraic 4))]
+    (make-move from to promotion)))
