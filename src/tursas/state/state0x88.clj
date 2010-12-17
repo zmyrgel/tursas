@@ -156,7 +156,8 @@
   (assoc state :board
          (-> (:board state)
              (fill-square PREV-MOVE-FROM (:from move))
-             (fill-square PREV-MOVE-TO (:to move)))))
+             (fill-square PREV-MOVE-TO (:to move))
+             (fill-square PREV-PIECE (get (:board state) (:from move))))))
 
 (defn- update-check
   "Updates CHECK status bit on the state."
