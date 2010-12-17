@@ -175,13 +175,13 @@
   "Updates game state to reflect changes from move."
   [old-state move]
   (->> old-state
+       (update-move move)
        (update-board move)
        update-turn
        (update-castling move)
        (update-en-passant move)
        (update-half-moves move)
        update-full-moves
-       (update-move move)
        update-check))
 
 (defrecord State0x88 [board black-pieces white-pieces]
