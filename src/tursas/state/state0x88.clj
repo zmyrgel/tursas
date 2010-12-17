@@ -54,8 +54,9 @@
       (Character/toUpperCase (char (:promotion move)))
       (Character/toLowerCase (char (:promotion move))))))
 
-(defn- commit-castle-move
-  "Helper function for update-board to make castling move on board."
+(defn- move-castling-pieces
+  "Helper function for update-board to make castling move on board.
+   Mainly it moves the king piece and the participating rook piece."
   [player state move castling-side]
   (let [[rook king from to]
         (if (= player WHITE)
@@ -74,14 +75,13 @@
         player (get board TURN-STORE)
         moving-piece (get board (:from move))]
     (cond (promotion? moving-piece move)
-          (assoc state :board
-                 (promote-piece state (:to move)
-                                (piece-value (get-promotion-piece player move))))
+          (promote-piece state (:to move)
+                         (piece-value (get-promotion-piece player move)))
           (castling? moving-piece move)
-          (commit-castle-move player board move
-                              (if (= column (:to move) 2)
-                                QUEEN-SIDE
-                                KING-SIDE))
+          (move-castling-pieces player board move
+                                (if (= column (:to move) 2)
+                                  QUEEN-SIDE
+                                  KING-SIDE))
           :else (move-piece state move))))
 
 (defn- update-castling
