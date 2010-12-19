@@ -260,11 +260,11 @@
                                     (castle-side? player side castling)
                                     (legal-castling? player board index direction))
                            (make-move index (+ direction direction) nil)))]
-    (reduce concat
-            (flatten (map #(move-to-place board index (+ index %) player)
-                          king-movement))
-            (castling-moves KING-SIDE WEST)
-            (castling-moves QUEEN-SIDE EAST))))
+    (concat
+     (flatten (map #(move-to-place board index (+ index %) player)
+                   king-movement))
+     (castling-moves KING-SIDE WEST)
+     (castling-moves QUEEN-SIDE EAST))))
 
 (defn- list-pawn-normal-moves
   "Returns lists of normail pawn moves available
