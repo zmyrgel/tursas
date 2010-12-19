@@ -144,5 +144,9 @@
   "Calculates heuristic value for given state."
   [state]
   (let [pieces (merge (:white-pieces state)
-                      (:black-pieces state))]
-    (reduce + (map #(material-value %) (vals pieces)))))
+                      (:black-pieces state))
+        situation (check-situation state pieces)]
+    (reduce + (concat (map #(material-value %) (vals pieces))
+                      (map #(index-score (get pieces %) % situation)
+                           (keys pieces))))))
+
