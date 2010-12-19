@@ -148,7 +148,7 @@
              "Can't evaluate score from empty game state!"
              (->> @game-state
                   first
-                  evaluate))))
+                  minmax))))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
