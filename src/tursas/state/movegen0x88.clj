@@ -332,31 +332,49 @@
   (map #(move-to-place board index (+ index %) player)
        knight-movement))
 
+(defn- piece-moves
+  "List of moves for piece in board index."
+  [board player index piece]
+  (cond (or (= piece WHITE-PAWN)
+            (= piece BLACK-PAWN))
+        (list-pawn-moves player board index)
+        (or (= piece WHITE-BISHOP)
+            (= piece BLACK-BISHOP))
+        (list-bishop-moves player board index)
+        (or (= piece WHITE-KNIGHT)
+            (= piece BLACK-KNIGHT))
+        (list-knight-moves player board index)
+        (or (= piece WHITE-ROOK)
+            (= piece BLACK-ROOK))
+        (list-rook-moves player board index)
+        (or (= piece WHITE-QUEEN)
+            (= piece BLACK-QUEEN))
+        (list-queen-moves player board index)
+        (or (= piece WHITE-KING)
+            (= piece BLACK-KING))
+        (list-king-moves player board index)
+        :else '()))
+
 (defn- pseudo-moves
-  "Generates a set of all available moves for piece at INDEX in given STATE.
+  "Lists all pseudo-moves for player in state.
    Still doesn't live up to its name as all moves returned are also
    legal.  Later the move generation should be separated to pseudo
    moves and legal moves."
-  [state index]
+  [state player]
   (let [board (:board state)
-        player (if (occupied-by? board index WHITE) WHITE BLACK)]
-    (case (Character/toLowerCase (char (piece-name (get board index))))
-          \p (list-pawn-moves player board index)
-          \b (list-bishop-moves player board index)
-          \n (list-knight-moves player board index)
-          \r (list-rook-moves player board index)
-          \q (list-queen-moves player board index)
-          \k (list-king-moves player board index)
-          '())))
+        pieces (seq (if (= player WHITE)
+                      (:white-pieces state)
+                      (:black-pieces state)))]
+    (reduce (fn [moves [index piece]]
+              (concat moves (piece-moves board player index piece)))
+            '() pieces)))
 
 (defn moves
-  "Returns a set of all available moves for SIDE in STATE.
-   TODO: get rid of flatten call"
+  "Returns a set of all available moves for SIDE in STATE."
   [state]
-  (filter #(not (nil? %))
-          (flatten (map #(pseudo-moves state %)
-                        (piece-indexes state
-                                       (get (:board state) TURN-STORE))))))
+  (let [player (get (:board state) TURN-STORE)]
+    (filter #(not (nil? %))
+            (pseudo-moves state player))))
 
 (defn states
   "Returns all legal states attainable by applying move."
@@ -367,12 +385,14 @@
           (map #(apply-move state %) moves)))
 
 (defn allowed-move?
-  "Checks if given MOVE is allowed in STATE.
-   TODO: get rid of flatten call"
+  "Checks if given MOVE is allowed in STATE."
   [state move]
-  (and (occupied-by? (:board state)
-                     (:from move)
-                     (get (:board state) TURN-STORE))
-       (not (nil? (some #(and (= (:from move) (:from %))
-                              (= (:to move) (:to %)))
-                        (flatten (pseudo-moves state (:from move))))))))
+  (let [board (:board state)
+        player (get (:board state) TURN-STORE)
+        from (:from move)
+        to (:to move)
+        piece (get board from)]
+    (and (occupied-by? board from player)
+         (not (nil? (some #(and (= from (:from %))
+                                (= to (:to %)))
+                          (piece-moves board player from piece)))))))
