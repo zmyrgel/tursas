@@ -157,42 +157,19 @@
           (not (board-occupied? board new-index)) (recur board new-index inc pieces)
           :else (not (nil? (some #(= (get board new-index) %) pieces))))))
 
-(defn- threaten-by-knight?
-  "Can piece in INDEX of BOARD be captured by OPPONENTs knight."
-  [board index opponent]
-  (not (nil? (some #(= (get board %)
-                       (if (= opponent WHITE)
-                         WHITE-KNIGHT BLACK-KING))
-                   (map #(+ index %) knight-movement)))))
+(defn- threaten-by-piece?
+  "Can piece in index be captured by opponents pieces."
+  [board index opponent piece placements]
+  (not (nil? (some #(= (get board %) piece)
+                   placements))))
 
-(defn- threaten-by-pawn?
-  "Can the piece in INDEX of BOARD be captured by OPPONENTs pawn?"
-  [board index opponent]
-  (if (= opponent WHITE)
-    (or (= (get board (+ index SE)) WHITE-PAWN)
-        (= (get board (+ index SW)) WHITE-PAWN))
-    (or (= (get board (+ index NE)) BLACK-PAWN)
-        (= (get board (+ index NW)) BLACK-PAWN))))
-
-(defn- threaten-by-queen-or-rook?
+(defn- threaten-by-slider?
   "Can the piece in INDEX of BOARD be captured
    by OPPONENTs queen or rook?"
-  [board index opponent]
-  (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                               (if (= opponent WHITE)
-                                                 [WHITE-QUEEN WHITE-ROOK]
-                                                 [BLACK-QUEEN BLACK-ROOK]))
-                              [NORTH EAST WEST SOUTH])))))
+  [board index opponent pieces directions]
+  (not (nil? (some true? (map #(ray-to-pieces? board index % pieces)
+                              directions)))))
 
-(defn- threaten-by-queen-or-bishop?
-  "Can the piece in INDEX on BOARD be captured by
-   OPPONENTs queen or bishop?"
-  [board index opponent]
-  (not (nil? (some true? (map #(ray-to-pieces? board index %
-                                               (if (= opponent WHITE)
-                                                 [WHITE-QUEEN WHITE-BISHOP]
-                                                 [BLACK-QUEEN BLACK-BISHOP]))
-                              [NE NW SW SE])))))
 (declare threaten-index?)
 (defn- threaten-by-king?
   "Can the piece in INDEX on BOARD be captured by OPPONENTs king."
@@ -211,12 +188,19 @@
   "Checks if given INDEX in STATE is under threath of enemy.
    Inf loop with king-index check"
   [board index opponent]
-  (or (threaten-by-knight? board index opponent)
-      (threaten-by-queen-or-bishop? board index opponent)
-      (threaten-by-queen-or-rook? board index opponent)
-      (threaten-by-pawn? board index opponent)
-      ;;(threaten-by-king? board index opponent)
-      ))
+  (let [[qb qr knight pawn pawn-places]
+        (if (= opponent WHITE)
+          [[WHITE-QUEEN WHITE-BISHOP]
+           [WHITE-QUEEN WHITE-ROOK]
+           WHITE-KNIGHT WHITE-PAWN [SE SW]]
+          [[BLACK-QUEEN BLACK-BISHOP]
+           [BLACK-QUEEN BLACK-ROOK]
+           BLACK-KNIGHT BLACK-PAWN [NE NW]])]
+    (or (threaten-by-piece? board index opponent knight knight-movement)
+        (threaten-by-slider? board index opponent qr rook-directions)
+        (threaten-by-slider? board index opponent qb bishop-directions)
+        (threaten-by-piece? board index opponent pawn pawn-places)
+        (threaten-by-king? board index opponent))))
 
 (defn- empty-and-safe?
   "Predicate to see if given index is empty
