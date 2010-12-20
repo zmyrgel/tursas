@@ -134,7 +134,7 @@
    from INDEX to DIRECTION in given STATE."
   [player board index direction]
   (loop [new-index (+ index direction)
-         moves ()]
+         moves '()]
     (if (or (not (board-index? new-index))
             (occupied-by? board new-index player))
       moves
