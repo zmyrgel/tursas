@@ -144,6 +144,8 @@
        choose-move))
 
 (defn get-score
+  "Calculates state's score by checking child states
+   to certain depth using minmax algorithm."
   []
   (println
    (if (empty? @game-state)
