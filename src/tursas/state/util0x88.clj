@@ -2,8 +2,8 @@
   (:use (tursas.state common0x88)))
 
 (def board-indexes (reduce concat
-                               (map #(map (fn [col] (+ col %)) (range 8))
-                                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
+                           (map #(map (fn [col] (+ col %)) (range 8))
+                                [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
 (def board-color [1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
                   0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
