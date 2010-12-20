@@ -292,13 +292,12 @@
                    [(+ NW index) (+ NE index)]
                    [(+ SW index) (+ SE index)])
         en-passant-index (get board EN-PASSANT-STORE)]
-    (map #(if (or (and (board-index? %)
-                       (= en-passant-index %))
-                  (and (board-index? %)
-                       (board-occupied? board %)
-                       (not (occupied-by? board % player))))
-            (list (make-move index % nil))
-            nil)
+    (map #(when (or (and (board-index? %)
+                         (= en-passant-index %))
+                    (and (board-index? %)
+                         (board-occupied? board %)
+                         (not (occupied-by? board % player))))
+            (list (make-move index % nil)))
          captures)))
 
 (defn- list-pawn-moves
