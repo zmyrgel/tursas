@@ -273,16 +273,15 @@
   [player board index]
   (let [direction (if (= player WHITE) NORTH SOUTH)
         move-index (+ index direction)]
-    (if (and (board-index? move-index)
-             (not (board-occupied? board move-index)))
+    (when (and (board-index? move-index)
+               (not (board-occupied? board move-index)))
       (if (and (board-index? (+ move-index direction))
                (not (board-occupied? board (+ move-index direction)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
         (list (make-move index move-index nil)
               (make-move index (+ move-index direction) nil))
-        (list (make-move index move-index nil)))
-      nil)))
+        (list (make-move index move-index nil))))))
 
 (defn- list-pawn-capture-moves
   "List of possible capture moves of pawn."
