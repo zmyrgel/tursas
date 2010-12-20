@@ -96,7 +96,7 @@
         (set-dynamic (if (= occupant EMPTY) 0 1)))))
 
 (defn promote-piece
-  "Promotes piece in INDEX to VALUE."
+  "Promotes piece in index to new-piece value."
   [state index new-piece]
   (-> state
       (remove-piece index)
@@ -124,8 +124,9 @@
     (pos? (bit-and value castling))))
 
 (defn- slide-in-direction
-  "Returns a set of possible moves by sliding piece
-   from INDEX to DIRECTION in given STATE."
+  "Returns a list of possible moves by sliding piece
+   from index to given direction on the board.
+   Sliding will continue until it hits piece or board edge."
   [player board index direction]
   (loop [new-index (+ index direction)
          moves '()]
@@ -140,7 +141,7 @@
               moves)))))
 
 (defn- move-to-place
-  "Return set with index of possible move to given PLACE in given STATE."
+  "Return list of moves for given piece."
   [board index place player]
   (when (and (board-index? place)
            (or (not (board-occupied? board place))
