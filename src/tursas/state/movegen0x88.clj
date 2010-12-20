@@ -354,9 +354,7 @@
    moves and legal moves."
   [state player]
   (let [board (:board state)
-        pieces (seq (if (= player WHITE)
-                      (:white-pieces state)
-                      (:black-pieces state)))]
+        pieces (seq (pmap-get state player))]
     (reduce (fn [moves [index piece]]
               (concat moves (piece-moves board player index piece)))
             '() pieces)))
