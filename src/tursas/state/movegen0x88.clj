@@ -370,11 +370,12 @@
             '() pieces)))
 
 (defn moves
-  "Returns a set of all available moves for SIDE in STATE."
+  "Returns a set of all available moves for SIDE in STATE.
+   TODO: get rid of flatten"
   [state]
   (let [player (get (:board state) TURN-STORE)]
     (filter #(not (nil? %))
-            (pseudo-moves state player))))
+            (flatten (pseudo-moves state player)))))
 
 (defn states
   "Returns all legal states attainable by applying move."
