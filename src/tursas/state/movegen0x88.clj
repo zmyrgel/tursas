@@ -245,8 +245,7 @@
 
 (defn- list-king-moves
   "Returns a list of  all available moves for players king
-   in given index on the board.
-   TODO: get rid of flatten call"
+   in given index on the board."
   [player board index]
   (let [castling (get board CASTLING-STORE)
         castling-move (fn [side direction]
@@ -255,11 +254,11 @@
                                    (legal-castling? player board index direction))
                           (make-move index (+ direction direction) nil)))]
     (concat
-     (flatten (map #(move-to-place board index (+ index %) player)
-                   king-movement))
-     (concat
-      (castling-move KING-SIDE WEST)
-      (castling-move QUEEN-SIDE EAST)))))
+     (reduce (fn [moves diff]
+               (concat moves (move-to-place board index (+ index diff) player)))
+             '() king-movement)
+     (castling-move KING-SIDE WEST)
+     (castling-move QUEEN-SIDE EAST))))
 
 (defn- list-pawn-normal-moves
   "Returns lists of normail pawn moves available
@@ -286,44 +285,49 @@
                    [(+ NW index) (+ NE index)]
                    [(+ SW index) (+ SE index)])
         en-passant-index (get board EN-PASSANT-STORE)]
-    (map #(when (or (and (board-index? %)
-                         (= en-passant-index %))
-                    (and (board-index? %)
-                         (board-occupied? board %)
-                         (not (occupied-by? board % player))))
-            (list (make-move index % nil)))
-         captures)))
+    (reduce (fn [moves place]
+              (concat moves
+                      (when (or (and (board-index? place)
+                                     (= en-passant-index place))
+                                (and (board-index? place)
+                                     (board-occupied? board place)
+                                     (not (occupied-by? board place player))))
+                        (make-move index place nil))))
+            '() captures)))
 
 (defn- list-pawn-moves
-  "Returns a set of available pawn moves from INDEX in given STATE.
-   TODO: get rid of flatten call"
+  "Returns a set of available pawn moves from INDEX in given STATE."
   [player board index]
-  (flatten (conj (list-pawn-normal-moves player board index)
-                 (list-pawn-capture-moves player board index))))
+  (concat (list-pawn-normal-moves player board index)
+          (list-pawn-capture-moves player board index)))
 
 (defn- list-bishop-moves
   "Returns a list of bishop moves"
   [player board index]
-  (map #(slide-in-direction player board index %)
-       bishop-directions))
+  (reduce (fn [moves direction]
+            (concat moves (slide-in-direction player board index direction)))
+          '() bishop-directions))
 
 (defn- list-queen-moves
   "Returns a list of queen moves."
   [player board index]
-  (map #(slide-in-direction player board index %)
-       queen-directions))
+  (reduce (fn [moves direction]
+            (concat moves (slide-in-direction player board index direction)))
+          '() queen-directions))
 
 (defn- list-rook-moves
   "Returns a list of rook moves."
   [player board index]
-  (map #(slide-in-direction player board index %)
-       rook-directions))
+  (reduce (fn [moves direction]
+            (concat moves (slide-in-direction player board index direction)))
+          '() rook-directions))
 
 (defn- list-knight-moves
   "Returns a list of knight moves."
   [player board index]
-  (map #(move-to-place board index (+ index %) player)
-       knight-movement))
+  (reduce (fn [moves diff]
+            (concat moves (move-to-place board index (+ index diff) player)))
+          '() knight-movement))
 
 (defn- piece-moves
   "List of moves for piece in board index."
@@ -361,12 +365,11 @@
             '() pieces)))
 
 (defn moves
-  "Returns a set of all available moves for SIDE in STATE.
-   TODO: get rid of flatten"
+  "Returns a set of all available moves for SIDE in STATE."
   [state]
   (let [player (get (:board state) TURN-STORE)]
     (filter #(not (nil? %))
-            (flatten (pseudo-moves state player)))))
+            (pseudo-moves state player))))
 
 (defn states
   "Returns all legal states attainable by applying move."
