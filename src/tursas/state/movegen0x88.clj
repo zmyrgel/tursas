@@ -367,17 +367,18 @@
 (defn moves
   "Returns a set of all available moves for SIDE in STATE."
   [state]
-  (let [player (get (:board state) TURN-STORE)]
-    (filter #(not (nil? %))
-            (pseudo-moves state player))))
+  (pseudo-moves state (get (:board state) TURN-STORE)))
 
 (defn states
   "Returns all legal states attainable by applying move."
   [state moves]
-  (filter #(not (or (nil? %)
-                    (nil? (king-index state (get (:board state) TURN-STORE)))
-                    (check? %)))
-          (map #(apply-move state %) moves)))
+  (let [states (reduce (fn [states move]
+                         (if-let [new-state (apply-move state move)]
+                           (cons new-state states)
+                           states))
+                       '() moves)]
+    (filter #(not (or (nil? (king-index state (get (:board state) TURN-STORE)))
+                      (check? %))) states)))
 
 (defn allowed-move?
   "Checks if given MOVE is allowed in STATE."
