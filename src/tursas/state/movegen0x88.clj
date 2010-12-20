@@ -281,7 +281,7 @@
         (list (make-move index move-index nil)
               (make-move index (+ move-index direction) nil))
         (list (make-move index move-index nil)))
-      '())))
+      nil)))
 
 (defn- list-pawn-capture-moves
   "List of possible capture moves of pawn."
@@ -298,7 +298,7 @@
                        (board-occupied? board %)
                        (not (occupied-by? board % player))))
             (list (make-move index % nil))
-            '())
+            nil)
          captures)))
 
 (defn- list-pawn-moves
@@ -353,7 +353,7 @@
         (or (= piece WHITE-KING)
             (= piece BLACK-KING))
         (list-king-moves player board index)
-        :else '()))
+        :else nil))
 
 (defn- pseudo-moves
   "Lists all pseudo-moves for player in state.
