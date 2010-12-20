@@ -142,7 +142,7 @@
 
 (defn- move-to-place
   "Return list of moves for given piece."
-  [board index place player]
+  [player board index place ]
   (when (and (board-index? place)
            (or (not (board-occupied? board place))
                (occupied-by? board place (opponent player))))
@@ -255,7 +255,7 @@
                           (make-move index (+ direction direction) nil)))]
     (concat
      (reduce (fn [moves diff]
-               (concat moves (move-to-place board index (+ index diff) player)))
+               (concat moves (move-to-place player board index (+ index diff))))
              '() king-movement)
      (castling-move KING-SIDE WEST)
      (castling-move QUEEN-SIDE EAST))))
@@ -326,7 +326,7 @@
   "Returns a list of knight moves."
   [player board index]
   (reduce (fn [moves diff]
-            (concat moves (move-to-place board index (+ index diff) player)))
+            (concat moves (move-to-place player board index (+ index diff))))
           '() knight-movement))
 
 (defn- piece-moves
