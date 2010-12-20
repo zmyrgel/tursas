@@ -155,12 +155,13 @@
           (minmax (:depth-limit @game-options) evaluate)))))
 
 (defn eval-current-state
+  "Evaluates the current state and prints its score."
   []
   (println (if (empty? @game-state)
              "Can't evaluate score from empty game state!"
              (->> @game-state
                   first
-                  minmax))))
+                  evaluate))))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
