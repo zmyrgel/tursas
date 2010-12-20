@@ -96,6 +96,16 @@
        state->fen
        println))
 
+(defn display-perft
+  "Display Perft of given depth."
+  [depth]
+  (println
+   (if (empty? @game-state)
+     "Can't calculate perft from empty state!"
+     (time (-> @game-state
+               first
+               (perft (- (int depth) 48)))))))
+
 (defn list-moves
   "List all available moves from currect state."
   []

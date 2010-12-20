@@ -36,6 +36,7 @@
           "lm" (list-moves)
           "gs" (get-score)
           "es" (eval-current-state)
+          "pf" (display-perft (second command))
           "uci"  (set-active-repl :uci)
           "xboard" (set-active-repl :xboard)
           "quit" (quit)
