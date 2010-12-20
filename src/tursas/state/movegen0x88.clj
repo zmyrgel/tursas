@@ -148,11 +148,10 @@
 (defn- move-to-place
   "Return set with index of possible move to given PLACE in given STATE."
   [board index place player]
-  (if (and (board-index? place)
+  (when (and (board-index? place)
            (or (not (board-occupied? board place))
                (occupied-by? board place (opponent player))))
-    (list (make-move index place nil))
-    '()))
+    (list (make-move index place nil))))
 
 (defn- ray-to-pieces?
   "Checks if there's ray to from INDEX to given PIECES."
