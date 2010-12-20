@@ -90,16 +90,10 @@
   (let [piece (get (:board state) (:from move))
         occupant (get (:board state) (:to move))
         player (if (white-piece? piece) WHITE BLACK)]
-    (if (= occupant EMPTY)
-      (-> state
-          (remove-piece (:from move))
-          (add-piece (:to move) piece)
-          (set-dynamic 0))
-      (-> state
-          (remove-piece (:to move))
-          (remove-piece (:from move))
-          (add-piece (:to move) piece)
-          (set-dynamic 1)))))
+    (-> state
+        (remove-piece (:from move))
+        (add-piece (:to move) piece)
+        (set-dynamic (if (= occupant EMPTY) 0 1)))))
 
 (defn promote-piece
   "Promotes piece in INDEX to VALUE."
