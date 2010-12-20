@@ -277,23 +277,26 @@
               (make-move index (+ move-index direction) nil))
         (list (make-move index move-index nil))))))
 
+(defn- pawn-capture
+  "Function to generate pawn capture moves.
+   If pawn of index can capture piece in place, generate the move
+   otherwise return nil."
+  [player board index place]
+  (when (or (and (board-index? place)
+                 (= (get board EN-PASSANT-STORE) place))
+            (and (board-index? place)
+                 (board-occupied? board place)
+                 (not (occupied-by? board place player))))
+    (make-move index place nil)))
+
 (defn- list-pawn-capture-moves
   "List of possible capture moves of pawn."
   [player board index]
-  (let [direction (if (= player WHITE) NORTH SOUTH)
-        move-index (+ index direction)
-        captures (if (= player WHITE)
+  (let [captures (if (= player WHITE)
                    [(+ NW index) (+ NE index)]
-                   [(+ SW index) (+ SE index)])
-        en-passant-index (get board EN-PASSANT-STORE)]
+                   [(+ SW index) (+ SE index)])]
     (reduce (fn [moves place]
-              (concat moves
-                      (when (or (and (board-index? place)
-                                     (= en-passant-index place))
-                                (and (board-index? place)
-                                     (board-occupied? board place)
-                                     (not (occupied-by? board place player))))
-                        (make-move index place nil))))
+              (concat moves (pawn-capture player board index place)))
             '() captures)))
 
 (defn- list-pawn-moves
