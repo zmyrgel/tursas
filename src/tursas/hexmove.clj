@@ -28,7 +28,8 @@
   (to [move]
     (index->algebraic (:to move)))
   (promotion [move]
-    (piece-name (:promotion move))))
+    (when-not (zero? (:promotion move))
+      (piece-name (:promotion move)))))
 
 (defn make-move
   "Constructor for moves."

@@ -220,8 +220,9 @@
           piece (get board (get board PREV-MOVE-TO))]
       (make-move (get board PREV-MOVE-FROM)
                  (get board PREV-MOVE-TO)
-                 (when-not (= prev-piece piece)
-                   piece))))
+                 (if-not (= prev-piece piece)
+                   piece
+                   0))))
   (perft [state depth]
     (if (zero? depth)
       1

@@ -135,9 +135,9 @@
       moves
       (if (not (board-occupied? board new-index))
         (recur (+ new-index direction)
-               (cons (make-move index new-index nil)
+               (cons (make-move index new-index 0)
                      moves))
-        (cons (make-move index new-index nil)
+        (cons (make-move index new-index 0)
               moves)))))
 
 (defn- move-to-place
@@ -147,7 +147,7 @@
     (when (and (board-index? new-place)
                (or (not (board-occupied? board new-place))
                    (occupied-by? board new-place (opponent player))))
-      (list (make-move index new-place nil)))))
+      (list (make-move index new-place 0)))))
 
 (defn- ray-to-pieces?
   "Checks if there's ray to from INDEX to given PIECES."
@@ -245,7 +245,7 @@
                         (when (and (= (column index) 4)
                                    (castle-side? player side castling)
                                    (legal-castling? player board index direction))
-                          (make-move index (+ direction direction) nil)))]
+                          (make-move index (+ direction direction) 0)))]
     (concat
      (reduce (fn [moves diff]
                (concat moves (move-to-place player board index (+ index diff))))
@@ -265,9 +265,9 @@
                (not (board-occupied? board (+ move-index direction)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
-        (list (make-move index move-index nil)
-              (make-move index (+ move-index direction) nil))
-        (list (make-move index move-index nil))))))
+        (list (make-move index move-index 0)
+              (make-move index (+ move-index direction) 0))
+        (list (make-move index move-index 0))))))
 
 (defn- pawn-capture
   "Function to generate pawn capture moves.
@@ -279,7 +279,7 @@
             (and (board-index? place)
                  (board-occupied? board place)
                  (not (occupied-by? board place player))))
-    (make-move index place nil)))
+    (make-move index place 0)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
