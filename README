@@ -7,16 +7,14 @@ Tursas is a simple chess engine implemented in Clojure.
 - UCI / XBoard interface : Some commands implemented, no error detection
 - Saving / Loading game: Completed
 - REPL to play with: some commands exist, has some issues like game doesn't end
+- Game: Controls the game, needs testing to detect end-game conditions
 - State representation: Completed with 0x88 board
-- Move generation: Completed although contains some errors, most likely
-                   in special moves and game end detection
-- Search algorithm: WIP version of minimax algorithm
-- Evaluator: Material balance and some board location for now,
-             will work on this once rest is completed and tested
+- Move generation: Mostly done, some errors in special moves
+- Search algorithm: Semi-functional version of minimax algorithm
+- Evaluator: Material balance and some board location for now
 
-Currently the game is somewhat playable via repl. It is very much work
-in progress code.
-Currently I'm trying to iron out the bugs in the move generation code
+The game is somewhat playable via repl. It is very much work
+in progress state. I'm working on ironing out the bugs in the move generation code
 and getting the minimax algorithm to work.
 
 ## Installation
@@ -28,6 +26,80 @@ lein uberjar
 
 After making the jar file you can run the engine with
 java -jar tursas-0.1-standalone.jar
+
+## Usage
+
+The game tries to support both UCI and XBoard protocol.  General repl
+commands are always available for use.  Once the uci or xboard command
+is given the active repl is changed and available command list is
+extended to support uci or xboard commands.
+
+Here's the planned command list for 1.0 version:
+
+Available general commands:
+  help - display this help
+  load - load the last saved game from file
+  save - store the current game to file
+  bd - display the board on the screen
+  fd - display current game state in FEN
+  lm - print a list of all available moves
+  gs - calculates score for the current game state
+  es - evaluates current game state
+  pf n - calculate perft score to depth of n
+  uci - enable uci mode
+  xboard - ebable xboard mode
+  quit - quite the Tursas engine
+
+Available UCI commands are:
+ debug [ on | off ] - print debug messages
+ isready - Prompts the engine if its ready
+ setoption name <id> [value <x>]
+ register [later | name <x> | code <x> ] - register values with engine
+ ucinewgame - start a new game
+ position [fen <fenstring> | startpos ] moves <move1> .... <movei>
+ go [searchmoves <move1> .... <movei>]
+     ponder - startpos searching in pondering mode
+     wtime <x> - white has x msec left on the clock
+     btime <x> - black has x msec left on the clock
+     winc <x> - white increment per move in mseconds if x > 0
+     binc <x> - black increment per move in mseconds if x > 0
+     movestogo <x> - there are x moves to next time control
+     depth <x> - search x plies only
+     nodes <x> - search x nodes only
+     movetime <x> - search exactly x mseconds
+     infinite - search until 'stop' command is sent
+ stop - stop calculating as soon as possible
+ ponderhit - the user has played the expected move.
+
+Available XBoard commands are:
+ protover N - change engine to use protocol version N
+ accepted - Accept last feature
+ reject - Reject last feature
+ variant VARIANT - change to use VARIANT rules. Only 'normal' supported
+ random - Tell engine to add little random elements
+ force - Disable engine AI
+ go - Enable engine AI
+ level MPS BASE INC - set time controls
+ st TIME - set time controls
+ sd DEPTH - set search depth to DEPTH
+ nps NODE_RATE - search only NODE_RATE nodes
+ usermove MOVE - make given MOVE if legal
+ ? - Tell Engine to stop thinking and make its move now
+ ping N - Pings the engine for pong reply
+ result RESULT {COMMENTS} - give the game RESULT to engine
+ setboard FEN - Set the game board to given FEN.
+ hint - prompt move hint from engine
+ bk - use book
+ undo - tell engine to undo last move
+ remove - tell engine to undo last two moves
+ hard - tell engine to ponder during players turn
+ easy - tell engine to ponder only during its turn
+ post - tell engine to send ponder output
+ nopost - tell engine not to send ponder output
+ name X - tell engine its opponents name
+ rating - ask engine its rating
+ computer - tell engine that its playing against cpu
+ option NAME[=VALUE] - tell engine to use new option
 
 ## License
 
