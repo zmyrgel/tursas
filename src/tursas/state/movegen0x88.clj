@@ -247,9 +247,8 @@
                                    (legal-castling? player board index direction))
                           (make-move index (+ direction direction) 0)))]
     (concat
-     (reduce (fn [moves diff]
-               (concat moves (move-to-place player board index (+ index diff))))
-             '() king-movement)
+     (list-moves player board index
+                 move-to-place (map #(+ index %) king-movement))
      (castling-move KING-SIDE WEST)
      (castling-move QUEEN-SIDE EAST))))
 
