@@ -210,7 +210,7 @@
           new-state))))
   (legal-states [state]
     (->> state
-         moves
+         (pseudo-moves (get (:board state) TURN-STORE))
          (states state)))
   (turn [state]
     (if (= (get (:board state) TURN-STORE) WHITE) :white :black))

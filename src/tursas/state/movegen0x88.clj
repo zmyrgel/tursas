@@ -313,22 +313,17 @@
         (list-king-moves player board index)
         :else nil))
 
-(defn- pseudo-moves
+(defn pseudo-moves
   "Lists all pseudo-moves for player in state.
    Still doesn't live up to its name as all moves returned are also
    legal.  Later the move generation should be separated to pseudo
    moves and legal moves."
-  [state player]
+  [player state]
   (let [board (:board state)
         pieces (seq (pmap-get state player))]
     (reduce (fn [moves [index piece]]
               (concat moves (piece-moves board player index piece)))
             '() pieces)))
-
-(defn moves
-  "Returns a set of all available moves for SIDE in STATE."
-  [state]
-  (pseudo-moves state (get (:board state) TURN-STORE)))
 
 (defn states
   "Returns all legal states attainable by applying move."
