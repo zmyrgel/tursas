@@ -45,14 +45,12 @@
                               :else (same-color? (first (keys bishops))
                                                  (second (keys bishops)))))))))))
 (defn- get-promotion-piece
-  "Helper function to return new piece char.
-    Gets the char from move or if nil, defaults to queen."
+  "Helper function to return promotion piece value.
+    Reads the char from move or if nil, defaults to queen."
   [player move]
-  (if (nil? (:promotion move))
-    (if (= player WHITE) \Q \q)
-    (if (= player WHITE)
-      (Character/toUpperCase (char (:promotion move)))
-      (Character/toLowerCase (char (:promotion move))))))
+  (if-let [piece (:promotion move)]
+    (if (= player WHITE) (Character/toUpperCase piece) piece)
+    (if (= player WHITE) WHITE-QUEEN BLACK-QUEEN)))
 
 (defn- move-castling-pieces
   "Helper function for update-board to make castling move on board.
@@ -76,7 +74,7 @@
         moving-piece (get board (:from move))]
     (cond (promotion? moving-piece move)
           (promote-piece state (:to move)
-                         (piece-value (get-promotion-piece player move)))
+                         (get-promotion-piece player move))
           (castling? moving-piece move)
           (move-castling-pieces player board move
                                 (if (= column (:to move) 2)

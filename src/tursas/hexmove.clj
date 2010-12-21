@@ -1,5 +1,6 @@
 (ns tursas.hexmove
-  (:use (tursas move)))
+  (:use (tursas move)
+        (tursas.state util0x88)))
 
 (defn index->algebraic
   "Converts given index to algebraic representation."
@@ -19,27 +20,29 @@
 (defrecord HexMove [from to promotion]
   Move
   (move->algebraic [move]
-                   (str (index->algebraic (:from move))
-                        (index->algebraic (:to move))
-                        (:promotion move)))
+    (str (index->algebraic (:from move))
+         (index->algebraic (:to move))
+         (piece-name (:promotion move))))
   (from [move]
-        (index->algebraic (:from move)))
+    (index->algebraic (:from move)))
   (to [move]
-      (index->algebraic (:to move)))
+    (index->algebraic (:to move)))
   (promotion [move]
-             (:promotion move)))
+    (piece-name (:promotion move))))
 
 (defn make-move
   "Constructor for moves."
   [from to promotion]
   (cond (and (number? from)
-             (number? to))
+             (number? to)
+             (number? promotion))
         (HexMove. from to promotion)
         (and (string? from)
-             (string? to))
+             (string? to)
+             (string? promotion))
         (HexMove. (algebraic->index from)
                   (algebraic->index to)
-                  promotion)
+                  (piece-value promotion))
         :else (println "Invalid move arguments!")))
 
 (defn algebraic->move
