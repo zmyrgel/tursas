@@ -109,8 +109,7 @@
      "   movetime <x> - search exactly x mseconds"
      "   infinite - search until 'stop' command is sent"
      " stop - stop calculating as soon as possible"
-     " ponderhit - the user has played the expected move."
-     " quit - quit the program as soon as possible")))
+     " ponderhit - the user has played the expected move.")))
 
 (defn- uci-set-option
   "Sets UCI specific game options:

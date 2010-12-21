@@ -45,7 +45,6 @@
      "accepted - Accept last feature"
      "reject - Reject last feature"
      "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
-     "quit - Quit the engine"
      "random - Tell engine to add little random elements"
      "force - Disable engine AI"
      "go - Enable engine AI"
