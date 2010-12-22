@@ -7,7 +7,6 @@
   [& args]
   (println "Welcome to Tursas Chess Engine!")
   (println "Type 'help' to get list of supported commands")
-  (loop []
-    (let [input (read-line)]
-      (process-command input))
-    (recur)))
+  (loop [input (read-line)]
+    (process-command input)
+    (recur (read-line))))
