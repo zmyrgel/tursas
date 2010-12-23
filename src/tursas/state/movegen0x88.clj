@@ -239,15 +239,15 @@
   [player board index]
   (let [castling (get board CASTLING-STORE)
         castling-move (fn [side dir]
-                        (when (and (= (column index) 4)
+                        (when (and (= (column index) 4) ;; XXX: ugly hack
                                    (castle-side? player side castling)
                                    (legal-castling? player board index dir))
                           (list (make-move index (+ dir dir) 0))))]
     (concat
      (list-moves player board index
                  move-to-place (map #(+ index %) king-movement))
-     (castling-move KING-SIDE WEST)
-     (castling-move QUEEN-SIDE EAST))))
+     (castling-move KING-SIDE EAST)
+     (castling-move QUEEN-SIDE WEST))))
 
 (defn- list-pawn-normal-moves
   "Returns lists of normail pawn moves available
