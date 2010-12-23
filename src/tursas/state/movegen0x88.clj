@@ -238,11 +238,11 @@
    in given index on the board."
   [player board index]
   (let [castling (get board CASTLING-STORE)
-        castling-move (fn [side direction]
+        castling-move (fn [side dir]
                         (when (and (= (column index) 4)
                                    (castle-side? player side castling)
-                                   (legal-castling? player board index direction))
-                          (make-move index (+ direction direction) 0)))]
+                                   (legal-castling? player board index dir))
+                          (list (make-move index (+ dir dir) 0))))]
     (concat
      (list-moves player board index
                  move-to-place (map #(+ index %) king-movement))
