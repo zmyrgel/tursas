@@ -77,7 +77,7 @@
             (promote-piece state (:to move)
                            (get-promotion-piece player move))
             (castling? moving-piece move)
-            (move-castling-pieces player board move
+            (move-castling-pieces player state move
                                   (if (= column (:to move) 2)
                                     QUEEN-SIDE
                                     KING-SIDE))
