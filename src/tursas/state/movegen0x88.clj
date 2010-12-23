@@ -164,15 +164,15 @@
                    placements))))
 
 (defn- threaten-by-slider?
-  "Can the piece in INDEX of BOARD be captured
-   by OPPONENTs queen or rook?"
+  "Can the piece in index of board be captured
+   by opponents queen or rook?"
   [board index opponent pieces directions]
   (not (nil? (some true? (map #(ray-to-pieces? board index % pieces)
                               directions)))))
 
 (declare threaten-index?)
 (defn- threaten-by-king?
-  "Can the piece in INDEX on BOARD be captured by OPPONENTs king."
+  "Can the piece in index on board be captured by opponents king."
   [board index opponent]
   (let [player (if (= opponent WHITE) BLACK WHITE)
         enemy-king (if (= opponent BLACK) BLACK-KING WHITE-KING)
@@ -185,7 +185,7 @@
           (threaten-index? index player)))))
 
 (defn threaten-index?
-  "Checks if given INDEX in STATE is under threath of enemy.
+  "Checks if given index in state is under threath of enemy.
    Inf loop with king-index check"
   [board index opponent]
   (let [[qb qr knight pawn pawn-places]
