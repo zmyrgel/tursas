@@ -74,13 +74,11 @@
           player (get board TURN-STORE)
           moving-piece (get board (:from move))]
       (cond (promotion? moving-piece move)
-            (promote-piece state (:to move)
-                           (get-promotion-piece player move))
+            (promote-piece state (:to move) (get-promotion-piece player move))
             (castling? moving-piece move)
             (move-castling-pieces player state move
                                   (if (= column (:to move) 2)
-                                    QUEEN-SIDE
-                                    KING-SIDE))
+                                    QUEEN-SIDE KING-SIDE))
             :else (move-piece state move)))))
 
 (defn- update-castling
