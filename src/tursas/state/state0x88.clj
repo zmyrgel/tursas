@@ -216,11 +216,9 @@
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
-    (when (and (satisfies? Move move) ;; XXX: ugly hack, find cause of invalid moves
-               (allowed-move? state move))
-      (let [new-state (update-state state move)]
-        (when (and (not (check? new-state)))
-          new-state))))
+    (when-let [new-state (update-state state move)]
+      (when (not (check? new-state))
+        new-state)))
   (legal-states [state]
     (->> state
          (pseudo-moves (get (:board state) TURN-STORE))
