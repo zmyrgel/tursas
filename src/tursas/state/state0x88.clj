@@ -184,17 +184,18 @@
 (defn- update-state
   "Updates game state to reflect changes from move.
    If game state is not legal, will return a nil value."
-  [old-state move]
-  (->> old-state
-       (update-move move)
-       (update-board move)
-       update-check
-       update-turn
-       (update-castling move)
-       (update-en-passant move)
-       (update-half-moves move)
-       update-full-moves
-       update-check))
+  [state move]
+  (when (not (nil? state))
+    (->> state
+         (update-move move)
+         (update-board move)
+         update-check
+         update-turn
+         (update-castling move)
+         (update-en-passant move)
+         (update-half-moves move)
+         update-full-moves
+         update-check)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
