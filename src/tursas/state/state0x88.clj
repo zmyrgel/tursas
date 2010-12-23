@@ -194,8 +194,7 @@
          (update-castling move)
          (update-en-passant move)
          (update-half-moves move)
-         update-full-moves
-         update-check)))
+         update-full-moves)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
