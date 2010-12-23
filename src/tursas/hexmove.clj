@@ -22,7 +22,9 @@
   (move->algebraic [move]
     (str (index->algebraic (:from move))
          (index->algebraic (:to move))
-         (piece-name (:promotion move))))
+         (let [piece (piece-name (:promotion move))]
+           (when (not (= piece \E))
+             piece))))
   (from [move]
     (index->algebraic (:from move)))
   (to [move]
@@ -34,17 +36,7 @@
 (defn make-move
   "Constructor for moves."
   [from to promotion]
-  (cond (and (number? from)
-             (number? to)
-             (number? promotion))
-        (HexMove. from to promotion)
-        (and (string? from)
-             (string? to)
-             (string? promotion))
-        (HexMove. (algebraic->index from)
-                  (algebraic->index to)
-                  (piece-value promotion))
-        :else (println "Invalid move arguments!")))
+  (HexMove. from to promotion))
 
 (defn algebraic->move
   [algebraic]
