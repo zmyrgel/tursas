@@ -237,8 +237,8 @@
   (perft [state depth]
     (if (zero? depth)
       1
-      (reduce + (map #(perft % (dec depth))
-                     (legal-states state)))))
+      (apply + (map #(perft % (dec depth))
+                    (legal-states state)))))
   (dynamic? [state]
     (= (get (:board state) DYNAMIC-STORE) 1))
   (evaluate [state]
