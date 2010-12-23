@@ -123,18 +123,18 @@
                 (if (= side KING-SIDE) 2 1))]
     (pos? (bit-and value castling))))
 
-(defn- slide-in-direction
+(defn- slide-in-dir
   "Returns a list of possible moves by sliding piece
    from index to given direction on the board.
    Sliding will continue until it hits piece or board edge."
-  [player board index direction]
-  (loop [new-index (+ index direction)
+  [player board index dir]
+  (loop [new-index (+ index dir)
          moves '()]
     (if (or (not (board-index? new-index))
             (occupied-by? board new-index player))
       moves
       (if (not (board-occupied? board new-index))
-        (recur (+ new-index direction)
+        (recur (+ new-index dir)
                (cons (make-move index new-index 0)
                      moves))
         (cons (make-move index new-index 0)
@@ -211,18 +211,18 @@
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
-  [player board index direction]
-  (let [king-index-1 (+ index direction)
-        king-index-2 (+ king-index-1 direction)
-        rook-index (if (= direction WEST)
+  [player board index dir]
+  (let [king-index-1 (+ index dir)
+        king-index-2 (+ king-index-1 dir)
+        rook-index (if (= dir WEST)
                      (+ king-index-2 WEST WEST)
                      (+ king-index-2 EAST))
         opponent (opponent player)]
     (and (not (threaten-index? board index opponent))
          (empty-and-safe? board king-index-1 opponent)
          (empty-and-safe? board king-index-2 opponent)
-         (if (= direction WEST)
-           (not (board-occupied? board (+ king-index-2 direction)))
+         (if (= dir WEST)
+           (not (board-occupied? board (+ king-index-2 dir)))
            true))))
 
 (defn- list-moves
@@ -253,16 +253,16 @@
   "Returns lists of normail pawn moves available
    for player in board index."
   [player board index]
-  (let [direction (if (= player WHITE) NORTH SOUTH)
-        move-index (+ index direction)]
+  (let [dir (if (= player WHITE) NORTH SOUTH)
+        move-index (+ index dir)]
     (when (and (board-index? move-index)
                (not (board-occupied? board move-index)))
-      (if (and (board-index? (+ move-index direction))
-               (not (board-occupied? board (+ move-index direction)))
+      (if (and (board-index? (+ move-index dir))
+               (not (board-occupied? board (+ move-index dir)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
         (list (make-move index move-index 0)
-              (make-move index (+ move-index direction) 0))
+              (make-move index (+ move-index dir) 0))
         (list (make-move index move-index 0))))))
 
 (defn- pawn-capture
@@ -295,7 +295,7 @@
         (or (= piece WHITE-BISHOP)
             (= piece BLACK-BISHOP))
         (list-moves player board index
-                    slide-in-direction bishop-directions)
+                    slide-in-dir bishop-directions)
         (or (= piece WHITE-KNIGHT)
             (= piece BLACK-KNIGHT))
         (list-moves player board index
@@ -303,11 +303,11 @@
         (or (= piece WHITE-ROOK)
             (= piece BLACK-ROOK))
         (list-moves player board index
-                    slide-in-direction rook-directions)
+                    slide-in-dir rook-directions)
         (or (= piece WHITE-QUEEN)
             (= piece BLACK-QUEEN))
         (list-moves player board index
-                    slide-in-direction queen-directions)
+                    slide-in-dir queen-directions)
         (or (= piece WHITE-KING)
             (= piece BLACK-KING))
         (list-king-moves player board index)
