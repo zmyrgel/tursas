@@ -49,7 +49,7 @@
     Reads the char from move or if nil, defaults to queen."
   [player move]
   (if-let [piece (:promotion move)]
-    (if (= player WHITE) (Character/toUpperCase piece) piece)
+    (if (= player WHITE) (abs piece) piece)
     (if (= player WHITE) WHITE-QUEEN BLACK-QUEEN)))
 
 (defn- move-castling-pieces
