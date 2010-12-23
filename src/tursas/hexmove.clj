@@ -44,7 +44,7 @@
                   (get algebraic 1))
         to (str (get algebraic 2)
                 (get algebraic 3))
-        promotion (str (get algebraic 4))]
+        promotion (get algebraic 4)]
     (make-move (algebraic->index from)
                (algebraic->index to)
                (if (not (nil? promotion))
