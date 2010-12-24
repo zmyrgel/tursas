@@ -274,9 +274,9 @@
                (not (board-occupied? board (+ move-index dir)))
                (or (and (= player WHITE) (same-row? index 0x10))
                    (and (= player BLACK) (same-row? index 0x60))))
-        (list (make-move index move-index 0)
-              (make-move index (+ move-index dir) 0))
-        (list (make-move index move-index 0))))))
+        (list (make-pawn-move player index move-index)
+              (make-pawn-move player index (+ move-index dir)))
+        (list (make-pawn-move player index move-index))))))
 
 (defn- pawn-capture
   "Function to generate pawn capture moves.
@@ -288,7 +288,7 @@
             (and (board-index? place)
                  (board-occupied? board place)
                  (not (occupied-by? board place player))))
-    (make-move index place 0)))
+    (make-pawn-move player index place)))
 
 (defn- list-pawn-moves
   "Returns a set of available pawn moves from INDEX in given STATE."
