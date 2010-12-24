@@ -212,7 +212,7 @@
   (set-game-option option (not (= (get-game-option option) true))))
 
 (defn make-chess-move
-  "Make given MOVE in chess game."
+  "Make given move in chess game."
   [algebraic]
   (let [state (first @game-state)]
     (cond (mate? state) (println (if (= (turn state) :white)
