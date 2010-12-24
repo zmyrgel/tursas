@@ -171,11 +171,10 @@
   (when (not (nil? state))
     (assoc state :board
            (let [board (:board state)
-                 player (get board TURN-STORE)]
+                 player (get board TURN-STORE)
+                 k-index (king-index state (opponent player))]
              (fill-square board GAME-STATUS-STORE
-                          (if (threaten-index? board
-                                               (king-index state (opponent player))
-                                               player)
+                          (if (threaten-index? board k-index player)
                             CHECK-BIT
                             0))))))
 
