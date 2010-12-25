@@ -29,12 +29,11 @@
     (and (<= piece-count 4)
          (or (= piece-count 2)
              (and (= piece-count 3)
-                  (not (nil? (some
-                              #(or (= BLACK-KNIGHT %)
-                                   (= BLACK-BISHOP %)
-                                   (= WHITE-KNIGHT %)
-                                   (= WHITE-BISHOP %))
-                              vals))))
+                  (any? #(or (= BLACK-KNIGHT %)
+                             (= BLACK-BISHOP %)
+                             (= WHITE-KNIGHT %)
+                             (= WHITE-BISHOP %))
+                        vals))
              (and (= piece-count 4)
                   (or (= (count (filter #(= BLACK-KNIGHT %) vals)) 2)
                       (= (count (filter #(= WHITE-KNIGHT %) vals)) 2)
@@ -174,7 +173,7 @@
                  player (get board TURN-STORE)
                  k-index (king-index state (opponent player))]
              (fill-square board GAME-STATUS-STORE
-                          (if (threaten-index? board k-index player)
+                          (if (threatened? board k-index player)
                             CHECK-BIT
                             0))))))
 

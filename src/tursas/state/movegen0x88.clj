@@ -155,22 +155,22 @@
   (let [new-index (+ index inc)]
     (cond (not (board-index? new-index)) false
           (not (board-occupied? board new-index)) (recur board new-index inc pieces)
-          :else (not (nil? (some #(= (get board new-index) %) pieces))))))
+          :else (any? #(= (get board new-index) %) pieces))))
 
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
   [board index opponent piece placements]
-  (not (nil? (some #(= (get board %) piece)
-                   placements))))
+  (any? #(= (get board %) piece)
+        placements))
 
 (defn- threaten-by-slider?
   "Can the piece in index of board be captured
    by opponents queen or rook?"
   [board index opponent pieces directions]
-  (not (nil? (some true? (map #(ray-to-pieces? board index % pieces)
-                              directions)))))
+  (any? true? (map #(ray-to-pieces? board index % pieces)
+                   directions)))
 
-(declare threaten-index?)
+(declare threatened?)
 (defn- threaten-by-king?
   "Can the piece in index on board be captured by opponents king."
   [board index opponent]
@@ -182,11 +182,10 @@
     (if (nil? enemy-king-index)
       false
       (-> (fill-square board index enemy-king)
-          (threaten-index? index player)))))
+          (threatened? index player)))))
 
-(defn threaten-index?
-  "Checks if given index in state is under threath of enemy.
-   Inf loop with king-index check"
+(defn threatened?
+  "Checks if given index in state is under threath of enemy."
   [board index opponent]
   (let [[qb qr knight pawn pawn-places]
         (if (= opponent WHITE)
@@ -207,7 +206,7 @@
    and unthreatened by opponent."
   [board index opponent]
   (and (not (board-occupied? board index))
-       (not (threaten-index? board index opponent))))
+       (not (threatened? board index opponent))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
@@ -218,7 +217,7 @@
                      (+ king-index-2 WEST WEST)
                      (+ king-index-2 EAST))
         opponent (opponent player)]
-    (and (not (threaten-index? board index opponent))
+    (and (not (threatened? board index opponent))
          (empty-and-safe? board king-index-1 opponent)
          (empty-and-safe? board king-index-2 opponent)
          (if (= dir WEST)
@@ -358,6 +357,6 @@
         to (:to move)
         piece (get board from)]
     (and (occupied-by? board from player)
-         (not (nil? (some #(and (= from (:from %))
-                                (= to (:to %)))
-                          (piece-moves board player from piece)))))))
+         (any? #(and (= from (:from %))
+                     (= to (:to %)))
+               (piece-moves board player from piece)))))
