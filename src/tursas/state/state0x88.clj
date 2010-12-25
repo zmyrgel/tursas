@@ -244,6 +244,7 @@
     (get (:board state) FULL-MOVE-STORE)))
 
 (defn make-state
+  "Constructor for state"
   [board blacks whites]
   (State0x88. board blacks whites))
 
