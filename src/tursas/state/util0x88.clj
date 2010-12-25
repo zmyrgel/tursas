@@ -14,6 +14,11 @@
                   1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
                   0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2])
 
+(defn any?
+  "Predicate to see if any of the items of coll return true on pred."
+  [pred coll]
+  (not (nil? (some pred coll))))
+
 (defn board-index?
   "Does the given INDEX represent a square on the board?"
   [index]
