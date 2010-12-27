@@ -20,32 +20,32 @@
   (not (nil? (some pred coll))))
 
 (defn board-index?
-  "Does the given INDEX represent a square on the board?"
+  "Does the given index represent a square on the board?"
   [index]
   (zero? (bit-and index 0x88)))
 
 (defn empty-square?
-  "Checks if given INDEX on BOARD is empty."
+  "Checks if given index on board is empty."
   [board index]
   (zero? (get board index)))
 
 (defn column
-  "Get the board column of the given square INDEX."
+  "Get the board column of the given square index."
   [index]
   (bit-and index 7))
 
 (defn row
-  "Get the board row of the given square INDEX."
+  "Get the board row of the given square index."
   [index]
   (bit-shift-right index 4))
 
 (defn same-column?
-  "Determines if both given square indexes X and Y are on the same column."
+  "Determines if both given square indexes x and x are on the same column."
   [x y]
   (= (column x) (column y)))
 
 (defn same-row?
-  "Determines if both given square indexes X and Y are on the same row."
+  "Determines if both given square indexes x and y are on the same row."
   [x y]
   (= (row x) (row y)))
 
@@ -55,22 +55,23 @@
   (> piece EMPTY))
 
 (defn black-piece?
-  "Checks if given PIECE value belongs to black."
+  "Checks if given piece value belongs to black."
   [piece]
   (< piece EMPTY))
 
 (defn same-color?
   "Check if two squares are same color."
   [sq1 sq2]
-  (= (get board-color sq1) (get board-color sq2)))
+  (= (get board-color sq1)
+     (get board-color sq2)))
 
 (defn board-occupied?
-  "Checks if BOARD INDEX is occupied by piece."
+  "Checks if board index is occupied by piece."
   [board index]
   (not (empty-square? board index)))
 
 (defn occupied-by?
-  "Checks if given BOARD INDEX is occupied by PLAYER."
+  "Checks if given board index is occupied by player."
   [board index player]
   (and (board-occupied? board index)
        (if (= player WHITE)
@@ -90,17 +91,17 @@
         (vec (replicate 128 EMPTY))))
 
 (defn fill-square
-  "Return new board with given VALUE added to given BOARD's INDEX."
+  "Return new board with given value added to given board's index."
   [board index value]
   (assoc board index value))
 
 (defn clear-square
-  "Clears the given square INDEX on the game BOARD."
+  "Clears the given square index on the game board."
   [board index]
   (fill-square board index EMPTY))
 
 (defn piece-name
-  "Gives piece character representation from its board VALUE."
+  "Gives piece character representation from its board value."
   [piece]
   (cond (= piece WHITE-KING) \K
         (= piece WHITE-QUEEN) \Q
@@ -117,7 +118,7 @@
         :else \E))
 
 (defn piece-value
-  "Gives pieces character numerical representation from its CHAR."
+  "Gives pieces character numerical representation from its char."
   [char]
   (case char
         \P WHITE-PAWN
@@ -135,14 +136,14 @@
         EMPTY))
 
 (defn king-index
-  "Gets the kings index in STATE for SIDE."
+  "Gets the kings index in state for side."
   [state player]
   (get (:board state) (if (= player WHITE)
                         WHITE-KING-STORE
                         BLACK-KING-STORE)))
 
 (defn update-king-index
-  "Updates INDEX of given PLAYER's king in outer board."
+  "Updates index of given player's king in outer board."
   [board index player]
   (if (= player WHITE)
     (fill-square board WHITE-KING-STORE index)
