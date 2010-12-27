@@ -150,12 +150,12 @@
       (list (make-move index new-place 0)))))
 
 (defn- ray-to-pieces?
-  "Checks if there's ray to from INDEX to given PIECES."
-  [board index inc pieces]
-  (let [new-index (+ index inc)]
+  "Checks if there's ray from index to given pieces."
+  [board index dir pieces]
+  (let [new-index (+ index dir)]
     (cond (not (board-index? new-index)) false
-          (not (board-occupied? board new-index)) (recur board new-index inc pieces)
-          :else (any? #(= (get board new-index) %) pieces))))
+          (not (board-occupied? board new-index)) (recur board new-index dir pieces)
+          :else (not (nil? (some #(= (get board new-index) %) pieces))))))
 
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
