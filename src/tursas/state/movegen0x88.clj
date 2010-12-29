@@ -330,10 +330,9 @@
    legal.  Later the move generation should be separated to pseudo
    moves and legal moves."
   [player state]
-  (let [board (:board state)
-        pieces (seq (pmap-get state player))]
+  (let [pieces (seq (pmap-get state player))]
     (reduce (fn [moves [index piece]]
-              (concat moves (piece-moves board player index piece)))
+              (concat moves (piece-moves (:board state) player index piece)))
             '() pieces)))
 
 (defn states
