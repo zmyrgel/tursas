@@ -40,6 +40,7 @@
           "fd" (display-fen)
           "lm" (list-moves)
           "gs" (get-score)
+          "cp" (get-move)
           "es" (eval-current-state)
           "pf" (display-perft (second command))
           "uci"  (set-active-repl :uci)
