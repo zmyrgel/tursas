@@ -130,9 +130,11 @@
          (last (sort states)))))
 
 (defn- all-moves
-  "Generates all available moves from given STATE."
+  "Generates all available states from given state.
+   Returns list of two element vectors. The first member of
+   vector is the heuristic value and second is the actual state."
   [state]
-  (map (partial minmax (:depth-limit @game-options) evaluate)
+  (map (partial alpha-beta (:depth-limit @game-options))
        (legal-states state)))
 
 (defn get-move
