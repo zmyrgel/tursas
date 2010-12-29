@@ -174,3 +174,27 @@
        (taketree 3)
        maximise-
        (apply max)))
+
+(defn alpha-beta
+  "Find the best state, from initial state by searching to given depth and backing up values,
+   using cutoff whenever possible.
+   Based on alpha-beta in PAIP ch. 18"
+  [state achievable cutoff depth]
+  (if (zero? depth)
+    [(evaluate state) nil]
+    (let [children (legal-states state)]
+      (if (empty? children)
+        [(evaluate state) nil])
+      (loop [states children
+             best-state (first children)
+             ac achievable]
+        (if (empty? states)
+          [ac best-state]
+          (let [[val _] (alpha-beta (first states)
+                                    (- cutoff) (- ac) (dec depth))
+                value (- val)]
+            (cond (and (> value ac)
+                       (< value cutoff)) (recur (rest states) (first states) value)
+                  (and (<= value ac)
+                       (< value cutoff)) (recur (rest states) best-state ac)
+                  :else [ac best-state])))))))
