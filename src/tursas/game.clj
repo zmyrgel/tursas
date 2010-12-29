@@ -136,12 +136,12 @@
        (legal-states state)))
 
 (defn get-move
-  "Return a move from current game state."
+  "Prompt a move from AI and add it to game-state."
   []
-  (->> @game-state
-       first
-       all-moves
-       choose-move))
+  (if (empty? @game-state)
+    "Can't calculate score from empty state!"
+    (let [new-state (second (alpha-beta (first @game-state) -100000 100000 3))]
+      (add-game-state new-state))))
 
 (defn get-score
   "Calculates state's score by checking child states
@@ -150,9 +150,7 @@
   (println
    (if (empty? @game-state)
      "Can't calculate score from empty state!"
-     (->> @game-state
-          first
-          (minmax (:depth-limit @game-options) evaluate)))))
+     (first (alpha-beta (first @game-state) -100000 100000 3)))))
 
 (defn eval-current-state
   "Evaluates the current state and prints its score."
@@ -231,3 +229,9 @@
             (if (nil? n)
               (rest @game-state)
               (nthnext @game-state n)))))
+
+(defn perft-test
+  "Dummy function for profiling!"
+  []
+  (let [state (fen->state "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")]
+    (println "Perft for depth 2 = "(perft state 2))))
