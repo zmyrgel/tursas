@@ -347,7 +347,8 @@
                       (check? %))) states)))
 
 (defn allowed-move?
-  "Checks if given MOVE is allowed in STATE."
+  "Checks if given move is allowed in state.
+   Prevents players from moving each others pieces."
   [state move]
   (let [player (get (:board state) TURN-STORE)
         piece (get (:board state) (:from move))]
