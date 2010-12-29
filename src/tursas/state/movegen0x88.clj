@@ -155,7 +155,7 @@
   (let [new-index (+ index dir)]
     (cond (not (board-index? new-index)) false
           (not (board-occupied? board new-index)) (recur board new-index dir pieces)
-          :else (not (nil? (some #(= (get board new-index) %) pieces))))))
+          :else (any? #(= (get board new-index) %) pieces))))
 
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
