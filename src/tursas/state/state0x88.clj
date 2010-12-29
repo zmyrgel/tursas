@@ -212,9 +212,10 @@
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
-    (when-let [new-state (update-state state move)]
-      (when (not (check? new-state))
-        new-state)))
+    (when (allowed-move? state move)
+      (when-let [new-state (update-state state move)]
+        (when (not (check? new-state))
+          new-state))))
   (legal-states [state]
     (->> state
          (pseudo-moves (get (:board state) TURN-STORE))
