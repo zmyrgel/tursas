@@ -128,17 +128,15 @@
    from index to given direction on the board.
    Sliding will continue until it hits piece or board edge."
   [player board index dir]
-  (loop [new-index (+ index dir)
-         moves '()]
-    (if (or (not (board-index? new-index))
-            (occupied-by? board new-index player))
-      moves
-      (if (not (board-occupied? board new-index))
-        (recur (+ new-index dir)
-               (cons (make-move index new-index 0)
-                     moves))
-        (cons (make-move index new-index 0)
-              moves)))))
+  (reduce (fn [moves new-index]
+            (let [piece-index (+ new-index (opponent player))]
+              (if (occupied-by? board piece-index player)
+                (cons (make-move index piece-index 0)
+                      (cons (make-move index new-index 0) moves))
+                (cons (make-move index new-index 0) moves))))
+          '() (take-while #(and (board-index? %)
+                                (not (board-occupied? board %)))
+                          (iterate #(+ % dir) (+ index dir)))))
 
 (defn- move-to-place
   "Return list of moves for given piece."
@@ -287,10 +285,11 @@
             (and (board-index? place)
                  (board-occupied? board place)
                  (not (occupied-by? board place player))))
-    (make-pawn-move player index place)))
+    (list (make-pawn-move player index place))))
 
 (defn- list-pawn-moves
-  "Returns a set of available pawn moves from INDEX in given STATE."
+  "Returns a list of available pawn moves
+   for player's pawn in board index."
   [player board index]
   (concat (list-pawn-normal-moves player board index)
           (list-moves player board index pawn-capture
