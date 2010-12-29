@@ -349,12 +349,9 @@
 (defn allowed-move?
   "Checks if given MOVE is allowed in STATE."
   [state move]
-  (let [board (:board state)
-        player (get (:board state) TURN-STORE)
-        from (:from move)
-        to (:to move)
-        piece (get board from)]
-    (and (occupied-by? board from player)
-         (any? #(and (= from (:from %))
-                     (= to (:to %)))
-               (piece-moves board player from piece)))))
+  (let [player (get (:board state) TURN-STORE)
+        piece (get (:board state) (:from move))]
+    (and (occupied-by? (:board state) (:from move) player)
+         (any? #(and (= (:from move) (:from %))
+                     (= (:to move) (:to %)))
+               (piece-moves (:board state) player (:from move) piece)))))
