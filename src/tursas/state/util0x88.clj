@@ -145,9 +145,9 @@
 (defn update-king-index
   "Updates index of given player's king in outer board."
   [board index player]
-  (if (= player WHITE)
-    (fill-square board WHITE-KING-STORE index)
-    (fill-square board BLACK-KING-STORE index)))
+  (fill-square board
+               (if (= player WHITE) WHITE-KING-STORE BLACK-KING-STORE)
+               index))
 
 
 
