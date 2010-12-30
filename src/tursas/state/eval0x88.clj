@@ -7,7 +7,7 @@
 (def KNIGHT-VALUE 400)
 (def ROOK-VALUE 600)
 (def QUEEN-VALUE 1200)
-(def KING-VALUE 10000)
+(def KING-VALUE 99999)
 
 (def white-pawn-table
      [0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0
