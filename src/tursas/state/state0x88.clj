@@ -167,8 +167,7 @@
 (defn- update-check
   "Updates CHECK status bit on the state.
    Check for check condition by testing if next players king
-   is threatened by the last player.
-   When this function is called the state's turn is not yet updated."
+   is threatened by the last player."
   [state]
   (when (not (nil? state))
     (assoc state :board
@@ -188,12 +187,12 @@
     (->> state
          (update-move move)
          (update-board move)
-         update-check
          update-turn
          (update-castling move)
          (update-en-passant move)
          (update-half-moves move)
-         update-full-moves)))
+         update-full-moves
+         update-check)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
