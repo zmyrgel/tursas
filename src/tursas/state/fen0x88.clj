@@ -29,7 +29,9 @@
          (convert \q 1))))
 
 (defn- find-king-index
-  "Seeks king's index from piece-map."
+  "Seeks king's index from piece-map.
+   This is only used when generating state from a fen.
+   Otherwise the king index can be queried from the board directly."
   [state player]
   (let [piece-map (if (= player WHITE)
                     (:white-pieces state)
