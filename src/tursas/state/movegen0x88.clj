@@ -26,15 +26,15 @@
 (defn promotion?
   "Checks if given move is pawn promotion."
   [piece move]
-  (or (and (= piece WHITE-PAWN)
-           (= (row (:to move)) 0x07))
-      (and (= piece BLACK-PAWN)
-           (= (row (:to move)) 0x00))))
+  (or (and (== piece WHITE-PAWN)
+           (== (row (:to move)) 0x07))
+      (and (== piece BLACK-PAWN)
+           (== (row (:to move)) 0x00))))
 
 (defn- pmap-add
   "Add piece to player piece-map store on the board."
   [state player index piece]
-  (if (= player WHITE)
+  (if (== player WHITE)
     (assoc state :white-pieces
            (assoc (:white-pieces state) index piece))
     (assoc state :black-pieces
@@ -43,7 +43,7 @@
 (defn pmap-remove
   "Remove piece from player piece-map store on the board."
   [state player index]
-  (if (= player WHITE)
+  (if (== player WHITE)
     (assoc state :white-pieces
            (dissoc (:white-pieces state) index))
     (assoc state :black-pieces
@@ -52,7 +52,7 @@
 (defn pmap-get
   "Returns the players piece-map from board."
   [state player]
-  (if (= player WHITE)
+  (if (== player WHITE)
     (:white-pieces state)
     (:black-pieces state)))
 
@@ -66,8 +66,8 @@
   "Adds given piece to board in state"
   [state index piece]
   (let [player (if (white-piece? piece) WHITE BLACK)
-        new-board (if (or (= piece BLACK-KING)
-                          (= piece WHITE-KING))
+        new-board (if (or (== piece BLACK-KING)
+                          (== piece WHITE-KING))
                     (-> (:board state)
                         (update-king-index index player)
                         (fill-square index piece))
@@ -93,7 +93,7 @@
     (-> state
         (remove-piece (:from move))
         (add-piece (:to move) piece)
-        (set-dynamic (if (= occupant EMPTY) 0 1)))))
+        (set-dynamic (if (== occupant EMPTY) 0 1)))))
 
 (defn promote-piece
   "Promotes piece in index to new-piece value."
@@ -111,16 +111,16 @@
 (defn castling?
   "Checks given move is castling move."
   [piece move]
-  (and (or (= piece WHITE-KING)
-           (= piece BLACK-KING))
-       (= (abs (- (:to move) (:from move))) 2)))
+  (and (or (== piece WHITE-KING)
+           (== piece BLACK-KING))
+       (== (abs (- (:to move) (:from move))) 2)))
 
 (defn- castle-side?
   "Predicate to check if given piece can do castling."
   [player side castling]
-  (let [value (if (= player WHITE)
-                (if (= side KING-SIDE) 8 4)
-                (if (= side KING-SIDE) 2 1))]
+  (let [value (if (== player WHITE)
+                (if (== side KING-SIDE) 8 4)
+                (if (== side KING-SIDE) 2 1))]
     (pos? (bit-and value castling))))
 
 (defn- slide-in-dir
@@ -158,7 +158,7 @@
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
   [board index opponent piece placements]
-  (any? #(= (get board %) piece)
+  (any? #(== (get board %) piece)
         placements))
 
 (defn- threaten-by-slider?
@@ -174,10 +174,10 @@
    Checks this by looking for a king within next squares and then
    checking if it can move to index and not be threatened instead."
   [board index opponent]
-  (let [player (if (= opponent WHITE) BLACK WHITE)
-        enemy-king (if (= opponent BLACK) BLACK-KING WHITE-KING)
+  (let [player (if (== opponent WHITE) BLACK WHITE)
+        enemy-king (if (== opponent BLACK) BLACK-KING WHITE-KING)
         king-move-indexes (map #(+ index %) king-movement)
-        enemy-king-index (first (filter #(= (get board %) enemy-king)
+        enemy-king-index (first (filter #(== (get board %) enemy-king)
                                         king-move-indexes))]
     (if (nil? enemy-king-index)
       false
@@ -188,7 +188,7 @@
   "Checks if given index in state is under threath of enemy."
   [board index opponent]
   (let [[qb qr knight pawn pawn-places]
-        (if (= opponent WHITE)
+        (if (== opponent WHITE)
           [[WHITE-QUEEN WHITE-BISHOP]
            [WHITE-QUEEN WHITE-ROOK]
            WHITE-KNIGHT WHITE-PAWN [SE SW]]
@@ -213,14 +213,14 @@
   [player board index dir]
   (let [king-index-1 (+ index dir)
         king-index-2 (+ king-index-1 dir)
-        rook-index (if (= dir WEST)
-                     (+ king-index-2 WEST WEST)
-                     (+ king-index-2 EAST))
+        ;;rook-index (if (= dir WEST)
+        ;;(+ king-index-2 WEST WEST)
+        ;;(+ king-index-2 EAST))
         opponent (opponent player)]
     (and (not (threatened? board index opponent))
          (empty-and-safe? board king-index-1 opponent)
          (empty-and-safe? board king-index-2 opponent)
-         (if (= dir WEST)
+         (if (== dir WEST)
            (not (board-occupied? board (+ king-index-2 dir)))
            true))))
 
@@ -238,8 +238,7 @@
   [player board index]
   (let [castling (get board CASTLING-STORE)
         castling-move (fn [side dir]
-                        (when (and (= (column index) 4) ;; XXX: ugly hack
-                                   (castle-side? player side castling)
+                        (when (and (castle-side? player side castling)
                                    (legal-castling? player board index dir))
                           (list (make-move index (+ dir dir) 0))))]
     (concat
@@ -253,11 +252,11 @@
    Needed to handle promotions."
   [player from to]
   (make-move from to
-             (cond (and (= player WHITE)
-                        (= (row to) 0x70))
+             (cond (and (== player WHITE)
+                        (== (row to) 0x70))
                    BLACK-QUEEN
-                   (and (= player BLACK)
-                        (= (row to) 0x00))
+                   (and (== player BLACK)
+                        (== (row to) 0x00))
                    BLACK-QUEEN
                    :else 0)))
 
@@ -265,14 +264,14 @@
   "Returns lists of normail pawn moves available
    for player in board index."
   [player board index]
-  (let [dir (if (= player WHITE) NORTH SOUTH)
+  (let [dir (if (== player WHITE) NORTH SOUTH)
         move-index (+ index dir)]
     (when (and (board-index? move-index)
                (not (board-occupied? board move-index)))
       (if (and (board-index? (+ move-index dir))
                (not (board-occupied? board (+ move-index dir)))
-               (or (and (= player WHITE) (same-row? index 0x10))
-                   (and (= player BLACK) (same-row? index 0x60))))
+               (or (and (== player WHITE) (same-row? index 0x10))
+                   (and (== player BLACK) (same-row? index 0x60))))
         (list (make-pawn-move player index move-index)
               (make-pawn-move player index (+ move-index dir)))
         (list (make-pawn-move player index move-index))))))
@@ -283,7 +282,7 @@
    otherwise return nil."
   [player board index place]
   (when (or (and (board-index? place)
-                 (= (get board EN-PASSANT-STORE) place))
+                 (== (get board EN-PASSANT-STORE) place))
             (and (board-index? place)
                  (board-occupied? board place)
                  (not (occupied-by? board place player))))
@@ -295,34 +294,34 @@
   [player board index]
   (concat (list-pawn-normal-moves player board index)
           (move-builder (partial pawn-capture player board index)
-                        (if (= player WHITE)
-                          [(+ NW index) (+ NE index)]
-                          [(+ SW index) (+ SE index)]))))
+                        (if (== player WHITE)
+                          (list (+ NW index) (+ NE index))
+                          (list (+ SW index) (+ SE index))))))
 
 (defn- piece-moves
   "List of moves for piece in board index."
   [board player index piece]
-  (cond (or (= piece WHITE-PAWN)
-            (= piece BLACK-PAWN))
+  (cond (or (== piece WHITE-PAWN)
+            (== piece BLACK-PAWN))
         (list-pawn-moves player board index)
-        (or (= piece WHITE-BISHOP)
-            (= piece BLACK-BISHOP))
+        (or (== piece WHITE-BISHOP)
+            (== piece BLACK-BISHOP))
         (move-builder (partial slide-in-dir player board index)
                       bishop-directions)
-        (or (= piece WHITE-KNIGHT)
-            (= piece BLACK-KNIGHT))
+        (or (== piece WHITE-KNIGHT)
+            (== piece BLACK-KNIGHT))
         (move-builder (partial move-to-place player board index)
                       knight-movement)
-        (or (= piece WHITE-ROOK)
-            (= piece BLACK-ROOK))
+        (or (== piece WHITE-ROOK)
+            (== piece BLACK-ROOK))
         (move-builder (partial slide-in-dir player board index)
                       rook-directions)
-        (or (= piece WHITE-QUEEN)
-            (= piece BLACK-QUEEN))
+        (or (== piece WHITE-QUEEN)
+            (== piece BLACK-QUEEN))
         (move-builder (partial slide-in-dir player board index)
                       queen-directions)
-        (or (= piece WHITE-KING)
-            (= piece BLACK-KING))
+        (or (== piece WHITE-KING)
+            (== piece BLACK-KING))
         (list-king-moves player board index)
         :else nil))
 
@@ -356,6 +355,6 @@
   (let [player (get (:board state) TURN-STORE)
         piece (get (:board state) (:from move))]
     (and (occupied-by? (:board state) (:from move) player)
-         (any? #(and (= (:from move) (:from %))
-                     (= (:to move) (:to %)))
+         (any? #(and (== (:from move) (:from %))
+                     (== (:to move) (:to %)))
                (piece-moves (:board state) player (:from move) piece)))))
