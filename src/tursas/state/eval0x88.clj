@@ -13,7 +13,7 @@
      [0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0
       50  50  50  50  50  50  50  50 0  0  0  0  0  0  0  0
       10  10  20  30  30  20  10  10 0  0  0  0  0  0  0  0
-      5   5   10  27  27  10  5   5  0  0  0  0  0  0  0  0
+      5   5   10  25  25  10  5   5  0  0  0  0  0  0  0  0
       0   0   0   25  25  0   0   0  0  0  0  0  0  0  0  0
       5  -5  -10  0   0  -10 -5   5  0  0  0  0  0  0  0  0
       5   10  10 -25 -25  10  10  5  0  0  0  0  0  0  0  0
@@ -21,12 +21,12 @@
 
 (def black-pawn-table
      [ 0    0   0   0   0   0   0   0  0  0  0  0  0  0  0  0
-      -5  -10 -10  25  25 -10 -10  -5  0  0  0  0  0  0  0  0
-      -5    5  10   0   0  10   5  -5  0  0  0  0  0  0  0  0
-       0    0   0 -25 -25  0    0   0  0  0  0  0  0  0  0  0
-      -5   -5 -10 -27 -27 -10  -5  -5  0  0  0  0  0  0  0  0
-      -10 -10 -20 -30 -30 -20 -10 -10  0  0  0  0  0  0  0  0
-      -50 -50 -50 -50 -50 -50 -50 -50  0  0  0  0  0  0  0  0
+       5   10  10 -25 -25  10  10   5  0  0  0  0  0  0  0  0
+       5   -5 -10   0   0 -10  -5   5  0  0  0  0  0  0  0  0
+       0    0   0  25  25  0    0   0  0  0  0  0  0  0  0  0
+       5    5  10  25  25  10   5   5  0  0  0  0  0  0  0  0
+       10  10  20  30  30  20  10  10  0  0  0  0  0  0  0  0
+       50  50  50  50  50  50  50  50  0  0  0  0  0  0  0  0
        0    0   0   0   0   0   0   0  0  0  0  0  0  0  0  0])
 
 (def white-knight-table
@@ -40,14 +40,14 @@
       -50 -40 -20 -30 -30 -20 -40 -50 0  0  0  0  0  0  0  0])
 
 (def black-knight-table
-     [50  40  20  30  30  20  40  50 0  0  0  0  0  0  0  0
-      40  20   0  -5  -5   0  20  40 0  0  0  0  0  0  0  0
-      30  -5 -10 -15 -15 -10  -5  30 0  0  0  0  0  0  0  0
-      30   0 -15 -20 -20 -15   0  30 0  0  0  0  0  0  0  0
-      30   0 -15 -20 -20 -15   0  30 0  0  0  0  0  0  0  0
-      30  -5 -10 -15 -15 -10  -5  30 0  0  0  0  0  0  0  0
-      40  20   0  -5  -5   0  20  40 0  0  0  0  0  0  0  0
-      50  40  20  30  30  20  40  50 0  0  0  0  0  0  0  0])
+     [-50 -40 -20 -30 -30 -20 -40 -50 0  0  0  0  0  0  0  0
+      -40 -20   0   5   5   0 -20 -40 0  0  0  0  0  0  0  0
+      -30   5  10  15  15  10   5 -30 0  0  0  0  0  0  0  0
+      -30   0  15  20  20  15   0 -30 0  0  0  0  0  0  0  0
+      -30   0  15  20  20  15   0 -30 0  0  0  0  0  0  0  0
+      -30   5  10  15  15  10   5 -30 0  0  0  0  0  0  0  0
+      -40 -20   0   5   5   0 -20 -40 0  0  0  0  0  0  0  0
+      -50 -40 -20 -30 -30 -20 -40 -50 0  0  0  0  0  0  0  0])
 
 (def white-bishop-table
      [-20 -10 -10 -10 -10 -10 -10 -20 0  0  0  0  0  0  0  0
@@ -60,14 +60,14 @@
       -20 -10 -40 -10 -10 -40 -10 -20 0  0  0  0  0  0  0  0])
 
 (def black-bishop-table
-     [20  10  40  10  10  40  10  20 0  0  0  0  0  0  0  0
-      10  -5   0   0   0   0  -5  10 0  0  0  0  0  0  0  0
-      10 -10 -10 -10 -10 -10 -10  10 0  0  0  0  0  0  0  0
-      10   0 -10 -10 -10 -10   0  10 0  0  0  0  0  0  0  0
-      10  -5  -5 -10 -10  -5  -5  10 0  0  0  0  0  0  0  0
-      10   0  -5 -10 -10  -5   0  10 0  0  0  0  0  0  0  0
-      10   0   0   0   0   0   0  10 0  0  0  0  0  0  0  0
-      20  10  10  10  10  10  10 20  0  0  0  0  0  0  0  0])
+     [-20 -10 -40 -10 -10 -40 -10 -20 0  0  0  0  0  0  0  0
+      -10   5   0   0   0   0   5 -10 0  0  0  0  0  0  0  0
+      -10  10  10  10  10  10  10 -10 0  0  0  0  0  0  0  0
+      -10   0  10  10  10  10   0 -10 0  0  0  0  0  0  0  0
+      -10   5   5  10  10   5   5 -10 0  0  0  0  0  0  0  0
+      -10   0   5  10  10   5   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -20 -10 -10 -10 -10 -10 -10 -20 0  0  0  0  0  0  0  0])
 
 (def white-king-table
      [-30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
@@ -80,14 +80,14 @@
        20  30  10   0   0  10  30  20 0  0  0  0  0  0  0  0])
 
 (def black-king-table
-     [-20 -30 -10   0   0 -10 -30 -20 0  0  0  0  0  0  0  0
-      -20 -20   0   0   0   0 -20 -20 0  0  0  0  0  0  0  0
-       10  20  20  20  20  20  20  10 0  0  0  0  0  0  0  0
-       20  30  30  40  40  30  30  20 0  0  0  0  0  0  0  0
-       30  40  40  50  50  40  40  30 0  0  0  0  0  0  0  0
-       30  40  40  50  50  40  40  30 0  0  0  0  0  0  0  0
-       30  40  40  50  50  40  40  30 0  0  0  0  0  0  0  0
-       30  40  40  50  50  40  40  30 0  0  0  0  0  0  0  0])
+     [ 20  30  10   0   0  10  30  20 0  0  0  0  0  0  0  0
+       20  20   0   0   0   0  20  20 0  0  0  0  0  0  0  0
+      -10 -20 -20 -20 -20 -20 -20 -10 0  0  0  0  0  0  0  0
+      -20 -30 -30 -40 -40 -30 -30 -20 0  0  0  0  0  0  0  0
+      -30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
+      -30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
+      -30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
+      -30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0])
 
 (def white-king-table-end-game
      [-50 -40 -30 -20 -20 -30 -40 -50 0  0  0  0  0  0  0  0
@@ -100,48 +100,48 @@
       -50 -30 -30 -30 -30 -30 -30 -50 0  0  0  0  0  0  0  0])
 
 (def black-king-table-end-game
-     [50  30  30  30  30  30  30  50 0  0  0  0  0  0  0  0
-      30  30   0   0   0   0  30  30 0  0  0  0  0  0  0  0
-      30  10 -20 -30 -30 -20  10  30 0  0  0  0  0  0  0  0
-      30  10 -30 -40 -40 -30  10  30 0  0  0  0  0  0  0  0
-      30  10 -30 -40 -40 -30  10  30 0  0  0  0  0  0  0  0
-      30  10 -20 -30 -30 -20  10  30 0  0  0  0  0  0  0  0
-      30  20  10  0    0  10  20  30 0  0  0  0  0  0  0  0
-      50  40  30  20  20  30  40  50 0  0  0  0  0  0  0  0])
+     [-50 -30 -30 -30 -30 -30 -30 -50 0  0  0  0  0  0  0  0
+      -30 -30   0   0   0   0 -30 -30 0  0  0  0  0  0  0  0
+      -30 -10  20  30  30  20 -10 -30 0  0  0  0  0  0  0  0
+      -30 -10  30  40  40  30 -10 -30 0  0  0  0  0  0  0  0
+      -30 -10  30  40  40  30 -10 -30 0  0  0  0  0  0  0  0
+      -30 -10  20  30  30  20 -10 -30 0  0  0  0  0  0  0  0
+      -30 -20 -10  0    0 -10 -20 -30 0  0  0  0  0  0  0  0
+      -50 -40 -30 -20 -20 -30 -40 -50 0  0  0  0  0  0  0  0])
 
 (defn- material-value
   "Gives material value for PIECE."
   [piece]
-  (cond (= piece WHITE-PAWN) PAWN-VALUE
-        (= piece WHITE-KNIGHT) KNIGHT-VALUE
-        (= piece WHITE-BISHOP) BISHOP-VALUE
-        (= piece WHITE-ROOK) ROOK-VALUE
-        (= piece WHITE-QUEEN) QUEEN-VALUE
-        (= piece WHITE-KING) KING-VALUE
-        (= piece BLACK-PAWN) (- PAWN-VALUE)
-        (= piece BLACK-KNIGHT) (- KNIGHT-VALUE)
-        (= piece BLACK-BISHOP) (- BISHOP-VALUE)
-        (= piece BLACK-ROOK) (- ROOK-VALUE)
-        (= piece BLACK-QUEEN) (- QUEEN-VALUE)
-        (= piece BLACK-KING) (- KING-VALUE)
+  (cond (== piece WHITE-PAWN) PAWN-VALUE
+        (== piece WHITE-KNIGHT) KNIGHT-VALUE
+        (== piece WHITE-BISHOP) BISHOP-VALUE
+        (== piece WHITE-ROOK) ROOK-VALUE
+        (== piece WHITE-QUEEN) QUEEN-VALUE
+        (== piece WHITE-KING) KING-VALUE
+        (== piece BLACK-PAWN) PAWN-VALUE
+        (== piece BLACK-KNIGHT) KNIGHT-VALUE
+        (== piece BLACK-BISHOP) BISHOP-VALUE
+        (== piece BLACK-ROOK) ROOK-VALUE
+        (== piece BLACK-QUEEN) QUEEN-VALUE
+        (== piece BLACK-KING) KING-VALUE
         :else 0))
 
 (defn- index-score
   "Checks piece-specific index score"
   [piece index game-situation]
-  (cond (= piece WHITE-PAWN)
+  (cond (== piece WHITE-PAWN)
         (get white-pawn-table index)
-        (= piece BLACK-PAWN)
+        (== piece BLACK-PAWN)
         (get black-pawn-table index)
-        (= piece WHITE-KNIGHT)
+        (== piece WHITE-KNIGHT)
         (get white-knight-table index)
-        (= piece BLACK-KNIGHT)
+        (== piece BLACK-KNIGHT)
         (get black-knight-table index)
-        (= piece WHITE-BISHOP)
+        (== piece WHITE-BISHOP)
         (get white-bishop-table index)
-        (= piece BLACK-BISHOP)
+        (== piece BLACK-BISHOP)
         (get black-bishop-table index)
-        (= piece WHITE-KING)
+        (== piece WHITE-KING)
         (if (= game-situation :end-game)
           (get white-king-table-end-game index)
           (get white-king-table index))
