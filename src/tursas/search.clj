@@ -192,7 +192,7 @@
           [ac best-state]
           (let [[val _] (alpha-beta (first states)
                                     (- cutoff) (- ac) (dec depth))
-                value (- val)]
+                value (int (- val))]
             (cond (and (> value ac)
                        (< value cutoff)) (recur (rest states) (first states) value)
                   (and (<= value ac)
