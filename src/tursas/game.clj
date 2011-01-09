@@ -143,11 +143,12 @@
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
     (let [new-state (second (alpha-beta (first @game-state) -100000 100000 3))]
-      (add-game-state new-state))))
+      (add-game-state new-state)
+      (display-board))))
 
 (defn get-score
   "Calculates state's score by checking child states
-   to certain depth using minmax algorithm."
+   to certain depth using alpha-beta algorithm."
   []
   (println
    (if (empty? @game-state)
