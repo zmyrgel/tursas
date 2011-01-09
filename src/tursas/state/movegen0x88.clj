@@ -174,7 +174,6 @@
    Checks this by looking for a king within next squares and then
    checking if it can move to index and not be threatened instead."
   [board index opponent]
-  (println "TH-KING: board index opp" board index opponent)
   (let [player (int (if (== opponent WHITE) BLACK WHITE))
         enemy-king (int (if (== opponent BLACK) BLACK-KING WHITE-KING))
         enemy-king-index (first (filter #(= (get board %) enemy-king)
