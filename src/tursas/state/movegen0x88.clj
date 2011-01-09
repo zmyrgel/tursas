@@ -129,7 +129,7 @@
    Sliding will continue until it hits piece or board edge."
   [player board index dir]
   (reduce (fn [moves new-index]
-            (let [piece-index (+ new-index (opponent player))]
+            (let [piece-index (int (+ new-index (opponent player)))]
               (if (occupied-by? board piece-index player)
                 (cons (make-move index piece-index 0)
                       (cons (make-move index new-index 0) moves))
@@ -141,7 +141,7 @@
 (defn- move-to-place
   "Return list of moves for given piece."
   [player board index place]
-  (let [new-place (+ index place)]
+  (let [new-place (int (+ index place))]
     (when (and (board-index? new-place)
                (or (not (board-occupied? board new-place))
                    (occupied-by? board new-place (opponent player))))
@@ -150,16 +150,16 @@
 (defn- ray-to-pieces?
   "Checks if there's ray from index to given pieces."
   [board index dir pieces]
-  (let [new-index (+ index dir)]
+  (let [new-index (int (+ index dir))]
     (cond (not (board-index? new-index)) false
           (not (board-occupied? board new-index)) (recur board new-index dir pieces)
           :else (any? #(= (get board new-index) %) pieces))))
 
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
-  [board index opponent piece placements]
-  (any? #(== (get board %) piece)
-        placements))
+  [board index opponent piece places]
+  (any? #(= (get board %) piece)
+        places))
 
 (defn- threaten-by-slider?
   "Can the piece in index of board be captured
@@ -174,11 +174,11 @@
    Checks this by looking for a king within next squares and then
    checking if it can move to index and not be threatened instead."
   [board index opponent]
-  (let [player (if (== opponent WHITE) BLACK WHITE)
-        enemy-king (if (== opponent BLACK) BLACK-KING WHITE-KING)
-        king-move-indexes (map #(+ index %) king-movement)
-        enemy-king-index (first (filter #(== (get board %) enemy-king)
-                                        king-move-indexes))]
+  (println "TH-KING: board index opp" board index opponent)
+  (let [player (int (if (== opponent WHITE) BLACK WHITE))
+        enemy-king (int (if (== opponent BLACK) BLACK-KING WHITE-KING))
+        enemy-king-index (first (filter #(= (get board %) enemy-king)
+                                        (map #(+ index %) king-movement)))]
     (if (nil? enemy-king-index)
       false
       (-> (fill-square board index enemy-king)
@@ -211,11 +211,8 @@
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index dir]
-  (let [king-index-1 (+ index dir)
-        king-index-2 (+ king-index-1 dir)
-        ;;rook-index (if (= dir WEST)
-        ;;(+ king-index-2 WEST WEST)
-        ;;(+ king-index-2 EAST))
+  (let [king-index-1 (int (+ index dir))
+        king-index-2 (int (+ king-index-1 dir))
         opponent (opponent player)]
     (and (not (threatened? board index opponent))
          (empty-and-safe? board king-index-1 opponent)
@@ -265,7 +262,7 @@
    for player in board index."
   [player board index]
   (let [dir (if (== player WHITE) NORTH SOUTH)
-        move-index (+ index dir)]
+        move-index (int (+ index dir))]
     (when (and (board-index? move-index)
                (not (board-occupied? board move-index)))
       (if (and (board-index? (+ move-index dir))
