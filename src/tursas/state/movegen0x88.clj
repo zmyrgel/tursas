@@ -234,7 +234,8 @@
   [player board index]
   (let [castling (get board CASTLING-STORE)
         castling-move (fn [side dir]
-                        (when (and (castle-side? player side castling)
+                        (when (and (== (column index) 4)
+                                   (castle-side? player side castling)
                                    (legal-castling? player board index dir))
                           (list (make-move index (+ dir dir) 0))))]
     (concat
