@@ -176,8 +176,8 @@
        (apply max)))
 
 (defn alpha-beta
-  "Find the best state, from initial state by searching to given depth and backing up values,
-   using cutoff whenever possible.
+  "Find the best state, from initial state by searching to given depth
+   and backing up values using cutoff whenever possible.
    Based on alpha-beta in PAIP ch. 18"
   [state achievable cutoff depth]
   (if (zero? depth)
