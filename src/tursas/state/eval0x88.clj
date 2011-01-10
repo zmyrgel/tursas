@@ -150,15 +150,20 @@
         (> (get (:board state) FULL-MOVE-STORE) 10) :middle-game
         :else :opening-game))
 
+(defn- score
+  [state pieces situation]
+  (reduce (fn [score [index piece]]
+            (+ score
+               (material-value piece)
+               (index-score piece index situation)))
+          0 (seq pieces)))
+
 (defn heuristic-value
   "Calculates heuristic value for given state."
   [state]
   (let [pieces (merge (:white-pieces state)
                       (:black-pieces state))
         situation (check-situation state pieces)]
-    (reduce (fn [score [index piece]]
-              (+ score
-                 (material-value piece)
-                 (index-score piece index situation)))
-            0 (seq pieces))))
+    (+ (score state (:white-pieces state) situation)
+       (- (score state (:black-pieces state) situation)))))
 
