@@ -22,11 +22,10 @@
        "xboard - ebable xboard mode"
        "quit - quite the Tursas engine"
        ""))
-    (when (= (get-active-repl) :uci)
-      (print-uci-usage))
-    (when (= (get-active-repl) :xboard)
-      (print-xboard-usage))))
-
+    (let [repl (get-repl)]
+      (cond (= repl :uci) (print-uci-usage)
+            (= repl :xboard) (print-xboard-usage)
+            :else nil))))
 
 (defn process-command
   "Processes command given by UI."
@@ -43,10 +42,10 @@
           "cp" (get-move)
           "es" (eval-current-state)
           "pf" (display-perft (second command))
-          "uci"  (set-active-repl :uci)
-          "xboard" (set-active-repl :xboard)
+          "uci"  (set-repl! :uci)
+          "xboard" (set-repl! :xboard)
           "quit" (quit)
-          (case (get-active-repl)
+          (case (get-repl)
                 :general (when (not (empty? (rest cmd)))
                            (recur (rest cmd)))
                 :uci (process-uci-command cmd)

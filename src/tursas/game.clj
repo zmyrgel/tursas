@@ -31,12 +31,12 @@
                         :move-limit nil
                         :search-time 0}))
 
-(defn get-active-repl
+(defn get-repl
   "Returns currently active repl"
   []
   @active-repl)
 
-(defn set-active-repl
+(defn set-repl!
   "Sets the currently active repl"
   [repl]
   (dosync (ref-set active-repl repl)))
@@ -186,7 +186,7 @@
           rand-nth
           last-move))))
 
-(defn set-game
+(defn set-game!
   "Sets game to given FEN state."
   [fen]
   (add-game-state
@@ -205,21 +205,21 @@
               *black-clock*)
             time)))
 
-(defn set-game-option
+(defn set-option!
   "Sets game option"
   [key value]
   (dosync (alter game-options
                  (assoc @game-options key value))))
 
-(defn get-game-option
+(defn get-option
   "Returns value of given game option"
   [option]
   (@game-options option))
 
-(defn toggle-game-option
+(defn toggle-option!
   "Toggles the value of given game option, only for boolean."
   [option]
-  (set-game-option option (not (get-game-option option))))
+  (set-option! option (not (get-option option))))
 
 (defn make-chess-move
   "Make given move in chess game."

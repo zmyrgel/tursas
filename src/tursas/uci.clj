@@ -9,13 +9,13 @@
        '("Hash type spin default 1 min 1 max 32"
          "UCI_EngineAbout type string default Tursas by Timo Myyrä")))
 
-(defn- uci-set-position
+(defn- uci-set-position!
   "Sets game to position [fen <fenstring> | startpos ] moves <move1> .... <movei>"
   [pos]
   (let [operands (re-seq #"\S+" pos)]
     (if (= (first operands) "fen")
-      (set-game (second operands))
-      (set-game (first operands)))
+      (set-game! (second operands))
+      (set-game! (first operands)))
     (cond (and (not (nil? (nth operands 1 nil)))
                (= (nth operands 1 nil) "moves"))
           (map make-chess-move (nthnext operands 2))
@@ -60,30 +60,30 @@
   "Handler for go command"
   [command]
   (case (first command)
-        "searchmoves" (do (set-game-option :move-limit (take-while move? command))
+        "searchmoves" (do (set-option! :move-limit (take-while move? command))
                           (recur (drop-while move? command)))
         "ponder" (do
-                   (set-game-option :ponder-mode true)
+                   (set-option! :ponder-mode true)
                    (recur (rest command)))
         "wtime" (do (set-clock! :white (second command))
                     (recur (rest command)))
         "btime" (do (set-clock! :black (second command))
                     (recur (rest command)))
-        "winc" (do (set-game-option :white-increment (second command))
+        "winc" (do (set-option! :white-increment (second command))
                    (recur (rest command)))
-        "binc" (do (set-game-option :black-increment (second command))
+        "binc" (do (set-option! :black-increment (second command))
                    (recur (rest command)))
-        "movestogo" (do (set-game-option :movestogo (second command))
+        "movestogo" (do (set-option! :movestogo (second command))
                         (recur (rest command)))
-        "depth" (do (set-game-option :depth-limit (second command))
+        "depth" (do (set-option! :depth-limit (second command))
                     (recur (rest command)))
-        "nodes" (do (set-game-option :node-limit (second command))
+        "nodes" (do (set-option! :node-limit (second command))
                     (recur (rest command)))
-        "movetime" (do (set-game-option :search-time (second command))
+        "movetime" (do (set-option! :search-time (second command))
                        (recur (rest command)))
-        "infinite" (do (set-game-option :search-time 0)
+        "infinite" (do (set-option! :search-time 0)
                        (recur (rest command)))
-        (println "BAA!")))
+        (println "Unknown uci command!")))
 
 (defn print-uci-usage
   "Prints the available commands of the repl."
@@ -111,14 +111,14 @@
      " stop - stop calculating as soon as possible"
      " ponderhit - the user has played the expected move.")))
 
-(defn- uci-set-option
+(defn- uci-set-option!
   "Sets UCI specific game options:
    name <id> [value <x>]"
   [options]
   (let [opts (re-seq #"\S+" options)]
     (case (count opts)
-          2 (set-game-option (keyword (second opts)) true)
-          4 (set-game-option (keyword (second opts)) (nth opts 4))
+          2 (set-option! (keyword (second opts)) true)
+          4 (set-option! (keyword (second opts)) (nth opts 4))
           (println "Error parsing options!"))))
 
 (defn process-uci-command
@@ -129,15 +129,15 @@
                   (println "id author Timo Myyrä")
                   (map println (supported-uci-options))
                   (println "uciok"))
-        "debug" (set-game-option :debug
-                                 (if (= (second command) "on")
-                                   true
-                                   false))
+        "debug" (set-option! :debug
+                             (if (= (second command) "on")
+                               true
+                               false))
         "isready" (println "readyok")
-        "setoption" (uci-set-option (rest command))
+        "setoption" (uci-set-option! (rest command))
         "register" (register (rest command))
-        "ucinewgame" (set-game "startpos")
-        "position" (uci-set-position (rest command))
+        "ucinewgame" (set-game! "startpos")
+        "position" (uci-set-position! (rest command))
         "go" (go-handler (re-seq #"\S+" (rest command)))
         "stop"
         "ponderhit"
