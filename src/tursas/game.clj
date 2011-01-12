@@ -9,11 +9,14 @@
 (def cast-fen "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")
 (def prom-fen "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7")
 
+(def inf (- Integer/MAX_VALUE 2))
+(def -inf (+ Integer/MIN_VALUE 2))
+
 (def active-repl (ref :general))
 (def game-state (ref ()))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
-(def game-options (ref {:depth-limit 3
+(def game-options (ref {:depth-limit 4
                         :node-limit 5000
                         :time-limit 15
                         :random-mode false
