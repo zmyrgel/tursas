@@ -70,8 +70,8 @@
   [move state]
   (when (not (nil? state))
     (let [board (:board state)
-          player (get board TURN-STORE)
-          moving-piece (get board (:from move))]
+          player (int (get board TURN-STORE))
+          moving-piece (int (get board (:from move)))]
       (cond (promotion? moving-piece move)
             (promote-piece state (:to move) (get-promotion-piece player move))
             (castling? moving-piece move)
@@ -87,7 +87,7 @@
   (when (not (nil? state))
     (assoc state :board
            (fill-square (:board state) CASTLING-STORE
-                        (let [castling (get (:board state) CASTLING-STORE)]
+                        (let [castling (byte (get (:board state) CASTLING-STORE))]
                           (if (zero? castling)
                             0
                             (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
@@ -116,7 +116,7 @@
   (when (not (nil? state))
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
-                        (let [piece (get (:board state) (:from move))]
+                        (let [piece (int (get (:board state) (:from move)))]
                           (if (and (or (= piece WHITE-PAWN)
                                        (= piece BLACK-PAWN))
                                    (= (abs (- (:to move) (:from move))) 0x20))
@@ -239,11 +239,11 @@
       (apply + (map #(perft % (dec depth))
                     (legal-states state)))))
   (dynamic? [state]
-    (= (get (:board state) DYNAMIC-STORE) 1))
+    (== (get (:board state) DYNAMIC-STORE) 1))
   (evaluate [state]
     (heuristic-value state))
   (full-moves [state]
-    (get (:board state) FULL-MOVE-STORE)))
+    (int (get (:board state) FULL-MOVE-STORE))))
 
 (defn make-state
   "Constructor for state"
