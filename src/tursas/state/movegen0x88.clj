@@ -133,7 +133,7 @@
     (if (or (not (board-index? new-index))
             (occupied-by? board new-index player))
       moves
-      (if (not (board-occupied? board new-index))
+      (if (not (occupied? board new-index))
         (recur (int (+ new-index dir))
                (cons (make-move index new-index 0)
                      moves))
@@ -145,7 +145,7 @@
   [player board index place]
   (let [new-place (int (+ index place))]
     (when (and (board-index? new-place)
-               (or (not (board-occupied? board new-place))
+               (or (not (occupied? board new-place))
                    (occupied-by? board new-place (opponent player))))
       (list (make-move index new-place 0)))))
 
@@ -154,7 +154,7 @@
   [board index dir pieces]
   (let [new-index (int (+ index dir))]
     (cond (not (board-index? new-index)) false
-          (not (board-occupied? board new-index)) (recur board new-index dir pieces)
+          (not (occupied? board new-index)) (recur board new-index dir pieces)
           :else (any? #(= (get board new-index) %) pieces))))
 
 (defn- threaten-by-piece?
@@ -205,21 +205,21 @@
 (defn- empty-and-safe?
   "Predicate to see if given index is empty
    and unthreatened by opponent."
-  [board index opponent]
-  (and (not (board-occupied? board index))
+  [opponent board index]
+  (and (not (occupied? board index))
        (not (threatened? board index opponent))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index dir]
-  (let [king-index-1 (int (+ index dir))
-        king-index-2 (int (+ king-index-1 dir))
+  (let [king-sq-1 (int (+ index dir))
+        king-sq-2 (int (+ king-sq-1 dir))
         opponent (opponent player)]
     (and (not (threatened? board index opponent))
-         (empty-and-safe? board king-index-1 opponent)
-         (empty-and-safe? board king-index-2 opponent)
+         (empty-and-safe? opponent board king-sq-1)
+         (empty-and-safe? opponent board king-sq-2)
          (if (== dir WEST)
-           (not (board-occupied? board (+ king-index-2 dir)))
+           (not (occupied? board (+ king-sq-2 dir)))
            true))))
 
 (defn- move-builder
@@ -266,9 +266,9 @@
   (let [dir (if (== player WHITE) NORTH SOUTH)
         move-index (int (+ index dir))]
     (when (and (board-index? move-index)
-               (not (board-occupied? board move-index)))
+               (not (occupied? board move-index)))
       (if (and (board-index? (+ move-index dir))
-               (not (board-occupied? board (+ move-index dir)))
+               (not (occupied? board (+ move-index dir)))
                (or (and (== player WHITE) (same-row? index 0x10))
                    (and (== player BLACK) (same-row? index 0x60))))
         (list (make-pawn-move player index move-index)
@@ -283,7 +283,7 @@
   (when (or (and (board-index? place)
                  (== (get board EN-PASSANT-STORE) place))
             (and (board-index? place)
-                 (board-occupied? board place)
+                 (occupied? board place)
                  (not (occupied-by? board place player))))
     (list (make-pawn-move player index place))))
 

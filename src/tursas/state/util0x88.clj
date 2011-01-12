@@ -65,8 +65,8 @@
   (= (get board-color sq1)
      (get board-color sq2)))
 
-(defn board-occupied?
-  "Checks if board index is occupied by piece."
+(defn occupied?
+  "Checks if board index is occupied by a piece."
   [board index]
   (not (empty-square? board index)))
 
