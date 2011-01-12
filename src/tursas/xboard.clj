@@ -44,6 +44,7 @@
      "protover N - change engine to use protocol version N"
      "accepted - Accept last feature"
      "reject - Reject last feature"
+     "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
      "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
      "random - Tell engine to add little random elements"
      "force - Disable engine AI"
@@ -134,6 +135,8 @@
                        (xboard-print-supported-features))
         "accepted" (xboard-accept-feature)
         "rejected" (xboard-reject-feature)
+        "new" (do (set-game! "startpos")
+                  (set-option! :ai-mode false))
         "variant" (set-option! :variant (second command))
         "quit" (quit)
         "random" (toggle-option! :random-mode)
