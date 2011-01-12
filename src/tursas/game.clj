@@ -140,17 +140,16 @@
   (map (partial alpha-beta (:depth-limit @game-options))
        (legal-states state)))
 
-(defn get-move
+(defn ai-move
   "Prompt a move from AI and add it to game-state."
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (let [new-state (second (alpha-beta (first @game-state)
-                                        -inf
-                                        inf
-                                        (:depth-limit @game-options)))]
-      (add-game-state new-state)
-      (display-board))))
+    (do (add-game-state (second (alpha-beta (first @game-state)
+                                            -inf
+                                            inf
+                                            (:depth-limit @game-options))))
+        (println "move " (move->algebraic (last-move (first @game-state)))))))
 
 (defn get-score
   "Calculates state's score by checking child states
@@ -229,8 +228,9 @@
                                    "WHITE IN CHECK-MATE, GAME OVER!"))
           (draw? state) (println "GAME RESULTED IN DRAW!")
           :else (if-let [new-state (apply-move state (algebraic->move algebraic))]
-                  (add-game-state new-state)
-                  (println "Invalid move!")))))
+                  (do (add-game-state new-state)
+                      (ai-move))
+                  (println "Illegal move: " algebraic)))))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
