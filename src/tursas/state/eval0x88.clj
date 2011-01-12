@@ -9,6 +9,10 @@
 (def QUEEN-VALUE 1200)
 (def KING-VALUE 99999)
 
+(def OPENING-GAME 0)
+(def MIDDLE-GAME 1)
+(def END-GAME 2)
+
 (def white-pawn-table
      [0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0
       50  50  50  50  50  50  50  50 0  0  0  0  0  0  0  0
@@ -145,10 +149,12 @@
 
 (defn- check-situation
   "Checks which situation, opening, middle or end-game the game is."
-  [state pieces]
-  (cond (< (count (keys pieces)) 15) :end-game
-        (> (get (:board state) FULL-MOVE-STORE) 10) :middle-game
-        :else :opening-game))
+  [state]
+  (let [pieces (merge (:white-pieces state)
+                      (:black-pieces state))]
+    (cond (< (count (keys pieces)) 15) END-GAME
+          (> (get (:board state) FULL-MOVE-STORE) 10) MIDDLE-GAME
+          :else OPENING-GAME)))
 
 (defn- score
   [state pieces situation]
@@ -161,12 +167,10 @@
 (defn heuristic-value
   "Calculates heuristic value for given state."
   [state]
-  (let [pieces (merge (:white-pieces state)
-                      (:black-pieces state))
-        situation (check-situation state pieces)]
-    (if (= (:turn state) WHITE)
-      (+ (score state (:white-pieces state) situation)
-         (- (score state (:black-pieces state) situation)))
-      (+ (score state (:black-pieces state) situation)
-         (- (score state (:white-pieces state) situation))))))
+  (let [situation (check-situation state)
+        pieces (if (= (:turn state) WHITE)
+                 (list (:white-pieces state) (:black-pieces state))
+                 (list (:black-pieces state) (:white-pieces state)))]
+    (+ (score state (first pieces) situation)
+       (- (score state (second pieces) situation)))))
 
