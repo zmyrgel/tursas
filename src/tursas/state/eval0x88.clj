@@ -164,6 +164,9 @@
   (let [pieces (merge (:white-pieces state)
                       (:black-pieces state))
         situation (check-situation state pieces)]
-    (+ (score state (:white-pieces state) situation)
-       (- (score state (:black-pieces state) situation)))))
+    (if (= (:turn state) WHITE)
+      (+ (score state (:white-pieces state) situation)
+         (- (score state (:black-pieces state) situation)))
+      (+ (score state (:black-pieces state) situation)
+         (- (score state (:white-pieces state) situation))))))
 
