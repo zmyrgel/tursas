@@ -87,8 +87,8 @@
 (defn move-piece
   "Moves piece in the board."
   [state move]
-  (let [piece (get (:board state) (:from move))
-        occupant (get (:board state) (:to move))
+  (let [piece (int (get (:board state) (:from move)))
+        occupant (int (get (:board state) (:to move)))
         player (if (white-piece? piece) WHITE BLACK)]
     (-> state
         (remove-piece (:from move))
@@ -232,7 +232,7 @@
   "Returns a list of  all available moves for players king
    in given index on the board."
   [player board index]
-  (let [castling (get board CASTLING-STORE)
+  (let [castling (int (get board CASTLING-STORE))
         castling-move (fn [side dir]
                         (when (and (== (column index) 4)
                                    (castle-side? player side castling)
@@ -349,8 +349,8 @@
   "Checks if given move is allowed in state.
    Prevents players from moving each others pieces."
   [state move]
-  (let [player (get (:board state) TURN-STORE)
-        piece (get (:board state) (:from move))]
+  (let [player (int (get (:board state) TURN-STORE))
+        piece (int (get (:board state) (:from move)))]
     (and (occupied-by? (:board state) (:from move) player)
          (any? #(and (== (:from move) (:from %))
                      (== (:to move) (:to %)))
