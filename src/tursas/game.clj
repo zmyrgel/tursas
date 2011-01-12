@@ -219,7 +219,7 @@
 (defn toggle-game-option
   "Toggles the value of given game option, only for boolean."
   [option]
-  (set-game-option option (not (= (get-game-option option) true))))
+  (set-game-option option (not (get-game-option option))))
 
 (defn make-chess-move
   "Make given move in chess game."
