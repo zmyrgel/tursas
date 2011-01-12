@@ -206,7 +206,7 @@
             time)))
 
 (defn set-option!
-  "Sets game option"
+  "Sets game option of given key to value."
   [key value]
   (dosync (alter game-options
                  (assoc @game-options key value))))
