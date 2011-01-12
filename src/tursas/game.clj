@@ -145,7 +145,10 @@
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (let [new-state (second (alpha-beta (first @game-state) -100000 100000 3))]
+    (let [new-state (second (alpha-beta (first @game-state)
+                                        -inf
+                                        inf
+                                        (:depth-limit @game-options)))]
       (add-game-state new-state)
       (display-board))))
 
@@ -156,7 +159,10 @@
   (println
    (if (empty? @game-state)
      "Can't calculate score from empty state!"
-     (first (alpha-beta (first @game-state) -100000 100000 3)))))
+     (first (alpha-beta (first @game-state)
+                        -inf
+                        inf
+                        (:depth-limit @game-options))))))
 
 (defn eval-current-state
   "Evaluates the current state and prints its score."
