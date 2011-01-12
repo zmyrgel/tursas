@@ -128,15 +128,17 @@
    from index to given direction on the board.
    Sliding will continue until it hits piece or board edge."
   [player board index dir]
-  (reduce (fn [moves new-index]
-            (let [piece-index (int (+ new-index (opponent player)))]
-              (if (occupied-by? board piece-index player)
-                (cons (make-move index piece-index 0)
-                      (cons (make-move index new-index 0) moves))
-                (cons (make-move index new-index 0) moves))))
-          '() (take-while #(and (board-index? %)
-                                (not (board-occupied? board %)))
-                          (iterate #(+ % dir) (+ index dir)))))
+  (loop [new-index (int (+ index dir))
+         moves '()]
+    (if (or (not (board-index? new-index))
+            (occupied-by? board new-index player))
+      moves
+      (if (not (board-occupied? board new-index))
+        (recur (int (+ new-index dir))
+               (cons (make-move index new-index 0)
+                     moves))
+        (cons (make-move index new-index 0)
+              moves)))))
 
 (defn- move-to-place
   "Return list of moves for given piece."
