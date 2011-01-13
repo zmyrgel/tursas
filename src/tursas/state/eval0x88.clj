@@ -157,6 +157,7 @@
           :else OPENING-GAME)))
 
 (defn- score
+  "Calculates score for side."
   [state pieces situation]
   (reduce (fn [score [index piece]]
             (+ score
