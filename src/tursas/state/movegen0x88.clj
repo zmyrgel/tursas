@@ -188,7 +188,9 @@
 (defn threatened?
   "Checks if given index in state is under threath of enemy."
   [board index opponent]
-  (let [[qb qr knight pawn pawn-places]
+  (let [threaten-by-p? (partial threaten-by-piece? board index opponent)
+        threaten-by-s? (partial threaten-by-slider? board index opponent)
+        [qb qr knight pawn pawn-places]
         (if (== opponent WHITE)
           [[WHITE-QUEEN WHITE-BISHOP]
            [WHITE-QUEEN WHITE-ROOK]
@@ -196,28 +198,24 @@
           [[BLACK-QUEEN BLACK-BISHOP]
            [BLACK-QUEEN BLACK-ROOK]
            BLACK-KNIGHT BLACK-PAWN [NE NW]])]
-    (or (threaten-by-piece? board index opponent knight knight-movement)
-        (threaten-by-slider? board index opponent qr rook-directions)
-        (threaten-by-slider? board index opponent qb bishop-directions)
-        (threaten-by-piece? board index opponent pawn pawn-places)
+    (or (threaten-by-p? knight knight-movement)
+        (threaten-by-s? qr rook-directions)
+        (threaten-by-s? qb bishop-directions)
+        (threaten-by-p? pawn pawn-places)
         (threaten-by-king? board index opponent))))
-
-(defn- empty-and-safe?
-  "Predicate to see if given index is empty
-   and unthreatened by opponent."
-  [opponent board index]
-  (and (not (occupied? board index))
-       (not (threatened? board index opponent))))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
   [player board index dir]
   (let [king-sq-1 (int (+ index dir))
         king-sq-2 (int (+ king-sq-1 dir))
-        opponent (opponent player)]
+        opponent (opponent player)
+        safe? (fn [idx]
+                (and (not (occupied? board idx))
+                     (not (threatened? board idx opponent))))]
     (and (not (threatened? board index opponent))
-         (empty-and-safe? opponent board king-sq-1)
-         (empty-and-safe? opponent board king-sq-2)
+         (safe? king-sq-1)
+         (safe? king-sq-2)
          (if (== dir WEST)
            (not (occupied? board (+ king-sq-2 dir)))
            true))))
