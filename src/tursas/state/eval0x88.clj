@@ -172,5 +172,9 @@
                  (list (:white-pieces state) (:black-pieces state))
                  (list (:black-pieces state) (:white-pieces state)))]
     (+ (score state (first pieces) situation)
-       (- (score state (second pieces) situation)))))
+       (- (score state (second pieces) situation))
+       (cond (draw? state) -1000
+             (check? state) -2500
+             (mate? state) (- KING-VALUE)
+             :else 0))))
 
