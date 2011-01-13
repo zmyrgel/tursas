@@ -62,21 +62,22 @@
 (defn same-color?
   "Check if two squares are same color."
   [sq1 sq2]
-  (= (get board-color sq1)
-     (get board-color sq2)))
+  (== (get board-color sq1)
+      (get board-color sq2)))
 
-(defn occupied?
-  "Checks if board index is occupied by a piece."
+(defn board-occupied?
+  "Predicate to check if board index is occupied or not."
   [board index]
   (not (empty-square? board index)))
 
 (defn occupied-by?
   "Checks if given board index is occupied by player."
   [board index player]
-  (and (board-occupied? board index)
-       (if (= player WHITE)
-         (white-piece? (get board index))
-         (black-piece? (get board index)))))
+  (let [piece-color? (if (== player WHITE)
+                       white-piece?
+                       black-piece?)]
+    (and (board-occupied? board index)
+         (piece-color? (get board index)))))
 
 (defn opponent
   "Return opponent of given player"
