@@ -183,7 +183,7 @@
   "Updates game state to reflect changes from move.
    If game state is not legal, will return a nil value."
   [state move]
-  (when (not (nil? state))
+  (when-not (nil? state)
     (->> state
          (update-move move)
          (update-board move)
