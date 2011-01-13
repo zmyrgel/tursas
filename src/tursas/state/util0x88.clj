@@ -42,12 +42,12 @@
 (defn same-column?
   "Determines if both given square indexes x and x are on the same column."
   [x y]
-  (= (column x) (column y)))
+  (== (column x) (column y)))
 
 (defn same-row?
   "Determines if both given square indexes x and y are on the same row."
   [x y]
-  (= (row x) (row y)))
+  (== (row x) (row y)))
 
 (defn white-piece?
   "Predicate to check if given piece value belongs to white."
@@ -103,18 +103,18 @@
 (defn piece-name
   "Gives piece character representation from its board value."
   [piece]
-  (cond (= piece WHITE-KING) \K
-        (= piece WHITE-QUEEN) \Q
-        (= piece WHITE-BISHOP) \B
-        (= piece WHITE-KNIGHT) \N
-        (= piece WHITE-ROOK) \R
-        (= piece WHITE-PAWN) \P
-        (= piece BLACK-KING) \k
-        (= piece BLACK-QUEEN) \q
-        (= piece BLACK-BISHOP) \b
-        (= piece BLACK-KNIGHT) \n
-        (= piece BLACK-ROOK) \r
-        (= piece BLACK-PAWN) \p
+  (cond (== piece WHITE-KING) \K
+        (== piece WHITE-QUEEN) \Q
+        (== piece WHITE-BISHOP) \B
+        (== piece WHITE-KNIGHT) \N
+        (== piece WHITE-ROOK) \R
+        (== piece WHITE-PAWN) \P
+        (== piece BLACK-KING) \k
+        (== piece BLACK-QUEEN) \q
+        (== piece BLACK-BISHOP) \b
+        (== piece BLACK-KNIGHT) \n
+        (== piece BLACK-ROOK) \r
+        (== piece BLACK-PAWN) \p
         :else \E))
 
 (defn piece-value
