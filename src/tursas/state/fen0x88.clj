@@ -101,6 +101,15 @@
                (update-king-index black-king BLACK)
                (update-king-index white-king WHITE)))))
 
+(defn- add-full-moves
+  "Helper funtion to add full moves to board.
+   Needed to workaround the byte limitation of the board."
+  [board moves]
+  (let [n-moves (int (/ moves 128))]
+    (-> board
+        (fill-square FULL-MOVE-N-STORE n-moves)
+        (fill-square FULL-MOVE-STORE (- moves (* n-moves 128))))))
+
 (defn parse-fen
   "Parses information from given FEN and applies it to given state."
   [fen state]
@@ -115,7 +124,7 @@
                                                    EN-PASSANT-STORE
                                                    (algebraic->index (nth fen-list 3))))
                    (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-                   (fill-square FULL-MOVE-STORE (Integer/parseInt (nth fen-list 5)))))
+                   (add-full-moves (Integer/parseInt (nth fen-list 5)))))
         add-pieces
         add-king-indexes)))
 
@@ -128,5 +137,6 @@
          (castling-str board) " "
          (index->algebraic (get board EN-PASSANT-STORE)) " "
          (get board HALF-MOVE-STORE) " "
-         (get board FULL-MOVE-STORE))))
+         (+ (* (get board FULL-MOVE-N-STORE) 127)
+            (get board FULL-MOVE-STORE)))))
 

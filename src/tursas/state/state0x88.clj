@@ -149,8 +149,14 @@
   (when-not (nil? state)
     (if (== (get (:board state) TURN-STORE) BLACK)
       (assoc state :board
-             (fill-square (:board state) FULL-MOVE-STORE
-                          (inc (get (:board state) FULL-MOVE-STORE))))
+             (let [moves (get (:board state) FULL-MOVE-STORE)
+                   n-moves (get (:board state) FULL-MOVE-N-STORE)]
+               (if (== moves 127)
+                 (-> (:board state)
+                     (fill-square FULL-MOVE-N-STORE (inc n-moves))
+                     (fill-square FULL-MOVE-STORE 0))
+                 (fill-square (:board state) FULL-MOVE-STORE
+                              (inc moves)))))
       state)))
 
 (defn- update-move
