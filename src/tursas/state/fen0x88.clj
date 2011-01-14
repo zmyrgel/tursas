@@ -129,14 +129,16 @@
         add-king-indexes)))
 
 (defn parse-state
-  "Returns FEN representation of given STATE."
+  "Returns FEN representation of given game state."
   [state]
   (let [board (:board state)]
-    (str (board->fen-board board) " "
-         (if (= (get board TURN-STORE) WHITE) "w" "b") " "
-         (castling-str board) " "
-         (index->algebraic (get board EN-PASSANT-STORE)) " "
-         (get board HALF-MOVE-STORE) " "
-         (+ (* (get board FULL-MOVE-N-STORE) 127)
-            (get board FULL-MOVE-STORE)))))
+    (s/join " " (list (board->fen-board board)
+                      (if (= (get board TURN-STORE) WHITE) "w" "b")
+                      (castling-str board)
+                      (if (= (get board EN-PASSANT-STORE) EN-PASSANT-STORE)
+                        "-"
+                        (index->algebraic (get board EN-PASSANT-STORE)))
+                      (get board HALF-MOVE-STORE)
+                      (+ (* (get board FULL-MOVE-N-STORE) 127)
+                         (get board FULL-MOVE-STORE))))))
 
