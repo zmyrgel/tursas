@@ -141,7 +141,8 @@
        (legal-states state)))
 
 (defn ai-move
-  "Prompt a move from AI and add it to game-state."
+  "Prompt a move from AI and add it to game-state.
+   XXX: add check when no move possible."
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
