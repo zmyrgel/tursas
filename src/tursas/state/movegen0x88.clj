@@ -330,9 +330,7 @@
 
 (defn pseudo-moves
   "Lists all pseudo-moves for player in state.
-   Still doesn't live up to its name as all moves returned are also
-   legal.  Later the move generation should be separated to pseudo
-   moves and legal moves."
+   Note: moves generated can leave player in check, hence pseudo-moves."
   [player state]
   (let [pieces (seq (pmap-get state player))]
     (reduce (fn [moves [index piece]]
