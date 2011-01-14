@@ -85,11 +85,11 @@
     checks for king or rook moves."
   [move state]
   (when-not (nil? state)
-    (assoc state :board
-           (fill-square (:board state) CASTLING-STORE
-                        (let [castling (byte (get (:board state) CASTLING-STORE))]
-                          (if (zero? castling)
-                            0
+    (let [castling (byte (get (:board state) CASTLING-STORE))]
+      (if (zero? castling)
+        state
+        (assoc state :board
+               (fill-square (:board state) CASTLING-STORE
                             (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
                                    rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
                                   (if (== (get (:board state) TURN-STORE) WHITE)
