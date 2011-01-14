@@ -142,9 +142,7 @@
                           (inc (get (:board state) HALF-MOVE-STORE)))))))
 
 (defn- update-full-moves
-  "Updates full move count on board.
-   XXX: Byte can only handle 128 moves, add second square to hold
-        a multiplier for full-moves like 3 x 125 for move 375."
+  "Updates full move count on board."
   [state]
   (when-not (nil? state)
     (if (== (get (:board state) TURN-STORE) BLACK)
