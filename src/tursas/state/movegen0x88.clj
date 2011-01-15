@@ -234,7 +234,7 @@
                         (when (and (== (column index) 4)
                                    (castle-side? side castling)
                                    (legal-castling? player board index dir))
-                          (list (make-move index (+ dir dir) 0))))]
+                          (list (make-move index (+ index dir dir) 0))))]
     (concat
      (move-builder (partial move-to-place player board index)
                    (map #(+ index %) king-movement))
