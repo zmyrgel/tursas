@@ -231,8 +231,7 @@
                                      (if (== side KING-SIDE) 2 1))]
                          (pos? (bit-and value castling))))
         castling-move (fn [side dir]
-                        (when (and (== (column index) 4)
-                                   (castle-side? side castling)
+                        (when (and (castle-side? side castling)
                                    (legal-castling? player board index dir))
                           (list (make-move index (+ index dir dir) 0))))]
     (concat
