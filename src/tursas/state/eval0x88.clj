@@ -13,6 +13,13 @@
 (def MIDDLE-GAME 1)
 (def END-GAME 2)
 
+(defn make-table
+  "Utility to make full 0x88 vector out of smaller vector."
+  [score-table]
+  (into (vector-of :byte)
+        (reduce concat (map #(concat % (vec (replicate 8 0)))
+                            (partition 8 score-table)))))
+
 (def white-pawn-table
      [0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0
       50  50  50  50  50  50  50  50 0  0  0  0  0  0  0  0
