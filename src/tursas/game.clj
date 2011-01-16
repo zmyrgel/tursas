@@ -117,13 +117,6 @@
                    first
                    legal-states))))
 
-(defn- valid-coord?
-  "Check that given coord is valid on chess board."
-  [coord]
-  (not (nil? (some #(= coord %)
-                   (for [x (range 8) y (range 8)]
-                     (str (get "abcdefgh" x) (inc y)))))))
-
 (defn choose-move
   "Let AI to choose a move from state with given strategy."
   [states & strategy]
