@@ -184,6 +184,19 @@
                             CHECK-BIT
                             0))))))
 
+(defn- update-mobility
+  "Updates mobility of the state.
+   Stores the amount of legal moves in state
+   which makes evaluation quicker."
+  [state]
+  (when-not (nil? state)
+    (assoc state :board
+           (fill-square (:board state) MOBILITY-STORE
+                        (let [moves (count (legal-states state))]
+                          (if (>= moves 128)
+                            127
+                            moves))))))
+
 (defn- update-state
   "Updates game state to reflect changes from move.
    If game state is not legal, will return a nil value."
