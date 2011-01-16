@@ -115,10 +115,10 @@
   "Sets UCI specific game options:
    name <id> [value <x>]"
   [options]
-  (let [opts (re-seq #"\S+" options)]
-    (case (count opts)
-          2 (set-option! (keyword (second opts)) true)
-          4 (set-option! (keyword (second opts)) (nth opts 4))
+  (let [words (re-seq #"\S+" options)]
+    (case (count words)
+          2 (set-option! (keyword (second words)) true)
+          4 (set-option! (keyword (second words)) (nth words 4))
           (println "Error parsing options!"))))
 
 (defn process-uci-command
