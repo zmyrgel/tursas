@@ -42,26 +42,14 @@
           (= (first words) "code") (register-value (second words))
           :else (println "invalid option!"))))
 
-(defn- move?
-  "Predicate to detect valid move strings"
-  [item]
-  (and (or (= (count item) 4)
-           (= (count item) 5))
-       (or (= item "0000")
-           (and (number? (get item 0))
-                (number? (get item 2)))
-           (and (char? (get item 1))
-                (char? (get item 3))))))
-
 (defn- go-handler
   "Handler for go command"
   [command]
   (case (first command)
-        "searchmoves" (do (set-option! :move-limit (take-while move? command))
-                          (recur (drop-while move? command)))
-        "ponder" (do
-                   (set-option! :ponder-mode true)
-                   (recur (rest command)))
+        "searchmoves" (do (set-option! :move-limit (take-while move-string? command))
+                          (recur (drop-while move-string? command)))
+        "ponder" (do (set-option! :ponder-mode true)
+                     (recur (rest command)))
         "wtime" (do (set-clock! :white (second command))
                     (recur (rest command)))
         "btime" (do (set-clock! :black (second command))
