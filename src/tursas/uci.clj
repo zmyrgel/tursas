@@ -123,22 +123,22 @@
 
 (defn process-uci-command
   "Processes command in uci mode."
-  [command]
-  (case (first command)
+  [words]
+  (case (first words)
         "uci" (do (println "id name Tursas 0.1")
                   (println "id author Timo Myyrä")
                   (map println (supported-uci-options))
                   (println "uciok"))
         "debug" (set-option! :debug
-                             (if (= (second command) "on")
+                             (if (= (second words) "on")
                                true
                                false))
         "isready" (println "readyok")
-        "setoption" (uci-set-option! (rest command))
-        "register" (register (rest command))
+        "setoption" (uci-set-option! (rest words))
+        "register" (register (rest words))
         "ucinewgame" (set-game! "startpos")
-        "position" (uci-set-position! (rest command))
-        "go" (go-handler (re-seq #"\S+" (rest command)))
+        "position" (uci-set-position! (rest words))
+        "go" (go-handler (re-seq #"\S+" (rest words)))
         "stop"
         "ponderhit"
         nil))
