@@ -194,8 +194,8 @@
 
 (defn set-option!
   "Sets game option of given key to value."
-  [key value]
-  (dosync (alter game-options assoc key value)))
+  [k v]
+  (dosync (alter game-options assoc k v)))
 
 (defn get-option
   "Returns value of given game option"
