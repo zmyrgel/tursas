@@ -82,7 +82,8 @@
 
 (defn- update-castling
   "Updates states castling value for move
-    checks for king or rook moves."
+   checks for king or rook moves.
+   XXX: check if updates correctly!!!"
   [move state]
   (when-not (nil? state)
     (let [castling (byte (get (:board state) CASTLING-STORE))]
