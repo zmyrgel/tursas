@@ -205,9 +205,9 @@
     (->> state
          (update-move move)
          (update-board move)
-         update-turn
          (update-castling move)
          (update-en-passant move)
+         update-turn
          (update-half-moves move)
          update-full-moves
          update-check)))
