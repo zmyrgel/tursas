@@ -1,12 +1,23 @@
 (ns tursas.repl
-  (:use (tursas uci xboard game))
-  (:require [clojure.contrib.string :as string]))
+  (:use (tursas uci xboard)
+        [tursas.game :only [get-repl
+                            load-game
+                            save-game
+                            display-board
+                            display-fen
+                            list-moves
+                            get-score
+                            ai-move
+                            eval-current-state
+                            display-perft
+                            set-repl!]])
+  (:require [clojure.contrib.string :as s]))
 
 (defn- print-usage
   "Prints the available commands of the repl."
   []
   (do
-    (string/map-str
+    (s/map-str
      println
      '("Available general commands:"
        "help - display this help"
