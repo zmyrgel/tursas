@@ -9,8 +9,8 @@
 (def cast-fen "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")
 (def prom-fen "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7")
 
-(def inf (- Integer/MAX_VALUE 2))
-(def -inf (+ Integer/MIN_VALUE 2))
+(def inf Integer/MAX_VALUE)
+(def -inf (+ Integer/MIN_VALUE 1))
 
 (def active-repl (ref :general))
 (def game-state (ref ()))
