@@ -125,7 +125,7 @@
                      (str (get "abcdefgh" x) (inc y)))))))
 
 (defn choose-move
-  "Let AI to choose a move from STATE with given STRATEGY."
+  "Let AI to choose a move from state with given strategy."
   [states & strategy]
   (last-move
    (case strategy
@@ -197,7 +197,7 @@
          :else (fen->state fen))))
 
 (defn set-clock!
-  "Sets PLAYER's clock to TIME."
+  "Sets player's clock to given time."
   [player time]
   (dosync
    (ref-set (if (= player :white)
@@ -216,7 +216,7 @@
   (@game-options option))
 
 (defn toggle-option!
-  "Toggles the value of given game option, only for boolean."
+  "Toggles the value of given boolean game option."
   [option]
   (set-option! option (not (get-option option))))
 
