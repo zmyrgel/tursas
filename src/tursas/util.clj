@@ -9,14 +9,14 @@
   [pred coll]
   (not (nil? (some pred coll))))
 
-(defn- valid-coord?
+(defn valid-coord?
   "Predicate to check given coord for valid chess coordinate."
   [coord]
   (any? #(= coord %)
         (for [x (range 8) y (range 8)]
           (str (get "abcdefgh" x) (inc y)))))
 
-(defn- split-move
+(defn split-move
   "Partitions chess move given in coordinate notation to pair of coordinates
    and possible promotion character."
   [algebraic]
