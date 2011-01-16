@@ -40,7 +40,7 @@
             :else nil))))
 
 (defn process-command
-  "Processes command given by UI."
+  "Processes command given by user."
   [command]
   (loop [words (re-seq #"\w+" command)]
     (case (first words)
