@@ -65,6 +65,23 @@
       (dosync (ref-set game-state state)))
     (catch Exception e nil)))
 
+(defn- game-end?
+  "Predicate to see if last game state ended the game."
+  []
+  (let [state (first @game-state)]
+    (or (draw? state)
+        (mate? state))))
+
+(defn- game-result
+  "Function to print game result."
+  []
+  (println "RESULT "
+           (let [state (first @game-state)]
+             (or (draw? state) (str "1/2-1/2 {" (draw-type state) "}")
+                 (mate? state) (if (= (turn state) :white)
+                                 "0-1 {Black mates"
+                                 "1-0 {White mates")))))
+
 (defn display-board
   "Displays the current chess board in ASCII."
   []
@@ -126,18 +143,19 @@
        (legal-states state)))
 
 (defn ai-move
-  "Prompt a move from AI and add it to game-state.
-   XXX: add check when no move possible."
+  "Prompt a move from AI and add it to game-state."
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (let [move (second (alpha-beta (first @game-state)
-                                            -inf
-                                            inf
-                                            (:depth-limit @game-options)))]
-      (when (not (nil? move)) ;; ugly hack for now
-        (add-game-state move)
-        (println "move " (move->algebraic (last-move (first @game-state))))))))
+    (if (game-end?)
+      (do (game-result)
+          (quit))
+      (let [move (second (alpha-beta (first @game-state)
+                                     -inf
+                                     inf
+                                     (:depth-limit @game-options)))]
+        (do (add-game-state move)
+            (println "move " (move->algebraic (last-move (first @game-state)))))))))
 
 (defn get-score
   "Calculates state's score by checking child states
@@ -207,36 +225,18 @@
   [option]
   (set-option! option (not (get-option option))))
 
-(defn- game-end?
-  "Predicate to see if last game state ended the game."
-  []
-  (let [state (first @game-state)]
-    (or (draw? state)
-        (mate? state))))
-
-(defn- game-result
-  "Function to print game result."
-  []
-  (println "RESULT "
-           (let [state (first @game-state)]
-             (or (draw? state) (str "1/2-1/2 {" (draw-type state) "}")
-                 (mate? state) (if (= (turn state) :white)
-                                 "0-1 {Black mates"
-                                 "1-0 {White mates")))))
-
 (defn make-chess-move
   "If given string represents chess move, apply it to current game."
   [s]
   (if (move-string? s)
     (let [state (first @game-state)]
-      (cond (mate? state) (println (if (= (turn state) :white)
-                                     "BLACK IN CHECK-MATE, GAME OVER!"
-                                     "WHITE IN CHECK-MATE, GAME OVER!"))
-            (draw? state) (println "GAME RESULTED IN DRAW!")
-            :else (if-let [new-state (apply-move state (algebraic->move s))]
-                    (do (add-game-state new-state)
-                        (ai-move))
-                    (println "Illegal move: " s))))
+      (if (game-end?)
+        (do (game-result)
+            (quit))
+        (if-let [new-state (apply-move state (algebraic->move s))]
+          (do (add-game-state new-state)
+              (ai-move))
+          (println "Illegal move: " s))))
     (println "Illegal move: " s)))
 
 (defn undo-move
