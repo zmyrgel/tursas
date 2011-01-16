@@ -1,5 +1,6 @@
 (ns tursas.xboard
-  (:use [clojure.contrib.string :only [as-str map-str split]]
+  (:use (tursas util)
+        [clojure.contrib.string :only [as-str map-str split]]
         [tursas.game :only [set-option!
                             set-game!
                             toggle-option!
