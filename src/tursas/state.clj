@@ -7,6 +7,7 @@
   (check? [state])
   (mate? [state])
   (draw? [state])
+  (draw-type [state])
   (state->fen [state])
   (legal-states [state])
   (apply-move [state move])

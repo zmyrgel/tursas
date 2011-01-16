@@ -233,7 +233,14 @@
   (draw? [state]
     (or (fifty-move-rule? state)
         (fide-draw? state)
-        (stalemate? state)))
+        (stalemate? state)
+        (repetition? state)))
+  (draw-type [state]
+    (cond (fifty-move-rule? state) "50-move rule"
+          (fide-draw? state) "Draw per FIDE rules"
+          (stalemate? state) "Stalemate"
+          (repetition? state) "Draw by repetition"
+          :else nil))
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
