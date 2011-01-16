@@ -34,7 +34,7 @@
              (valid-coord? (first parts))
              (valid-coord? (second parts))
              (if (== (count parts) 3)
-               (s/substring? (nthnext parts 2) promotion-chars)
+               (s/substring? (first (nthnext parts 2)) promotion-chars)
                true)))))
 
 (defn san-string?
