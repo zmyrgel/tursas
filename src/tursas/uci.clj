@@ -1,5 +1,5 @@
 (ns tursas.uci
-  (:require [clojure.contrib.string :as string])
+  (:require [clojure.contrib.string :as s])
   (:use (tursas game)))
 
 (defn supported-uci-options
@@ -88,7 +88,7 @@
 (defn print-uci-usage
   "Prints the available commands of the repl."
   []
-  (string/map-str
+  (s/map-str
    println
    '("Available UCI commands are:"
      "debug [ on | off ] - print debug messages"
