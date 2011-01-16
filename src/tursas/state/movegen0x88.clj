@@ -300,29 +300,23 @@
 (defn- piece-moves
   "List of moves for piece in board index."
   [board player index piece]
-  (cond (or (== piece WHITE-PAWN)
-            (== piece BLACK-PAWN))
-        (list-pawn-moves player board index)
+  (let [slider (fn [directions]
+                  (move-builder (partial slide-in-dir player board index) directions))
+        mover (fn [movement]
+                (move-builder (partial move-to-place player board index) movement))]
+      (cond (or (== piece WHITE-PAWN)
+            (== piece BLACK-PAWN)) (list-pawn-moves player board index)
         (or (== piece WHITE-BISHOP)
-            (== piece BLACK-BISHOP))
-        (move-builder (partial slide-in-dir player board index)
-                      bishop-directions)
+            (== piece BLACK-BISHOP)) (slider bishop-directions)
         (or (== piece WHITE-KNIGHT)
-            (== piece BLACK-KNIGHT))
-        (move-builder (partial move-to-place player board index)
-                      knight-movement)
+            (== piece BLACK-KNIGHT)) (mover knight-movement)
         (or (== piece WHITE-ROOK)
-            (== piece BLACK-ROOK))
-        (move-builder (partial slide-in-dir player board index)
-                      rook-directions)
+            (== piece BLACK-ROOK)) (slider rook-directions)
         (or (== piece WHITE-QUEEN)
-            (== piece BLACK-QUEEN))
-        (move-builder (partial slide-in-dir player board index)
-                      queen-directions)
+            (== piece BLACK-QUEEN)) (slider queen-directions)
         (or (== piece WHITE-KING)
-            (== piece BLACK-KING))
-        (list-king-moves player board index)
-        :else nil))
+            (== piece BLACK-KING)) (list-king-moves player board index)
+        :else nil)))
 
 (defn pseudo-moves
   "Lists all pseudo-moves for player in state.
