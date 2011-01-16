@@ -10,7 +10,8 @@
                             ai-move
                             eval-current-state
                             display-perft
-                            set-repl!]])
+                            set-repl!
+                            quit]])
   (:require [clojure.contrib.string :as s]))
 
 (defn- print-usage
