@@ -13,9 +13,10 @@
 (defn algebraic->index
   "Converts given algebraic representation to board index value."
   [algebraic]
-  (let [file (- (int (nth algebraic 0)) 97)
-        rank (- (int (nth algebraic 1)) 48)]
-    (+ (* (dec rank) 16) file)))
+  (when (valid-coord? algebraic)
+    (let [file (- (int (nth algebraic 0)) 97)
+          rank (- (int (nth algebraic 1)) 48)]
+      (+ (* (dec rank) 16) file))))
 
 (defrecord HexMove [from to promotion]
   Move
@@ -23,7 +24,7 @@
     (str (index->algebraic (:from move))
          (index->algebraic (:to move))
          (let [piece (piece-name (:promotion move))]
-           (when (not (= piece \E))
+           (when-not (= piece \E)
              piece))))
   (from [move]
     (index->algebraic (:from move)))
