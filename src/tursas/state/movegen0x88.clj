@@ -1,5 +1,5 @@
 (ns tursas.state.movegen0x88
-  (:use (tursas state move hexmove)
+  (:use (tursas state move hexmove util)
         (tursas.state common0x88 util0x88)
         [clojure.contrib.math :only [abs]]))
 
