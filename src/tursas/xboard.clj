@@ -14,7 +14,7 @@
    :setboard 1
    :playother 1
    :san 0
-   :usermove 1
+   :usermove 0
    :time 0
    :draw 1
    :sigint 0

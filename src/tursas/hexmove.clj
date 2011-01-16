@@ -1,6 +1,6 @@
 (ns tursas.hexmove
-  (:use (tursas move)
-        (tursas.state util0x88)))
+  (:use (tursas move util)
+        [tursas.state.util0x88 :only [piece-name piece-value]]))
 
 (defn index->algebraic
   "Converts given index to algebraic representation."
@@ -39,14 +39,11 @@
   (HexMove. from to promotion))
 
 (defn algebraic->move
-  [algebraic]
-  (let [from (str (get algebraic 0)
-                  (get algebraic 1))
-        to (str (get algebraic 2)
-                (get algebraic 3))
-        promotion (get algebraic 4)]
-    (make-move (algebraic->index from)
-               (algebraic->index to)
-               (if (not (nil? promotion))
-                 (piece-value promotion)
-                 0))))
+  [s]
+  (when (move-string? s)
+    (let [parts (split-move s)]
+      (make-move (algebraic->index (first parts))
+                 (algebraic->index (second parts))
+                 (if (== (count parts) 3)
+                   (piece-value (nthnext parts 2))
+                   0)))))
