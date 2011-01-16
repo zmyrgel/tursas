@@ -37,12 +37,9 @@
   "Registers values."
   [command]
   (let [words (re-seq #"\S+" command)]
-    (cond (= (first words) "register")
-          (println "register got")
-          (= (first words) "name")
-          (register-name (second words))
-          (= (first words) "code")
-          (register-value (second words))
+    (cond (= (first words) "register") (println "register got")
+          (= (first words) "name") (register-name (second words))
+          (= (first words) "code") (register-value (second words))
           :else (println "invalid option!"))))
 
 (defn- move?
