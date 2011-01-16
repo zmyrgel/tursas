@@ -43,6 +43,13 @@
                         (cond (< (count bishops) 2) false
                               :else (same-color? (first (keys bishops))
                                                  (second (keys bishops)))))))))))
+
+(defn- repetition?
+  "Predicate to see if game is draw by repetition.
+   Stub function to be filled later."
+  [state]
+  false)
+
 (defn- get-promotion-piece
   "Helper function to return promotion piece value.
     Reads the char from move or if nil, defaults to queen."
