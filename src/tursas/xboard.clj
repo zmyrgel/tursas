@@ -1,6 +1,12 @@
 (ns tursas.xboard
   (:use [clojure.contrib.string :only [as-str map-str split]]
-        (tursas game)))
+        [tursas.game :only [set-option!
+                            set-game!
+                            toggle-option!
+                            quit
+                            make-chess-move
+                            get-hint
+                            undo-move]]))
 
 (def xboard-supported-features
   {:ping 1
