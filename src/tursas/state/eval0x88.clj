@@ -73,6 +73,26 @@
       -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
       -20 -10 -10 -10 -10 -10 -10 -20 0  0  0  0  0  0  0  0])
 
+(def white-rook-table
+     [ 50 -10  30  10  10  30 -10  50 0  0  0  0  0  0  0  0
+      -10 -10 -10 -10 -10 -10 -10 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -20 -10 -10 -10 -10 -10 -10 -20 0  0  0  0  0  0  0  0])
+
+(def black-rook-table
+     [-20 -10 -10 -10 -10 -10 -10 -20 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10   0   0   0   0   0   0 -10 0  0  0  0  0  0  0  0
+      -10 -10 -10 -10 -10 -10 -10 -10 0  0  0  0  0  0  0  0
+       50 -10  30  10  10  30 -10  50 0  0  0  0  0  0  0  0])
+
 (def white-king-table
      [-30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
       -30 -40 -40 -50 -50 -40 -40 -30 0  0  0  0  0  0  0  0
@@ -139,6 +159,8 @@
         (== piece BLACK-KNIGHT) (get black-knight-table index)
         (== piece WHITE-BISHOP) (get white-bishop-table index)
         (== piece BLACK-BISHOP) (get black-bishop-table index)
+        (== piece WHITE-ROOK) (get white-rook-table index)
+        (== piece BLACK-ROOK) (get black-rook-table index)
         (== piece WHITE-KING) (if (= game-situation :end-game)
                                 (get white-king-table-end-game index)
                                 (get white-king-table index))
