@@ -79,6 +79,14 @@
   [player]
   (bit-xor player 1))
 
+(defn promotion?
+  "Checks if given move is pawn promotion."
+  [piece move]
+  (or (and (== piece WHITE-PAWN)
+           (== (row (:to move)) 7))
+      (and (== piece BLACK-PAWN)
+           (== (row (:to move)) 0))))
+
 (defn init-game-board
   "Generates new 128 element vector of bytes
    and places chess piece representation to it."

@@ -23,14 +23,6 @@
 (def white-pawn-movement (list NE NW NORTH))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
-(defn promotion?
-  "Checks if given move is pawn promotion."
-  [piece move]
-  (or (and (== piece WHITE-PAWN)
-           (== (row (:to move)) 0x07))
-      (and (== piece BLACK-PAWN)
-           (== (row (:to move)) 0x00))))
-
 (defn- pmap-add
   "Add piece to player piece-map store on the board."
   [state player index piece]
