@@ -208,17 +208,19 @@
   (set-option! option (not (get-option option))))
 
 (defn make-chess-move
-  "Make given move in chess game."
-  [algebraic]
-  (let [state (first @game-state)]
-    (cond (mate? state) (println (if (= (turn state) :white)
-                                   "BLACK IN CHECK-MATE, GAME OVER!"
-                                   "WHITE IN CHECK-MATE, GAME OVER!"))
-          (draw? state) (println "GAME RESULTED IN DRAW!")
-          :else (if-let [new-state (apply-move state (algebraic->move algebraic))]
-                  (do (add-game-state new-state)
-                      (ai-move))
-                  (println "Illegal move: " algebraic)))))
+  "If given string represents chess move, apply it to current game."
+  [s]
+  (if (move-string? s)
+    (let [state (first @game-state)]
+      (cond (mate? state) (println (if (= (turn state) :white)
+                                     "BLACK IN CHECK-MATE, GAME OVER!"
+                                     "WHITE IN CHECK-MATE, GAME OVER!"))
+            (draw? state) (println "GAME RESULTED IN DRAW!")
+            :else (if-let [new-state (apply-move state (algebraic->move s))]
+                    (do (add-game-state new-state)
+                        (ai-move))
+                    (println "Illegal move: " s))))
+    (println "Illegal move: " s)))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
