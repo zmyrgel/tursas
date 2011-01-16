@@ -59,7 +59,7 @@
           "xboard" (set-repl! :xboard)
           "quit" (quit)
           (case (get-repl)
-                :general (when (not (empty? (rest words)))
+                :general (when-not (empty? (rest words))
                            (recur (rest words)))
                 :uci (process-uci-command words)
                 :xboard (process-xboard-command words)))))
