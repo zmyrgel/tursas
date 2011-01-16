@@ -1,6 +1,6 @@
 (ns tursas.uci
   (:require [clojure.contrib.string :as s])
-  (:use (tursas game)))
+  (:use (tursas game util)))
 
 (defn supported-uci-options
   "Prints the supported options for Tursas."
