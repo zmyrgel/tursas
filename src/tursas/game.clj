@@ -241,9 +241,3 @@
             (if (nil? n)
               (rest @game-state)
               (nthnext @game-state n)))))
-
-(defn perft-test
-  "Dummy function for profiling!"
-  []
-  (let [state (fen->state "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")]
-    (println "Perft for depth 2 = "(perft state 2))))
