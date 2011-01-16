@@ -117,14 +117,6 @@
                    first
                    legal-states))))
 
-(defn choose-move
-  "Let AI to choose a move from state with given strategy."
-  [states & strategy]
-  (last-move
-   (case strategy
-         :total-random (rand-nth states)
-         (last (sort states)))))
-
 (defn- all-moves
   "Generates all available states from given state.
    Returns list of two element vectors. The first member of
