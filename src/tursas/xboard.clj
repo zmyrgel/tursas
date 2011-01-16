@@ -135,15 +135,15 @@
 
 (defn process-xboard-command
   "Processes command in xboard mode."
-  [command]
-  (case (first command)
-        "protover" (do (set-option! :xboard-protocol-version (second command))
+  [words]
+  (case (first words)
+        "protover" (do (set-option! :xboard-protocol-version (second words))
                        (xboard-print-supported-features))
         "accepted" (xboard-accept-feature)
         "rejected" (xboard-reject-feature)
         "new" (do (set-game! "startpos")
                   (set-option! :ai-mode false))
-        "variant" (set-option! :variant (second command))
+        "variant" (set-option! :variant (second words))
         "quit" (quit)
         "random" (toggle-option! :random-mode)
         "force" (set-option! :ai-mode false)
@@ -156,26 +156,26 @@
         ;;"white" (xboard-white)
         ;;"black" (xboard-black)
 
-        "level" (set-option! :level (rest command))
-        "st" (set-option! :time (second command))
-        "sd" (set-option! :depth-limit (second command))
-        "nps" (set-option! :nps (rest command))
+        "level" (set-option! :level (rest words))
+        "st" (set-option! :time (second words))
+        "sd" (set-option! :depth-limit (second words))
+        "nps" (set-option! :nps (rest words))
 
         ;; set time=1 to enable these
-        ;;"time" (xboard-set-engine-clock (second command))
-        ;;"otim" (xboard-set-opponent-clock (second command))
+        ;;"time" (xboard-set-engine-clock (second words))
+        ;;"otim" (xboard-set-opponent-clock (second words))
 
-        "usermove" (make-chess-move (second command))
+        "usermove" (make-chess-move (second words))
         "?" (xboard-move-now)
-        "ping" (xboard-ping (second command))
+        "ping" (xboard-ping (second words))
 
         ;; set draw=1 to enable
         ;;"draw" (xboard-draw)
 
-        "result" (xboard-result (rest command))
+        "result" (xboard-result (rest words))
 
-        ;; setboard=0 to disable setboard and use edit command
-        "setboard" (set-game! (second command))
+        ;; setboard=0 to disable setboard and use edit words
+        "setboard" (set-game! (second words))
         ;;"edit" (xboard-enter-edit-mode)
         ;;"." (xboard-exit-edit-mode)
 
@@ -191,7 +191,7 @@
         ;; set analyse=1 to enable
         ;;"analyse" (xboard-analyse-mode)
 
-        "name" (set-option! :opponent-name (second command))
+        "name" (set-option! :opponent-name (second words))
         "rating" (xboard-send-rating)
 
         ;; set ics=1 to enable
@@ -204,14 +204,14 @@
         ;;"resume" (xboard-resume)
 
         ;; set memory=1 to enable
-        ;;"memory" (xboard-set-memory (second command))
+        ;;"memory" (xboard-set-memory (second words))
 
         ;; set smp=1
-        ;;"cores" (xboard-set-cores (second command))
+        ;;"cores" (xboard-set-cores (second words))
 
         ;; set egtpath to enable
-        ;;"egtpath" (xboard-set-egtpath (second command))
+        ;;"egtpath" (xboard-set-egtpath (second words))
 
-        "option" (xboard-parse-option (second command))
+        "option" (xboard-parse-option (second words))
         nil
         ))
