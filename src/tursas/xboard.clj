@@ -214,5 +214,5 @@
         ;;"egtpath" (xboard-set-egtpath (second words))
 
         "option" (xboard-parse-option (second words))
-        nil
-        ))
+        (when (move-string? (first words))
+          (make-chess-move (first words)))))
