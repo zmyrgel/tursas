@@ -207,6 +207,23 @@
   [option]
   (set-option! option (not (get-option option))))
 
+(defn- game-end?
+  "Predicate to see if last game state ended the game."
+  []
+  (let [state (first @game-state)]
+    (or (draw? state)
+        (mate? state))))
+
+(defn- game-result
+  "Function to print game result."
+  []
+  (println "RESULT "
+           (let [state (first @game-state)]
+             (or (draw? state) (str "1/2-1/2 {" (draw-type state) "}")
+                 (mate? state) (if (= (turn state) :white)
+                                 "0-1 {Black mates"
+                                 "1-0 {White mates")))))
+
 (defn make-chess-move
   "If given string represents chess move, apply it to current game."
   [s]
