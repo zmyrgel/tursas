@@ -30,8 +30,8 @@
 (defn process-command
   "Processes command given by UI."
   [command]
-  (loop [cmd (re-seq #"\w+" command)]
-    (case (first cmd)
+  (loop [words (re-seq #"\w+" command)]
+    (case (first words)
           "help" (print-usage)
           "load" (load-game)
           "save" (save-game)
@@ -41,15 +41,15 @@
           "gs" (get-score)
           "cp" (ai-move)
           "es" (eval-current-state)
-          "pf" (display-perft (second command))
+          "pf" (display-perft (second words))
           "uci"  (set-repl! :uci)
           "xboard" (set-repl! :xboard)
           "quit" (quit)
           (case (get-repl)
-                :general (when (not (empty? (rest cmd)))
-                           (recur (rest cmd)))
-                :uci (process-uci-command cmd)
-                :xboard (process-xboard-command cmd)))))
+                :general (when (not (empty? (rest words)))
+                           (recur (rest words)))
+                :uci (process-uci-command words)
+                :xboard (process-xboard-command words)))))
 
 
 
