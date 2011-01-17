@@ -59,14 +59,14 @@
      ;;"playother - Tell AI to switch sides"
      ;;"white - Tell white to move, engine to play black [obsolete]"
      ;;"black - Tell black to move, engine to play white [obsolete]"
-     "level MPS BASE INC - set time controls"
-     "st TIME - set time controls"
+     ;;"level MPS BASE INC - set time controls"
+     ;;"st TIME - set time controls"
      "sd DEPTH - set search depth to DEPTH"
-     "nps NODE_RATE - search only NODE_RATE nodes"
+     ;;"nps NODE_RATE - search only NODE_RATE nodes"
      ;;"time N - set the engine clock to N centiseconds"
      ;;"otim N - set the opponents clock"
      "usermove MOVE - make given MOVE if legal"
-     "? - Tell Engine to stop thinking and make its move now"
+     ;;"? - Tell Engine to stop thinking and make its move now"
      "ping N - Pings the engine for pong reply"
      ;;"draw - offer draw to engine"
      "result RESULT {COMMENTS} - give the game RESULT to engine"
@@ -74,7 +74,7 @@
      ;;"edit - enable edit mode [obsolete]"
      ;;". - exit edit mode"
      "hint - prompt move hint from engine"
-     "bk - use book"
+     ;;"bk - use book"
      "undo - tell engine to undo last move"
      "remove - tell engine to undo last two moves"
      ;;"hard - tell engine to ponder during players turn"
@@ -157,17 +157,17 @@
         ;;"white" (xboard-white)
         ;;"black" (xboard-black)
 
-        "level" (set-option! :level (rest words))
-        "st" (set-option! :time (second words))
+        ;;"level" (set-option! :level (rest words))
+        ;;"st" (set-option! :time (second words))
         "sd" (set-option! :depth-limit (second words))
-        "nps" (set-option! :nps (rest words))
+        ;;"nps" (set-option! :nps (rest words))
 
         ;; set time=1 to enable these
         ;;"time" (xboard-set-engine-clock (second words))
         ;;"otim" (xboard-set-opponent-clock (second words))
 
         "usermove" (make-chess-move (second words))
-        "?" (xboard-move-now)
+        ;;"?" (xboard-move-now)
         "ping" (xboard-ping (second words))
 
         ;; set draw=1 to enable
@@ -181,7 +181,7 @@
         ;;"." (xboard-exit-edit-mode)
 
         "hint" (get-hint)
-        "bk" (xboard-bk)
+        ;;"bk" (xboard-bk)
         "undo" (undo-move)
         "remove" (undo-move 2)
         ;;"hard" (set-option! :ponder true)
