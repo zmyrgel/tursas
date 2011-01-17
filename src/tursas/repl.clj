@@ -30,7 +30,7 @@
        "gs - calculates score for the current game state"
        "es - evaluates current game state"
        "pf n - calculate perft score to depth of n"
-       "uci - enable uci mode"
+       ;;"uci - enable uci mode"
        "xboard - ebable xboard mode"
        "quit - quite the Tursas engine"
        ""))
@@ -55,7 +55,7 @@
                    (display-board))
           "es" (eval-current-state)
           "pf" (display-perft (second words))
-          "uci"  (set-repl! :uci)
+          ;;"uci"  (set-repl! :uci)
           "xboard" (set-repl! :xboard)
           "quit" (quit)
           (case (get-repl)
