@@ -16,10 +16,11 @@
          (to-char castling 1 \q))))
 
 (defn- castling-value
-  "Convers castling string to value."
-  [castling]
+  "Convers string representing castling to
+   internal castling value."
+  [s]
   (letfn [(convert [letter value result]
-            (if (some #(= % letter) castling)
+            (if (some #(= % letter) s)
               (+ result value)
               result))]
     (->> 0
@@ -33,10 +34,10 @@
    This is only used when generating state from a fen.
    Otherwise the king index can be queried from the board directly."
   [state player]
-  (let [piece-map (if (= player WHITE)
+  (let [piece-map (if (== player WHITE)
                     (:white-pieces state)
                     (:black-pieces state))
-        king (if (= player WHITE)
+        king (if (== player WHITE)
                WHITE-KING
                BLACK-KING)]
     (loop [pieces (seq piece-map)]
@@ -45,14 +46,13 @@
             :else (recur (rest pieces))))))
 
 (defn- fen-board->0x88board
-  "Converts given FEN board representation
-   to 0x88 board representation."
-  [fen-board]
+  "Converts string given in FEN notation to 0x88 board representation."
+  [s]
   (reduce (fn [board [index piece]]
             (fill-square board index (piece-value piece)))
           (init-game-board)
           (seq/indexed (s/map-str #(str % "EEEEEEEE")
-                                  (->> fen-board
+                                  (->> s
                                        (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \E)))
                                        (s/split #"/+")
                                        reverse)))))
@@ -80,9 +80,7 @@
     (cond (= index -1) (-> state
                            (assoc :white-pieces whites)
                            (assoc :black-pieces blacks))
-          (not (board-index? index)) (recur (dec index)
-                                            blacks
-                                            whites)
+          (not (board-index? index)) (recur (dec index) blacks whites)
           :else (recur (dec index)
                        (if (black-piece? (get (:board state) index))
                          (assoc blacks index (get (:board state) index))
@@ -112,8 +110,8 @@
 
 (defn parse-fen
   "Parses information from given FEN and applies it to given state."
-  [fen state]
-  (when-let [fen-list (re-seq #"\S+" fen)]
+  [s state]
+  (when-let [fen-list (re-seq #"\S+" s)]
     (-> (assoc state :board
                (-> (fen-board->0x88board (first fen-list))
                    (fill-square TURN-STORE (if (= (second fen-list) "w")
@@ -122,7 +120,7 @@
                                                 (nth fen-list 2)))
                    (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
                                                    EN-PASSANT-STORE
-                                                   (algebraic->index (nth fen-list 3))))
+                                                   (coord->index (nth fen-list 3))))
                    (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
                    (add-full-moves (Integer/parseInt (nth fen-list 5)))))
         add-pieces
@@ -137,7 +135,7 @@
                       (castling-str board)
                       (if (= (get board EN-PASSANT-STORE) EN-PASSANT-STORE)
                         "-"
-                        (index->algebraic (get board EN-PASSANT-STORE)))
+                        (index->coord (get board EN-PASSANT-STORE)))
                       (get board HALF-MOVE-STORE)
                       (+ (* (get board FULL-MOVE-N-STORE) 127)
                          (get board FULL-MOVE-STORE))))))

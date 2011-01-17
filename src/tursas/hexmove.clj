@@ -1,8 +1,9 @@
 (ns tursas.hexmove
   (:use (tursas move util)
-        [tursas.state.util0x88 :only [piece-name piece-value]]))
+        [tursas.state.util0x88 :only [piece-name
+                                      piece-value]]))
 
-(defn index->algebraic
+(defn index->coord
   "Converts given index to algebraic representation."
   [index]
   (let [coord (format "%02x" index)
@@ -10,26 +11,27 @@
         alpha (get "abcdefgh" (- (int (nth coord 1)) 48))]
     (str alpha num)))
 
-(defn algebraic->index
-  "Converts given algebraic representation to board index value."
-  [algebraic]
-  (when (valid-coord? algebraic)
-    (let [file (- (int (nth algebraic 0)) 97)
-          rank (- (int (nth algebraic 1)) 48)]
+(defn coord->index
+  "Converts given string in coordinate
+   representation to board index value."
+  [s]
+  (when (valid-coord? s)
+    (let [file (- (int (nth s 0)) 97)
+          rank (- (int (nth s 1)) 48)]
       (+ (* (dec rank) 16) file))))
 
 (defrecord HexMove [from to promotion]
   Move
-  (move->algebraic [move]
-    (str (index->algebraic (:from move))
-         (index->algebraic (:to move))
+  (move->coord [move]
+    (str (index->coord (:from move))
+         (index->coord (:to move))
          (let [piece (piece-name (:promotion move))]
            (when-not (= piece \E)
              piece))))
   (from [move]
-    (index->algebraic (:from move)))
+    (index->coord (:from move)))
   (to [move]
-    (index->algebraic (:to move)))
+    (index->coord (:to move)))
   (promotion [move]
     (when-not (zero? (:promotion move))
       (piece-name (:promotion move)))))
@@ -39,12 +41,14 @@
   [from to promotion]
   (HexMove. from to promotion))
 
-(defn algebraic->move
+(defn coord->move
+  "Make a Move from given string.
+   The string should be in coordinate notation."
   [s]
   (when (move-string? s)
     (let [parts (split-move s)]
-      (make-move (algebraic->index (first parts))
-                 (algebraic->index (second parts))
+      (make-move (coord->index (first parts))
+                 (coord->index (second parts))
                  (if (== (count parts) 3)
                    (piece-value (nthnext parts 2))
                    0)))))

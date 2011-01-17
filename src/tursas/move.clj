@@ -1,7 +1,7 @@
 (ns tursas.move)
 
 (defprotocol Move
-  (move->algebraic [move])
+  (move->coord [move])
   (from [move])
   (to [move])
   (promotion [move]))

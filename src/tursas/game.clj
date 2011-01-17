@@ -129,7 +129,7 @@
 (defn list-moves
   "List all available moves from currect state."
   []
-  (dorun (map #(println (move->algebraic (last-move %)))
+  (dorun (map #(println (move->coord (last-move %)))
               (->> @game-state
                    first
                    legal-states))))
@@ -155,7 +155,7 @@
                                      inf
                                      (:depth-limit @game-options)))]
         (do (add-game-state move)
-            (println "move " (move->algebraic (last-move (first @game-state)))))))))
+            (println "move " (move->coord (last-move (first @game-state)))))))))
 
 (defn get-score
   "Calculates state's score by checking child states
@@ -233,7 +233,7 @@
       (if (game-end?)
         (do (game-result)
             (quit))
-        (if-let [new-state (apply-move state (algebraic->move s))]
+        (if-let [new-state (apply-move state (coord->move s))]
           (do (add-game-state new-state)
               (ai-move))
           (println "Illegal move: " s))))
