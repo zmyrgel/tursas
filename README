@@ -48,30 +48,8 @@ Available general commands:
   gs - calculates score for the current game state
   es - evaluates current game state
   pf n - calculate perft score to depth of n
-  uci - enable uci mode
   xboard - ebable xboard mode
   quit - quite the Tursas engine
-
-Available UCI commands are:
- debug [ on | off ] - print debug messages
- isready - Prompts the engine if its ready
- setoption name <id> [value <x>]
- register [later | name <x> | code <x> ] - register values with engine
- ucinewgame - start a new game
- position [fen <fenstring> | startpos ] moves <move1> .... <movei>
- go [searchmoves <move1> .... <movei>]
-     ponder - startpos searching in pondering mode
-     wtime <x> - white has x msec left on the clock
-     btime <x> - black has x msec left on the clock
-     winc <x> - white increment per move in mseconds if x > 0
-     binc <x> - black increment per move in mseconds if x > 0
-     movestogo <x> - there are x moves to next time control
-     depth <x> - search x plies only
-     nodes <x> - search x nodes only
-     movetime <x> - search exactly x mseconds
-     infinite - search until 'stop' command is sent
- stop - stop calculating as soon as possible
- ponderhit - the user has played the expected move.
 
 Available XBoard commands are:
  protover N - change engine to use protocol version N
@@ -81,23 +59,14 @@ Available XBoard commands are:
  random - Tell engine to add little random elements
  force - Disable engine AI
  go - Enable engine AI
- level MPS BASE INC - set time controls
- st TIME - set time controls
  sd DEPTH - set search depth to DEPTH
- nps NODE_RATE - search only NODE_RATE nodes
  usermove MOVE - make given MOVE if legal
- ? - Tell Engine to stop thinking and make its move now
  ping N - Pings the engine for pong reply
  result RESULT {COMMENTS} - give the game RESULT to engine
  setboard FEN - Set the game board to given FEN.
  hint - prompt move hint from engine
- bk - use book
  undo - tell engine to undo last move
  remove - tell engine to undo last two moves
- hard - tell engine to ponder during players turn
- easy - tell engine to ponder only during its turn
- post - tell engine to send ponder output
- nopost - tell engine not to send ponder output
  name X - tell engine its opponents name
  rating - ask engine its rating
  computer - tell engine that its playing against cpu
