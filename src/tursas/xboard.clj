@@ -77,10 +77,10 @@
      "bk - use book"
      "undo - tell engine to undo last move"
      "remove - tell engine to undo last two moves"
-     "hard - tell engine to ponder during players turn"
-     "easy - tell engine to ponder only during its turn"
-     "post - tell engine to send ponder output"
-     "nopost - tell engine not to send ponder output"
+     ;;"hard - tell engine to ponder during players turn"
+     ;;"easy - tell engine to ponder only during its turn"
+     ;;"post - tell engine to send ponder output"
+     ;;"nopost - tell engine not to send ponder output"
      ;;"analyse - tell engine to engage analyse mode"
      "name X - tell engine its opponents name"
      "rating - ask engine its rating"
@@ -184,10 +184,10 @@
         "bk" (xboard-bk)
         "undo" (undo-move)
         "remove" (undo-move 2)
-        "hard" (set-option! :ponder true)
-        "easy" (set-option! :ponder false)
-        "post" (set-option! :ponder-output true)
-        "nopost" (set-option! :ponder-output false)
+        ;;"hard" (set-option! :ponder true)
+        ;;"easy" (set-option! :ponder false)
+        ;;"post" (set-option! :ponder-output true)
+        ;;"nopost" (set-option! :ponder-output false)
 
         ;; set analyse=1 to enable
         ;;"analyse" (xboard-analyse-mode)
