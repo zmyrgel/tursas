@@ -127,15 +127,17 @@
 (defn- highfirst
   "Sorts subtree of tree by placing largest node first."
   [tree]
-  (lazy-seq (cons (first tree)
-                  (sort higher? (map lowfirst (rest tree))))))
+  (lazy-seq
+   (cons (first tree)
+         (sort higher? (map lowfirst (rest tree))))))
 
 (defn- lowfirst
   "Sorts subtree of tree by placing lowest node first."
   [tree]
-  (lazy-seq (cons (first tree)
-                  (sort (complement higher?)
-                        (map highfirst (rest tree))))))
+  (lazy-seq
+   (cons (first tree)
+         (sort (complement higher?)
+               (map highfirst (rest tree))))))
 
 (defn alphabeta-mark-1
   "Alphabeta evaluation as before but improved so that
