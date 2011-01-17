@@ -195,8 +195,6 @@
           (let [[val _] (alpha-beta (first states)
                                     (- cutoff) (- ac) (dec depth))
                 value (int (- val))]
-            (cond (and (> value ac)
-                       (< value cutoff)) (recur (rest states) (first states) value)
-                  (and (<= value ac)
-                       (< value cutoff)) (recur (rest states) best-state ac)
-                  :else [ac best-state])))))))
+            (cond (>= ac cutoff) [ac best-state]
+                  (> value ac) (recur (rest states) (first states) value)
+                  :else (recur (rest states) best-state ac))))))))
