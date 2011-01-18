@@ -221,7 +221,7 @@
   "Returns a list of  all available moves for players king
    in given index on the board."
   [player board index]
-  (let [castling (int (get board CASTLING-STORE))
+  (let [castling (byte (get board CASTLING-STORE))
         castle-side? (fn [side castling]
                        (let [value (if (== player WHITE)
                                      (if (== side KING-SIDE) 8 4)
