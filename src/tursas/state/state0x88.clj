@@ -175,17 +175,16 @@
                (fill-square PREV-PIECE (get (:board state) (:from move)))))))
 
 (defn- update-check
-  "Updates CHECK status bit on the state.
-   Check for check condition by testing if next players king
+  "Updates check status bit on the state.
+   Check for check condition by testing if players king
    is threatened by the last player."
   [state]
   (when-not (nil? state)
     (assoc state :board
-           (let [board (:board state)
-                 player (get board TURN-STORE)
+           (let [player (get (:board state) TURN-STORE)
                  index (king-index state (opponent player))]
              (fill-square board GAME-STATUS-STORE
-                          (if (threatened? board index player)
+                          (if (threatened? (:board state) index player)
                             CHECK-BIT
                             0))))))
 
