@@ -5,14 +5,22 @@
                            (map #(map (fn [col] (+ col %)) (range 8))
                                 [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
 
-(def board-color [1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
-                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
-                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
-                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
-                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
-                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2
-                  1 0 1 0 1 0 1 0 2 2 2 2 2 2 2 2
-                  0 1 0 1 0 1 0 1 2 2 2 2 2 2 2 2])
+(defn make-table
+  "Utility to make full 0x88 vector out of smaller vector."
+  [score-table]
+  (into (vector-of :byte)
+        (reduce concat (map #(concat % (vec (replicate 8 0)))
+                            (partition 8 score-table)))))
+
+(def board-color
+     (make-table [1 0 1 0 1 0 1 0
+                  0 1 0 1 0 1 0 1
+                  1 0 1 0 1 0 1 0
+                  0 1 0 1 0 1 0 1
+                  1 0 1 0 1 0 1 0
+                  0 1 0 1 0 1 0 1
+                  1 0 1 0 1 0 1 0
+                  0 1 0 1 0 1 0 1]))
 
 (defn board-index?
   "Does the given index represent a square on the board?"
