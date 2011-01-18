@@ -74,20 +74,20 @@
 (defn- add-pieces
   "Adds all pieces from board to piece-map."
   [state]
-  (loop [index 0x77
-         blacks {}
-         whites {}]
-    (cond (= index -1) (-> state
-                           (assoc :white-pieces whites)
-                           (assoc :black-pieces blacks))
-          (not (board-index? index)) (recur (dec index) blacks whites)
-          :else (recur (dec index)
-                       (if (black-piece? (get (:board state) index))
-                         (assoc blacks index (get (:board state) index))
-                         blacks)
-                       (if (white-piece? (get (:board state) index))
-                         (assoc whites index (get (:board state) index))
-                         whites)))))
+  (letfn [(add-index-if [pred piece-map index]
+                     (if (pred (get (:board state) index))
+                       (assoc piece-map index (get (:board state) index))
+                       piece-map))]
+    (loop [index 0x77
+           blacks {}
+           whites {}]
+      (cond (= index -1) (-> state
+                             (assoc :white-pieces whites)
+                             (assoc :black-pieces blacks))
+            (not (board-index? index)) (recur (dec index) blacks whites)
+            :else (recur (dec index)
+                         (add-index-if black-piece? blacks index)
+                         (add-index-if white-piece? whites index))))))
 
 (defn- add-king-indexes
   "Adds king indexes to state."
