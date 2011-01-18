@@ -55,26 +55,31 @@
          (fill-square (:board state) DYNAMIC-STORE value)))
 
 (defn add-piece
-  "Adds given piece to board in state"
+  "Associates given piece to states board."
   [state index piece]
-  (let [player (if (white-piece? piece) WHITE BLACK)
-        new-board (if (or (== piece BLACK-KING)
-                          (== piece WHITE-KING))
-                    (-> (:board state)
-                        (update-king-index index player)
-                        (fill-square index piece))
-                    (fill-square (:board state) index piece))
-        new-state (assoc state :board new-board)]
-    (pmap-add new-state player index piece)))
+  (let [[player king] (if (white-piece? piece)
+                        [WHITE WHITE-KING]
+                        [BLACK BLACK-KING])]
+    (pmap-add (assoc state :board
+                     (if (== piece king)
+                       (-> (:board state)
+                           (update-king-index index player)
+                           (fill-square index piece))
+                       (fill-square (:board state) index piece)))
+              player
+              index
+              piece)))
 
 (defn remove-piece
   "Removes piece from board and updates maps accordingly."
   [state index]
   (let [player (if (white-piece? (get (:board state) index))
-                 WHITE BLACK)
-        cleared-board (clear-square (:board state) index)
-        new-state (assoc state :board cleared-board)]
-    (pmap-remove new-state player index)))
+                 WHITE BLACK)]
+    (pmap-remove
+     (assoc state :board
+            (clear-square (:board state) index))
+     player
+     index)))
 
 (defn move-piece
   "Moves piece in the board."
