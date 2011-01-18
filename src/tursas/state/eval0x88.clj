@@ -166,6 +166,60 @@
           (> (get (:board state) FULL-MOVE-STORE) 10) MIDDLE-GAME
           :else OPENING-GAME)))
 
+(defn- pawn-shield-bonus
+  "Returns pawn-shield bonus to score if king is castled and pawns protect it."
+  [state]
+  0)
+
+(defn- bishop-pair-bonus
+  "Grants small bonus if both bishops are present."
+  [state]
+  0)
+
+(defn- bishop-mobility-bonus
+  "When number of pawns is reduced, grant small bonus for each bishop.
+   They get more useful once there's more room to move."
+  [state]
+  0)
+
+(defn- knight-mobility-penalty
+  "When number of pawns decreases, the effectiviness of knights is reduced.
+   Reduce the value of knights at this point to reflect the fact."
+  [state]
+  0)
+
+(defn- early-queen-penalty
+  "Give small penalty when if queen is moved early in the game.
+   It makes it vurnerable to enemy captures."
+  [state]
+  0)
+
+(defn- mobility-bonus
+  "Give small bonus to pieces if it can move more."
+  [state]
+  0)
+
+(defn- threat-bonus
+  "Give small bonus to each piece which is threatening enemy piece."
+  [state]
+  0)
+
+(defn- protection-bonus
+  "Give small bonus to pieces which protect some other piece."
+  [state]
+  0)
+
+(defn- pawn-color-penalty
+  "Give small penalty if there is a lot of pawns
+   in same colored squares as the players bishop."
+  [state]
+  0)
+
+(defn- pawn-advanced-bonus
+  "Give bonus for advancing pawns so they will get promoted to other pieces."
+  [state]
+  0)
+
 (defn- score
   "Calculates score for side."
   [state pieces situation]
