@@ -183,7 +183,7 @@
     (assoc state :board
            (let [player (get (:board state) TURN-STORE)
                  index (king-index state (opponent player))]
-             (fill-square board GAME-STATUS-STORE
+             (fill-square (:board state) GAME-STATUS-STORE
                           (if (threatened? (:board state) index player)
                             CHECK-BIT
                             0))))))
