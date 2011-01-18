@@ -131,9 +131,9 @@
   [state]
   (let [board (:board state)]
     (s/join " " (list (board->fen-board board)
-                      (if (= (get board TURN-STORE) WHITE) "w" "b")
+                      (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
                       (castling-str board)
-                      (if (= (get board EN-PASSANT-STORE) EN-PASSANT-STORE)
+                      (if (== (int (get board EN-PASSANT-STORE)) EN-PASSANT-STORE)
                         "-"
                         (index->coord (get board EN-PASSANT-STORE)))
                       (get board HALF-MOVE-STORE)
