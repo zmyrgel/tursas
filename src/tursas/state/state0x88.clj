@@ -122,10 +122,16 @@
   (when-not (nil? state)
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
-                        (let [piece (int (get (:board state) (:from move)))]
-                          (if (and (or (= piece WHITE-PAWN)
-                                       (= piece BLACK-PAWN))
-                                   (== (abs (- (:to move) (:from move))) 0x20))
+                        (let [piece (int (get (:board state) (:from move)))
+                              opp-pawn (if (== (:turn state) WHITE)
+                                         BLACK-PAWN
+                                         WHITE-PAWN)]
+                          (if (and (or (== piece WHITE-PAWN)
+                                       (== piece BLACK-PAWN))
+                                   (== (abs (- (:to move) (:from move))) 0x20)
+                                   (or (== opp-pawn (int (get (:board state)
+                                                     (+ WEST (:to move)))))
+                                       (== opp-pawn (int (get (:board state) (+ EAST (:to move)))))))
                             (/ (+ (:to move) (:from move)) 2)
                             EMPTY))))))
 
