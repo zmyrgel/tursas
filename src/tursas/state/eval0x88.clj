@@ -229,9 +229,8 @@
         pieces (if (= (:turn state) WHITE)
                  (list (:white-pieces state) (:black-pieces state))
                  (list (:black-pieces state) (:white-pieces state)))]
-    (+ (score state (first pieces) situation)
-       (- (score state (second pieces) situation))
-       (if (mate? state)
-         (- KING-VALUE)
-         0))))
+    (cond (mate? state) (- KING-VALUE)
+          (draw? state) 0
+          :else (+ (score state (first pieces) situation)
+                   (- (score state (second pieces) situation))))))
 
