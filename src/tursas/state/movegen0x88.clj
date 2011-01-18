@@ -110,7 +110,8 @@
   [piece move]
   (and (or (== piece WHITE-KING)
            (== piece BLACK-KING))
-       (== (abs (- (:to move) (:from move))) 2)))
+       (== 2 (abs (- (:to move)
+                     (:from move))))))
 
 (defn- move-builder
   "Make a list of moves generated for piece in index of board.
