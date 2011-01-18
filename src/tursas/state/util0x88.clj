@@ -158,7 +158,9 @@
   "Updates index of given player's king in outer board."
   [board index player]
   (fill-square board
-               (if (= player WHITE) WHITE-KING-STORE BLACK-KING-STORE)
+               (if (== player WHITE)
+                 WHITE-KING-STORE
+                 BLACK-KING-STORE)
                index))
 
 
