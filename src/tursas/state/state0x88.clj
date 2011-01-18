@@ -130,9 +130,12 @@
                                        (== piece BLACK-PAWN))
                                    (== (abs (- (:to move) (:from move))) 0x20)
                                    (or (== opp-pawn (int (get (:board state)
-                                                     (+ WEST (:to move)))))
-                                       (== opp-pawn (int (get (:board state) (+ EAST (:to move)))))))
-                            (/ (+ (:to move) (:from move)) 2)
+                                                              (+ (:to move) WEST))))
+                                       (== opp-pawn (int (get (:board state)
+                                                              (+ (:to move) EAST))))))
+                            (/ (+ (:to move)
+                                  (:from move))
+                               2)
                             EMPTY))))))
 
 (defn- pawn-or-capture-move?
