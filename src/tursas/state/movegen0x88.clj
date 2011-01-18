@@ -26,20 +26,18 @@
 (defn- pmap-add
   "Add piece to player piece-map store on the board."
   [state player index piece]
-  (if (== player WHITE)
-    (assoc state :white-pieces
-           (assoc (:white-pieces state) index piece))
-    (assoc state :black-pieces
-           (assoc (:black-pieces state) index piece))))
+  (let [[key piece-map] (if (== player WHITE)
+                          [:white-pieces (:white-pieces state)]
+                          [:black-pieces (:black-pieces state)])]
+    (assoc state key (assoc piece-map index piece))))
 
 (defn pmap-remove
   "Remove piece from player piece-map store on the board."
   [state player index]
-  (if (== player WHITE)
-    (assoc state :white-pieces
-           (dissoc (:white-pieces state) index))
-    (assoc state :black-pieces
-           (dissoc (:black-pieces state) index))))
+  (let [[key piece-map] (if (== player WHITE)
+                          [:white-pieces (:white-pieces state)]
+                          [:black-pieces (:black-pieces state)])]
+    (assoc state key (dissoc piece-map index))))
 
 (defn pmap-get
   "Returns the players piece-map from board."
