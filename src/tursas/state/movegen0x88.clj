@@ -327,14 +327,12 @@
 (defn states
   "Returns all legal states attainable by applying move."
   [state moves]
-  (let [states (reduce (fn [states move]
-                         (if-let [new-state (apply-move state move)]
-                           (cons new-state states)
-                           states))
-                       '() moves)]
-    (filter #(or (not (nil? (king-index state (get (:board state) TURN-STORE))))
-                 (not (check? %)))
-            states)))
+  (filter #(not (check? %))
+          (reduce (fn [states move]
+                    (if-let [new-state (apply-move state move)]
+                      (cons new-state states)
+                      states))
+                  '() moves)))
 
 (defn allowed-move?
   "Checks if given move is allowed in state.
