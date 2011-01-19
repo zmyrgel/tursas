@@ -82,9 +82,8 @@
     (let [board (:board state)
           player (int (get board TURN-STORE))
           moving-piece (int (get board (:from move)))]
-      (cond (promotion? moving-piece move) (do (move-piece state move)
-                                               (promote-piece state (:to move)
-                                                              (get-promotion-piece player move)))
+      (cond (promotion? moving-piece move) (-> (move-piece state move)
+                                               (promote-piece (:to move) (get-promotion-piece player move)))
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
                                                                   QUEEN-SIDE KING-SIDE))
