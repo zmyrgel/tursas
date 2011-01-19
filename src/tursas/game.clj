@@ -129,10 +129,10 @@
 (defn list-moves
   "List all available moves from currect state."
   []
-  (dorun (map #(println (move->coord (last-move %)))
+  (dorun (map #(println (move->coord %))
               (->> @game-state
                    first
-                   legal-states))))
+                   legal-moves))))
 
 (defn- all-moves
   "Generates all available states from given state.
