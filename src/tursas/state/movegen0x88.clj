@@ -85,7 +85,9 @@
   (let [piece (int (get (:board state) (:from move)))
         occupant (int (get (:board state) (:to move)))
         player (if (white-piece? piece) WHITE BLACK)]
-    (-> state
+    (-> (if (== occupant EMPTY)
+          state
+          (remove-piece state (:to move)))
         (remove-piece (:from move))
         (add-piece (:to move) piece)
         (set-dynamic (if (== occupant EMPTY) 0 1)))))
