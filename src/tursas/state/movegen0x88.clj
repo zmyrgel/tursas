@@ -236,8 +236,7 @@
                                     (legal-castling? player board index dir))
                            (list (make-move index (+ index dir dir) 0)))))]
     (concat
-     (move-builder (partial move-to-place player board index)
-                   king-movement)
+     (move-builder (partial move-to-place player board index) king-movement)
      (castling-move KING-SIDE EAST)
      (castling-move QUEEN-SIDE WEST))))
 
