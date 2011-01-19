@@ -54,9 +54,12 @@
   "Helper function to return promotion piece value.
     Reads the char from move or if nil, defaults to queen."
   [player move]
-  (if-let [piece (:promotion move)]
-    (if (== player WHITE) (abs piece) piece)
-    (if (== player WHITE) WHITE-QUEEN BLACK-QUEEN)))
+  (let [piece (:promotion move)]
+    (if (zero? piece)
+      (if (== player WHITE)
+        WHITE-QUEEN BLACK-QUEEN)
+      (if (== player WHITE)
+        (- piece) piece))))
 
 (defn- move-castling-pieces
   "Helper function for update-board to make castling move on board.
