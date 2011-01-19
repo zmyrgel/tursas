@@ -50,5 +50,5 @@
       (make-move (coord->index (first parts))
                  (coord->index (second parts))
                  (if (== (count parts) 3)
-                   (piece-value (nthnext parts 2))
+                   (piece-value (get s 4))
                    0)))))
