@@ -74,13 +74,14 @@
 
 (defn- update-board
   "Returns state with new board after applying MOVE to STATE."
-  [move state]
+  [state move]
   (when-not (nil? state)
     (let [board (:board state)
           player (int (get board TURN-STORE))
           moving-piece (int (get board (:from move)))]
-      (cond (promotion? moving-piece move) (promote-piece state (:to move)
-                                                          (get-promotion-piece player move))
+      (cond (promotion? moving-piece move) (do (move-piece state move)
+                                               (promote-piece state (:to move)
+                                                              (get-promotion-piece player move)))
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
                                                                   QUEEN-SIDE KING-SIDE))
@@ -89,7 +90,7 @@
 (defn- update-castling
   "Updates states castling value for move
    checks for king or rook moves."
-  [move state]
+  [state move]
   (when-not (nil? state)
     (let [castling (byte (get (:board state) CASTLING-STORE))]
       (if (zero? castling)
@@ -118,7 +119,7 @@
 
 (defn- update-en-passant
   "Associates new en-passant string with given STATE based on the MOVE."
-  [move state]
+  [state move]
   (when-not (nil? state)
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
@@ -148,7 +149,7 @@
 (defn- update-half-moves
   "Increases half move count on board unless the move
    was pawn or a capture move."
-  [move state]
+  [state move]
   (when-not (nil? state)
     (assoc state :board
            (fill-square (:board state) HALF-MOVE-STORE
@@ -175,7 +176,7 @@
 (defn- update-move
   "Update the previous move of board.
    Stores previous move to 'off-board' locations"
-  [move state]
+  [state move]
   (when-not (nil? state)
     (assoc state :board
            (-> (:board state)
@@ -202,15 +203,15 @@
    If game state is not legal, will return a nil value."
   [state move]
   (when-not (nil? state)
-    (->> state
-         (update-move move)
-         (update-board move)
-         (update-castling move)
-         (update-en-passant move)
-         update-turn
-         (update-half-moves move)
-         update-full-moves
-         update-check)))
+    (-> state
+        (update-move move)
+        (update-board move)
+        (update-castling move)
+        (update-en-passant move)
+        update-turn
+        (update-half-moves move)
+        update-full-moves
+        update-check)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
