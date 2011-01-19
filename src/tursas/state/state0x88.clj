@@ -275,11 +275,6 @@
   (full-moves [state]
     (int (get (:board state) FULL-MOVE-STORE))))
 
-(defn make-state
-  "Constructor for state"
-  [board blacks whites]
-  (State0x88. board blacks whites))
-
 (defn fen->state
   "Convert given FEN to state representation."
   [fen]
