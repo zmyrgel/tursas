@@ -12,7 +12,7 @@
   "Check if given state is in stalemate."
   [state]
   (and (not (check? state))
-       (empty? (legal-states state))))
+       (empty? (legal-moves state))))
 
 (defn- fide-draw?
   "Checks if state is draw according to FIDE rules:
@@ -224,7 +224,7 @@
     (== (get (:board state) GAME-STATUS-STORE) CHECK-BIT))
   (mate? [state]
     (and (check? state)
-         (empty? (legal-states state))))
+         (empty? (legal-moves state))))
   (draw? [state]
     (or (fifty-move-rule? state)
         (fide-draw? state)
@@ -244,12 +244,12 @@
         (when-not (check? new-state)
           new-state))))
   (legal-states [state]
-    (filter #(not (check? %))
-            (reduce (fn [states move]
-                      (if-let [new-state (apply-move state move)]
-                        (cons new-state states)
-                        states))
-                    '() (pseudo-moves (get (:board state) TURN-STORE) state))))
+    (filter #(not (nil? %))
+            (map (partial apply-move state)
+                 (pseudo-moves (get (:board state) TURN-STORE) state))))
+  (legal-moves [state]
+    (filter #(not (nil? (apply-move state %)))
+            (pseudo-moves (get (:board state) TURN-STORE) state)))
   (turn [state]
     (if (== (get (:board state) TURN-STORE) WHITE)
       :white

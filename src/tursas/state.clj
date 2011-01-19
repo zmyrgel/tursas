@@ -10,6 +10,7 @@
   (draw-type [state])
   (state->fen [state])
   (legal-states [state])
+  (legal-moves [state])
   (apply-move [state move])
   (turn [state])
   (perft [state depth])
