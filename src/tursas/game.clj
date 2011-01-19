@@ -124,7 +124,7 @@
      "Can't calculate perft from empty state!"
      (time (-> @game-state
                first
-               (perft (- (int depth) 48)))))))
+               (perft (Integer/parseInt depth)))))))
 
 (defn list-moves
   "List all available moves from currect state."
