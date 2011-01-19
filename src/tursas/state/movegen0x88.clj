@@ -318,10 +318,9 @@
   "Lists all pseudo-moves for player in state.
    Note: moves generated can leave player in check, hence pseudo-moves."
   [player state]
-  (let [pieces (seq (pmap-get state player))]
-    (reduce (fn [moves [index piece]]
-              (concat moves (piece-moves (:board state) player index piece)))
-            '() pieces)))
+  (reduce (fn [moves [index piece]]
+            (concat moves (piece-moves (:board state) player index piece)))
+          '() (seq (pmap-get state player))))
 
 (defn allowed-move?
   "Checks if given move is allowed in state.
