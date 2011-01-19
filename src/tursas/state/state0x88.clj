@@ -257,9 +257,12 @@
         (when-not (check? new-state)
           new-state))))
   (legal-states [state]
-    (->> state
-         (pseudo-moves (get (:board state) TURN-STORE))
-         (states state)))
+    (filter #(not (check? %))
+            (reduce (fn [states move]
+                      (if-let [new-state (apply-move state move)]
+                        (cons new-state states)
+                        states))
+                    '() (pseudo-moves (get (:board state) TURN-STORE) state))))
   (turn [state]
     (if (== (get (:board state) TURN-STORE) WHITE)
       :white

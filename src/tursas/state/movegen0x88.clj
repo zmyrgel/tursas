@@ -323,16 +323,6 @@
               (concat moves (piece-moves (:board state) player index piece)))
             '() pieces)))
 
-(defn states
-  "Returns all legal states attainable by applying move."
-  [state moves]
-  (filter #(not (check? %))
-          (reduce (fn [states move]
-                    (if-let [new-state (apply-move state move)]
-                      (cons new-state states)
-                      states))
-                  '() moves)))
-
 (defn allowed-move?
   "Checks if given move is allowed in state.
    Prevents players from moving each others pieces."
