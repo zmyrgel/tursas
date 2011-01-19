@@ -109,7 +109,7 @@
   "Tells XBoard to wait for all the stuff to complete given before this
    and once done, respond with pong"
   [n]
-  (io! (println (str "pong " n))))
+  (println (str "pong " n)))
 
 (defn xboard-result
   "Sets the game result to engine, for learning purposes
@@ -123,7 +123,7 @@
 (defn xboard-send-rating
   "Prompts the Engine to send its rating."
   []
-  (io! (println "100")))
+  (println "100"))
 
 (defn xboard-parse-option
   "Wrapper to parse options from string and set them."
