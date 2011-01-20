@@ -87,7 +87,7 @@
    (if (empty? @game-state)
      "Can't print empty board!"
      (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
-           turn (second fen-list)]
+           side (second fen-list)]
        (str (s/map-str (fn [[index piece]]
                          (str (- 8 index) "|" piece "\n"))
                        (seq/indexed (->> fen-list
@@ -97,14 +97,14 @@
                                          (s/split #"/+"))))
             "------------------\n"
             " | a b c d e f g h\n"
-            (if (= turn "w")
+            (if (= side "w")
               "  WHITE"
               "  BLACK")
             " TO MOVE"
             (when (check? (first @game-state))
               (if (= (turn (first @game-state)) :white)
-                " BLACK CHECKED!"
-                " WHITE CHECKED!")))))))
+                ", WHITE IN CHECK!"
+                ", BLACK IN CHECK!")))))))
 
 (defn display-fen
   "Display FEN of currect game state."
