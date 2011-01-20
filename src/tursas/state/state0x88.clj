@@ -182,8 +182,8 @@
   (when-not (nil? state)
     (let [player (get (:board state) TURN-STORE)
           check-store (if (== player WHITE)
-                        WHITE-CHECKED
-                        BLACK-CHECKED)
+                        WHITE-CHECK-STORE
+                        BLACK-CHECK-STORE)
           prev-check (int (get (:board state) check-store))
           in-check? (threatened? (:board state)
                                  (king-index state player)
@@ -220,7 +220,7 @@
     (occupied-by? (:board state) index WHITE))
   (check? [state]
     (let [store (if (== (int (get (:board state) TURN-STORE)) WHITE)
-                  WHITE-CHECKED BLACK-CHECKED)]
+                  WHITE-CHECK-STORE BLACK-CHECK-STORE)]
       (== (get (:board state) store) 1)))
   (mate? [state]
     (and (check? state)
