@@ -242,7 +242,7 @@
 
 (defn- select-promotion-piece
   "Selects a proper promotion piece for situation.
-   Placeholder for future, currently selects always a queen."
+   Placeholder for future, currently selects just chooses a queen."
   []
   BLACK-QUEEN)
 
