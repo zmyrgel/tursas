@@ -174,15 +174,17 @@
 (defn- threaten-by-king?
   "Can the piece in index on board be captured by opponents king.
    Checks this by looking for a king within next squares and then
-   checking if it can move to index and not be threatened instead."
+   checking if it can move to index and not be threatened instead.
+   XXX: causes IllegalArgumentException in fill-square!!!"
   [board index opponent]
-  (let [player (int (if (== opponent WHITE) BLACK WHITE))
-        enemy-king (int (if (== opponent BLACK) BLACK-KING WHITE-KING))
-        enemy-king-index (first (filter #(= (get board %) enemy-king)
-                                        (map #(+ index %) king-movement)))]
-    (if (nil? enemy-king-index)
+  (let [[player opp-king] (if (== opponent WHITE)
+                            [BLACK WHITE-KING]
+                            [WHITE BLACK-KING])]
+    (if (empty? (filter #(= (get board %) opp-king)
+                        (map #(+ index %) king-movement)))
       false
-      (-> (fill-square board index enemy-king)
+      (-> board
+          (fill-square index opp-king)
           (threatened? index player)))))
 
 (defn threatened?
