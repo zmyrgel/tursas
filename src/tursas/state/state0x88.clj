@@ -181,15 +181,18 @@
   [state]
   (when-not (nil? state)
     (let [player (get (:board state) TURN-STORE)
-          prev-check (int (get (:board state) GAME-STATUS-STORE))
+          check-store (if (== player WHITE)
+                        WHITE-CHECKED
+                        BLACK-CHECKED)
+          prev-check (int (get (:board state) check-store))
           in-check? (threatened? (:board state)
-                                 (king-index state (opponent player))
-                                 player)]
-      (when-not (and (== prev-check CHECK-BIT) in-check?)
+                                 (king-index state player)
+                                 (opponent player))]
+      (when-not (and (== prev-check 1) in-check?)
         (assoc state :board
-               (fill-square (:board state) GAME-STATUS-STORE
+               (fill-square (:board state) check-store
                             (if in-check?
-                              CHECK-BIT
+                              1
                               0)))))))
 
 (defn- update-state
@@ -216,7 +219,9 @@
   (white? [state index]
     (occupied-by? (:board state) index WHITE))
   (check? [state]
-    (== (get (:board state) GAME-STATUS-STORE) CHECK-BIT))
+    (let [store (if (== (int (get (:board state) TURN-STORE)) WHITE)
+                  WHITE-CHECKED BLACK-CHECKED)]
+      (== (get (:board state) store) 1)))
   (mate? [state]
     (and (check? state)
          (empty? (legal-moves state))))
