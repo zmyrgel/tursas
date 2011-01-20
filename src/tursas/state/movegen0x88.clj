@@ -125,13 +125,6 @@
        (== 2 (abs (- (:to move)
                      (:from move))))))
 
-(defn- list-builder
-  "Builds a list by applying function f to each member of lst."
-  [f lst]
-  (reduce (fn [acc x]
-            (concat acc (f x)))
-          '() lst))
-
 (defn- slide-in-dir
   "Returns a lazy-seq of possible moves by sliding piece
    from index to given direction on the board.

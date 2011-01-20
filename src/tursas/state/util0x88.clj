@@ -163,5 +163,12 @@
                  BLACK-KING-STORE)
                index))
 
+(defn- list-builder
+  "Builds a list by applying function f to each member of lst."
+  [f lst]
+  (reduce (fn [acc x]
+            (concat acc (f x)))
+          '() lst))
+
 
 
