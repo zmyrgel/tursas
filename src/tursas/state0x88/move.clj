@@ -1,6 +1,6 @@
-(ns tursas.hexmove
+(ns tursas.state0x88.move
   (:use (tursas move util)
-        [tursas.state.util0x88 :only [piece-name
+        [tursas.state0x88.util :only [piece-name
                                       piece-value]]))
 
 (defn index->coord
