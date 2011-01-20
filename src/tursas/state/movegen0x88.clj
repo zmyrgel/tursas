@@ -246,21 +246,15 @@
      (castling-move KING-SIDE EAST)
      (castling-move QUEEN-SIDE WEST))))
 
-(defn- select-promotion-piece
-  "Selects a proper promotion piece for situation.
-   Placeholder for future, currently selects just chooses a queen."
-  []
-  BLACK-QUEEN)
-
 (defn- make-pawn-move
   "Utility function to create pawn moves.
    Needed to handle promotions."
   [player from to]
   (make-move from to
              (cond (and (== player WHITE)
-                        (== (row to) 0x70)) (select-promotion-piece)
+                        (== (row to) 0x70)) WHITE-QUEEN
                    (and (== player BLACK)
-                        (== (row to) 0x00)) (select-promotion-piece)
+                        (== (row to) 0x00)) BLACK-QUEEN
                    :else 0)))
 
 (defn- list-pawn-normal-moves
