@@ -9,8 +9,8 @@
   "Utility to make full 0x88 vector out of smaller vector."
   [score-table]
   (into (vector-of :byte)
-        (reduce concat (map #(concat % (vec (replicate 8 0)))
-                            (partition 8 score-table)))))
+        (mapcat #(concat % (vec (replicate 8 0)))
+                (partition 8 score-table))))
 
 (def board-color
      (make-table [1 0 1 0 1 0 1 0
