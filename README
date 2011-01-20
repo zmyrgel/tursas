@@ -1,6 +1,26 @@
 # tursas
 
-Tursas is a simple chess engine implemented in Clojure.
+Tursas is a chess engine implemented in Clojure. It tries to follow
+functional programming style throughout the code.
+
+This is my first project using either Lisp or functional programming
+style and this will reflect in the code too.
+
+## Roadmap
+
+These are my aims for the Tursas project.
+
+Version 0.1:
+- Subset of Chess Engine Communication Protocol implemented so engine can be played.
+- Working alphabeta algorithm
+- Game state representation with 0x88 board
+- Working evaluator which playes according to rules and can win weakest of players
+
+Possibly added in later versions:
+- UCI protocol interface
+- Bitboard state representation
+- Negascount, MDF replacement for alphabeta
+- Full Chess Engine Communication Protocol implementation
 
 ## Status
 
@@ -15,7 +35,7 @@ Tursas is a simple chess engine implemented in Clojure.
 
 The game is somewhat playable via repl. It is very much work
 in progress state.
-I'm working on ironing out the bugs in the move generation code to get all the basics done.
+I'm working on ironing out the bugs in the move generation code to get all the basics working.
 
 ## Installation
 
@@ -26,6 +46,8 @@ lein uberjar
 
 After making the jar file you can run the engine with
 java -jar tursas-0.1-standalone.jar
+or if using XBoard you can specify the engine via command:
+"xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
 
 ## Usage
 
@@ -69,6 +91,11 @@ Available XBoard commands are:
  rating - ask engine its rating
  computer - tell engine that its playing against cpu
  option NAME[=VALUE] - tell engine to use new option
+
+## Known issues
+
+Currently the game engine will occasionally crash when playing it with XBoard.
+
 
 ## License
 
