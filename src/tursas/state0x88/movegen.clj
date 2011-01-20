@@ -73,11 +73,8 @@
   [state index]
   (let [player (if (white-piece? (get (:board state) index))
                  WHITE BLACK)]
-    (pmap-remove
-     (assoc state :board
-            (clear-square (:board state) index))
-     player
-     index)))
+    (-> (assoc state :board (clear-square (:board state) index))
+        (pmap-remove player index))))
 
 (defn move-piece
   "Moves piece in the board."
