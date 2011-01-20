@@ -180,14 +180,17 @@
    is threatened by the last player."
   [state]
   (when-not (nil? state)
-    (assoc state :board
-           (let [player (get (:board state) TURN-STORE)]
-             (fill-square (:board state) GAME-STATUS-STORE
-                          (if (threatened? (:board state)
-                                           (king-index state (opponent player))
-                                           player)
-                            CHECK-BIT
-                            0))))))
+    (let [player (get (:board state) TURN-STORE)
+          prev-check (int (get (:board state) GAME-STATUS-STORE))
+          in-check? (threatened? (:board state)
+                                 (king-index state (opponent player))
+                                 player)]
+      (when-not (and (== prev-check CHECK-BIT) in-check?)
+        (assoc state :board
+               (fill-square (:board state) GAME-STATUS-STORE
+                            (if in-check?
+                              CHECK-BIT
+                              0)))))))
 
 (defn- update-state
   "Updates game state to reflect changes from move.
@@ -199,10 +202,10 @@
         (update-board move)
         (update-castling move)
         (update-en-passant move)
-        update-turn
         (update-half-moves move)
         update-full-moves
-        update-check)))
+        update-check
+        update-turn)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
@@ -236,8 +239,7 @@
   (apply-move [state move]
     (when (allowed-move? state move)
       (when-let [new-state (update-state state move)]
-        (when-not (check? new-state)
-          new-state))))
+        new-state)))
   (legal-states [state]
     (filter #(not (nil? %))
             (map (partial apply-move state)
