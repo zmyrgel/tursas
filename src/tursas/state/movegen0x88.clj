@@ -242,7 +242,7 @@
                                     (legal-castling? player board index dir))
                            (list (make-move index (+ index dir dir) 0)))))]
     (concat
-     (list-builder (partial move-to-place player board index) king-movement)
+     (mapcat (partial move-to-place player board index) king-movement)
      (castling-move KING-SIDE EAST)
      (castling-move QUEEN-SIDE WEST))))
 
@@ -301,7 +301,7 @@
   [player board index]
   (lazy-seq
    (concat (list-pawn-normal-moves player board index)
-           (list-builder (partial pawn-capture player board index)
+           (mapcat (partial pawn-capture player board index)
                          (if (== player WHITE)
                            (list (+ NW index) (+ NE index))
                            (list (+ SW index) (+ SE index)))))))
@@ -311,9 +311,9 @@
   [board player index piece]
   (lazy-seq
    (let [slider (fn [directions]
-                  (list-builder (partial slide-in-dir player board index) directions))
+                  (mapcat (partial slide-in-dir player board index) directions))
          mover (fn [movement]
-                 (list-builder (partial move-to-place player board index) movement))]
+                 (mapcat (partial move-to-place player board index) movement))]
      (cond (or (== piece WHITE-PAWN)
                (== piece BLACK-PAWN)) (list-pawn-moves player board index)
            (or (== piece WHITE-BISHOP)
