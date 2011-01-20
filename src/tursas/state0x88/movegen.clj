@@ -135,32 +135,30 @@
                      (:from move))))))
 
 (defn- slide-in-dir
-  "Returns a lazy-seq of possible moves by sliding piece
+  "Returns a list of possible moves by sliding piece
    from index to given direction on the board.
    Sliding will continue until it hits piece or board edge."
   [player board index dir]
-  (lazy-seq
-   (loop [new-index (int (+ index dir))
-          moves '()]
-     (if (or (not (board-index? new-index))
-             (occupied-by? board new-index player))
-       moves
-       (if (empty-square? board new-index)
-         (recur (int (+ new-index dir))
-                (cons (make-move index new-index 0)
-                      moves))
-         (cons (make-move index new-index 0)
-               moves))))))
+  (loop [new-index (int (+ index dir))
+         moves '()]
+    (if (or (not (board-index? new-index))
+            (occupied-by? board new-index player))
+      moves
+      (if (empty-square? board new-index)
+        (recur (int (+ new-index dir))
+               (cons (make-move index new-index 0)
+                     moves))
+        (cons (make-move index new-index 0)
+              moves)))))
 
 (defn- move-to-place
-  "Return lazy-seq of moves for given piece."
+  "Return list of moves for given piece."
   [player board index place]
-  (lazy-seq
-   (let [new-place (int (+ index place))]
-     (when (and (board-index? new-place)
-                (or (empty-square? board new-place)
-                    (occupied-by? board new-place (opponent player))))
-       (list (make-move index new-place 0))))))
+  (let [new-place (int (+ index place))]
+    (when (and (board-index? new-place)
+               (or (empty-square? board new-place)
+                   (occupied-by? board new-place (opponent player))))
+      (list (make-move index new-place 0)))))
 
 (defn- ray-to-pieces?
   "Checks if there's ray from index to given pieces."
@@ -236,7 +234,7 @@
            true))))
 
 (defn- list-king-moves
-  "Returns a list of  all available moves for players king
+  "Returns a list of available moves for players king
    in given index on the board."
   [player board index]
   (let [castling (byte (get board CASTLING-STORE))
@@ -246,10 +244,9 @@
                                      (if (== side KING-SIDE) 2 1))]
                          (pos? (bit-and value castling))))
         castling-move (fn [side dir]
-                        (lazy-seq
-                         (when (and (castle-side? side castling)
-                                    (legal-castling? player board index dir))
-                           (list (make-move index (+ index dir dir) 0)))))]
+                        (when (and (castle-side? side castling)
+                                   (legal-castling? player board index dir))
+                          (list (make-move index (+ index dir dir) 0))))]
     (concat
      (mapcat (partial move-to-place player board index) king-movement)
      (castling-move KING-SIDE EAST)
@@ -267,69 +264,65 @@
                    :else 0)))
 
 (defn- list-pawn-normal-moves
-  "Returns lazy-seq of normail pawn moves available
+  "Returns a list of normal pawn moves available
    for player in board index."
   [player board index]
-  (lazy-seq
-   (let [dir (if (== player WHITE) NORTH SOUTH)
-         move-index (int (+ index dir))]
-     (when (and (board-index? move-index)
-                (empty-square? board move-index))
-       (if (and (board-index? (+ move-index dir))
-                (empty-square? board (+ move-index dir))
-                (or (and (== player WHITE)
-                         (same-row? index 0x10))
-                    (and (== player BLACK)
-                         (same-row? index 0x60))))
-         (list (make-pawn-move player index move-index)
-               (make-pawn-move player index (+ move-index dir)))
-         (list (make-pawn-move player index move-index)))))))
+  (let [dir (if (== player WHITE) NORTH SOUTH)
+        move-index (int (+ index dir))]
+    (when (and (board-index? move-index)
+               (empty-square? board move-index))
+      (if (and (board-index? (+ move-index dir))
+               (empty-square? board (+ move-index dir))
+               (or (and (== player WHITE)
+                        (same-row? index 0x10))
+                   (and (== player BLACK)
+                        (same-row? index 0x60))))
+        (list (make-pawn-move player index move-index)
+              (make-pawn-move player index (+ move-index dir)))
+        (list (make-pawn-move player index move-index))))))
 
 (defn- pawn-capture
-  "Function to generate pawn capture moves.
+  "Utility function to generate pawn capture moves.
    If pawn of index can capture piece in place, generate the move
    otherwise return nil."
   [player board index place]
-  (lazy-seq
-   (when (or (and (board-index? place)
-                  (== (get board EN-PASSANT-STORE) place))
-             (and (board-index? place)
-                  (board-occupied? board place)
-                  (not (occupied-by? board place player))))
-     (list (make-pawn-move player index place)))))
+  (when (or (and (board-index? place)
+                 (== (get board EN-PASSANT-STORE) place))
+            (and (board-index? place)
+                 (board-occupied? board place)
+                 (not (occupied-by? board place player))))
+    (list (make-pawn-move player index place))))
 
 (defn- list-pawn-moves
   "Returns a list of available pawn moves
    for player's pawn in board index."
   [player board index]
-  (lazy-seq
-   (concat (list-pawn-normal-moves player board index)
-           (mapcat (partial pawn-capture player board index)
-                         (if (== player WHITE)
-                           (list (+ NW index) (+ NE index))
-                           (list (+ SW index) (+ SE index)))))))
+  (concat (list-pawn-normal-moves player board index)
+          (mapcat (partial pawn-capture player board index)
+                  (if (== player WHITE)
+                    (list (+ NW index) (+ NE index))
+                    (list (+ SW index) (+ SE index))))))
 
 (defn- piece-moves
-  "Returns lazy-seq of possible piece moves in board index."
+  "Returns a list of possible piece moves in board index."
   [board player index piece]
-  (lazy-seq
-   (let [slider (fn [directions]
-                  (mapcat (partial slide-in-dir player board index) directions))
-         mover (fn [movement]
-                 (mapcat (partial move-to-place player board index) movement))]
-     (cond (or (== piece WHITE-PAWN)
-               (== piece BLACK-PAWN)) (list-pawn-moves player board index)
-           (or (== piece WHITE-BISHOP)
-               (== piece BLACK-BISHOP)) (slider bishop-directions)
-           (or (== piece WHITE-KNIGHT)
-               (== piece BLACK-KNIGHT)) (mover knight-movement)
-           (or (== piece WHITE-ROOK)
-               (== piece BLACK-ROOK)) (slider rook-directions)
-           (or (== piece WHITE-QUEEN)
-               (== piece BLACK-QUEEN)) (slider queen-directions)
-           (or (== piece WHITE-KING)
-               (== piece BLACK-KING)) (list-king-moves player board index)
-           :else nil))))
+  (let [slider (fn [directions]
+                 (mapcat (partial slide-in-dir player board index) directions))
+        mover (fn [movement]
+                (mapcat (partial move-to-place player board index) movement))]
+    (cond (or (== piece WHITE-PAWN)
+              (== piece BLACK-PAWN)) (list-pawn-moves player board index)
+          (or (== piece WHITE-BISHOP)
+              (== piece BLACK-BISHOP)) (slider bishop-directions)
+          (or (== piece WHITE-KNIGHT)
+              (== piece BLACK-KNIGHT)) (mover knight-movement)
+          (or (== piece WHITE-ROOK)
+              (== piece BLACK-ROOK)) (slider rook-directions)
+          (or (== piece WHITE-QUEEN)
+              (== piece BLACK-QUEEN)) (slider queen-directions)
+          (or (== piece WHITE-KING)
+              (== piece BLACK-KING)) (list-king-moves player board index)
+          :else nil)))
 
 (defn pseudo-moves
   "Lists all pseudo-moves for player in state.
