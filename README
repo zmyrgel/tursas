@@ -94,8 +94,12 @@ Available XBoard commands are:
 
 ## Known issues
 
-Currently the game engine will occasionally crash when playing it with XBoard.
+Currently the game engine will occasionally crash when playing it with
+XBoard.  Seems the when black player is in check, it might try to make
+illegal move for some reason.
 
+There seems to be some hidden bug in threaten-by-king function
+which causes fill-square to fail with IllegalArgumentException.
 
 ## License
 
