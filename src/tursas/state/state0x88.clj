@@ -50,17 +50,6 @@
   [state]
   false)
 
-(defn- get-promotion-piece
-  "Helper function to return promotion piece value.
-    Reads the char from move or if nil, defaults to queen."
-  [player move]
-  (let [piece (:promotion move)]
-    (if (zero? piece)
-      (if (== player WHITE)
-        WHITE-QUEEN BLACK-QUEEN)
-      (if (== player WHITE)
-        (- piece) piece))))
-
 (defn- move-castling-pieces
   "Helper function for update-board to make castling move on board.
    Mainly it moves the king piece and the participating rook piece."
@@ -76,14 +65,13 @@
         (add-piece (get to castling-side) rook))))
 
 (defn- update-board
-  "Returns state with new board after applying MOVE to STATE."
+  "Returns state with new board after applying move to state."
   [state move]
   (when-not (nil? state)
-    (let [board (:board state)
-          player (int (get board TURN-STORE))
-          moving-piece (int (get board (:from move)))]
+    (let [player (int (get (:board state) TURN-STORE))
+          moving-piece (int (get (:board state) (:from move)))]
       (cond (promotion? moving-piece move) (-> (move-piece state move)
-                                               (promote-piece (:to move) (get-promotion-piece player move)))
+                                               (promote-piece player move))
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
                                                                   QUEEN-SIDE KING-SIDE))

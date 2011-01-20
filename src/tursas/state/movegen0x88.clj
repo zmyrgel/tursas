@@ -92,12 +92,24 @@
         (add-piece (:to move) piece)
         (set-dynamic (if (== occupant EMPTY) 0 1)))))
 
+(defn- promotion-piece
+  "Helper function to return promotion piece value.
+    Reads the char from move or if nil, defaults to queen."
+  [player move]
+  (let [piece (:promotion move)]
+    (if (zero? piece)
+      (if (== player WHITE)
+        WHITE-QUEEN BLACK-QUEEN)
+      (if (== player WHITE)
+        (- piece) piece))))
+
 (defn promote-piece
   "Promotes piece in index to new-piece value."
-  [state index new-piece]
+  [state player move]
   (-> state
-      (remove-piece index)
-      (add-piece index new-piece)))
+      (remove-piece (:to move))
+      (add-piece (:to move)
+                 (promotion-piece player move))))
 
 (defn- piece-indexes
   "Gets a list of all board indexes containing
