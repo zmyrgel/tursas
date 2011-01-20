@@ -16,9 +16,6 @@
 (def PREV-MOVE-FROM 0x6a)
 (def PREV-MOVE-TO 0x6b)
 (def PREV-PIECE 0x6c)
-;;(def PREV-CAPTURED 0x6d)
-;;(def PREV-CASTLING 0x6e)
-;;(def PREV-EN-PASSANT 0x6f)
 
 (def WHITE-KING-SIDE 8)
 (def WHITE-QUEEN-SIDE 4)
