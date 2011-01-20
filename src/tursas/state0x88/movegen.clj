@@ -111,6 +111,20 @@
       (add-piece (:to move)
                  (promotion-piece player move))))
 
+(defn move-castling-pieces
+  "Helper function for update-board to make castling move on board.
+   Mainly it moves the king piece and the participating rook piece."
+  [player state move castling-side]
+  (let [[rook king from to]
+        (if (== player WHITE)
+          [WHITE-ROOK WHITE-KING [0x00 0x07] [0x03 0x05]]
+          [BLACK-ROOK BLACK-KING [0x70 0x77] [0x73 0x75]])]
+    (-> state
+        (remove-piece (:from move))
+        (remove-piece (get from castling-side))
+        (add-piece (:to move) king)
+        (add-piece (get to castling-side) rook))))
+
 (defn- piece-indexes
   "Gets a list of all board indexes containing
    player's pieces in given board."
