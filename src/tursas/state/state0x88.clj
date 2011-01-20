@@ -222,11 +222,14 @@
         (fide-draw? state)
         (stalemate? state)
         (repetition? state)))
-  (draw-type [state]
-    (cond (fifty-move-rule? state) "50-move rule"
-          (fide-draw? state) "Draw per FIDE rules"
-          (stalemate? state) "Stalemate"
-          (repetition? state) "Draw by repetition"
+  (result [state]
+    (cond (fifty-move-rule? state) "1/2-1/2 {50-move rule}"
+          (fide-draw? state) "1/2-1/2 {Draw per FIDE rules}"
+          (stalemate? state) "1/2-1/2 {Stalemate}"
+          (repetition? state) "1/2-1/2 {Draw by repetition}"
+          (mate? state) (if (== (int (get (:board state) TURN-STORE)) WHITE)
+                          "0-1 {Black mates}"
+                          "1-1 {White mates}")
           :else nil))
   (state->fen [state]
     (parse-state state))

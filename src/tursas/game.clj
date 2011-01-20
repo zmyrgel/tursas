@@ -77,10 +77,8 @@
   []
   (println "RESULT "
            (let [state (first @game-state)]
-             (or (draw? state) (str "1/2-1/2 {" (draw-type state) "}")
-                 (mate? state) (if (= (turn state) :white)
-                                 "0-1 {Black mates"
-                                 "1-0 {White mates")))))
+             (when (game-end?)
+               (result state)))))
 
 (defn display-board
   "Displays the current chess board in ASCII."
