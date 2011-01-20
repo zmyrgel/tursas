@@ -58,15 +58,13 @@
   (let [[player king] (if (white-piece? piece)
                         [WHITE WHITE-KING]
                         [BLACK BLACK-KING])]
-    (pmap-add (assoc state :board
-                     (if (== piece king)
-                       (-> (:board state)
-                           (update-king-index index player)
-                           (fill-square index piece))
-                       (fill-square (:board state) index piece)))
-              player
-              index
-              piece)))
+    (-> state
+        (assoc :board (if (== piece king)
+                        (-> (:board state)
+                            (update-king-index index player)
+                            (fill-square index piece))
+                        (fill-square (:board state) index piece)))
+        (pmap-add player index piece))))
 
 (defn remove-piece
   "Removes piece from board and updates maps accordingly."
