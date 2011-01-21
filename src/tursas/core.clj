@@ -1,4 +1,4 @@
-(ns tursas.game
+(ns tursas.core
   (:gen-class)
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq])
@@ -20,7 +20,7 @@
                                 :colors 0, :ics 0, :name 0, :pause 0, :nps 0
                                 :debug 0, :memory 0, :smp 0, :done 1})
 
-(def active-repl (ref :general))
+(def protocol (ref :general))
 (def game-state (ref ()))
 (def *black-clock* (ref 300))
 (def *white-clock* (ref 300))
@@ -58,15 +58,15 @@
       (dosync (ref-set game-state state)))
     (catch Exception e nil)))
 
-(defn get-repl
-  "Returns currently active repl"
+(defn get-protocol
+  "Returns currently active reader protocol"
   []
-  @active-repl)
+  @protocol)
 
-(defn set-repl!
-  "Sets the currently active repl"
-  [repl]
-  (dosync (ref-set active-repl repl)))
+(defn set-protocol!
+  "Sets the currently active reader protocol"
+  [prot]
+  (dosync (ref-set protocol prot)))
 
 (defn- add-game-state
   "Adds given state to game state."
@@ -372,37 +372,28 @@
         "random" (toggle-option! :random-mode)
         "force" (set-option! :ai-mode false)
         "go" (set-option! :ai-mode true)
-
         ;; set playother=1 to enable
         ;;"playother" (xboard-playother)
-
         ;; set colors=1 to enable these
         ;;"white" (xboard-white)
         ;;"black" (xboard-black)
-
         ;;"level" (set-option! :level (rest words))
         ;;"st" (set-option! :time (second words))
         "sd" (set-option! :depth-limit (second words))
         ;;"nps" (set-option! :nps (rest words))
-
         ;; set time=1 to enable these
         ;;"time" (xboard-set-engine-clock (second words))
         ;;"otim" (xboard-set-opponent-clock (second words))
-
         "usermove" (make-chess-move (second words))
         ;;"?" (xboard-move-now)
         "ping" (xboard-ping (second words))
-
         ;; set draw=1 to enable
         ;;"draw" (xboard-draw)
-
         "result" (xboard-result (rest words))
-
         ;; setboard=0 to disable setboard and use edit words
         "setboard" (set-game! (second words))
         ;;"edit" (xboard-enter-edit-mode)
         ;;"." (xboard-exit-edit-mode)
-
         "hint" (get-hint)
         ;;"bk" (xboard-bk)
         "undo" (undo-move)
@@ -411,31 +402,22 @@
         ;;"easy" (set-option! :ponder false)
         ;;"post" (set-option! :ponder-output true)
         ;;"nopost" (set-option! :ponder-output false)
-
         ;; set analyse=1 to enable
         ;;"analyse" (xboard-analyse-mode)
-
         "name" (set-option! :opponent-name (second words))
         "rating" (xboard-send-rating)
-
         ;; set ics=1 to enable
         ;;"ics" (xboard-ics)
-
         "computer" (set-option! :opponent "cpu")
-
         ;; set pause=1 to enable
         ;;"pause" (xboard-pause)
         ;;"resume" (xboard-resume)
-
         ;; set memory=1 to enable
         ;;"memory" (xboard-set-memory (second words))
-
         ;; set smp=1
         ;;"cores" (xboard-set-cores (second words))
-
         ;; set egtpath to enable
         ;;"egtpath" (xboard-set-egtpath (second words))
-
         "option" (xboard-parse-option (second words))
         (when (move-string? (first words))
           (make-chess-move (first words)))))
@@ -588,9 +570,9 @@
          "xboard - ebable xboard mode"
          "quit - quite the Tursas engine"
          ""))
-      (let [repl (get-repl)]
-        (cond (= repl :uci) (print-uci-usage)
-              (= repl :xboard) (print-xboard-usage)
+      (let [prot (get-protocol)]
+        (cond (= prot :uci) (print-uci-usage)
+              (= prot :xboard) (print-xboard-usage)
               :else nil))))
 
 (defn process-command
@@ -610,19 +592,29 @@
           "es" (eval-current-state)
           "pf" (display-perft (second words))
           ;;"uci"  (set-repl! :uci)
-          "xboard" (set-repl! :xboard)
+          "xboard" (set-protocol! :xboard)
           "quit" (quit)
-          (case (get-repl)
+          (case (get-protocol)
                 :general (when-not (empty? (rest words))
                            (recur (rest words)))
                 :uci (process-uci-command words)
                 :xboard (process-xboard-command words)))))
 
+(defn set-player!
+  "Sets the given player's repl.
+   This determines if the player is AI or human."
+  [player repl])
+
+(defn- init-engine
+  "Initializes the chess engine."
+  []
+  (do (println "# Welcome to Tursas Chess Engine!")
+      (println "# Type 'help' to get list of supported commands")))
+
 (defn -main
   "Starts the engine repl for input handling."
   [& args]
-  (println "# Welcome to Tursas Chess Engine!")
-  (println "# Type 'help' to get list of supported commands")
+  (init-engine)
   (loop [input (read-line)]
     (process-command input)
     (recur (read-line))))
