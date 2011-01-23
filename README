@@ -68,7 +68,7 @@ Available general commands:
   gs - calculates score for the current game state
   es - evaluates current game state
   pf n - calculate perft score to depth of n
-  xboard - ebable xboard mode
+  xboard - enable xboard mode
   quit - quite the Tursas engine
 
 Available XBoard commands are:
