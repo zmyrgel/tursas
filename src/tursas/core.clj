@@ -440,12 +440,12 @@
 (defn- register-name
   "Registers given name."
   [name]
-  (println (str "Registered name " name)))
+  (println "Registered name " name))
 
 (defn- register-value
   "Registers given value."
   [value]
-  (println (str "Registered value " value)))
+  (println "Registered value " value))
 
 (defn- register
   "Registers values."
