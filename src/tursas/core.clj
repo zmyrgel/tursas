@@ -73,19 +73,12 @@
   [new-state]
   (dosync (ref-set game-state (cons new-state @game-state))))
 
-(defn- game-end?
-  "Predicate to see if last game state ended the game."
-  []
-  (let [state (first @game-state)]
-    (or (draw? state)
-        (mate? state))))
-
 (defn- game-result
   "Function to print game result."
   []
   (println "RESULT "
            (let [state (first @game-state)]
-             (when (game-end?)
+             (when (game-end? (first @game-state))
                (result state)))))
 
 (defn display-board
@@ -153,7 +146,7 @@
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (if (game-end?)
+    (if (game-end? (first @game-state))
       (do (game-result)
           (quit))
       (let [move (second (alpha-beta (first @game-state)
@@ -236,7 +229,7 @@
   [s]
   (if (move-string? s)
     (let [state (first @game-state)]
-      (if (game-end?)
+      (if (game-end? state)
         (do (game-result)
             (quit))
         (if-let [new-state (apply-move state (coord->move s))]
