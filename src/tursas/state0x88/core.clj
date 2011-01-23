@@ -261,7 +261,12 @@
   (evaluate [state]
     (heuristic-value state))
   (full-moves [state]
-    (int (get (:board state) FULL-MOVE-STORE))))
+    (int (get (:board state) FULL-MOVE-STORE)))
+  (game-end? [state]
+    (or (draw? state)
+        (mate? state)))
+  (game-score [state]
+    (end-score state)))
 
 (defn fen->state
   "Convert given FEN to state representation."

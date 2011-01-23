@@ -17,4 +17,6 @@
   (dynamic? [state])
   (full-moves [state])
   (evaluate [state])
-  (last-move [state]))
+  (last-move [state])
+  (game-score [state])
+  (game-end? [state]))
