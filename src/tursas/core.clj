@@ -604,10 +604,27 @@
   (do (println "# Welcome to Tursas Chess Engine!")
       (println "# Type 'help' to get list of supported commands")))
 
+(defn- game-eval
+  "Evaluates given engine protocol command."
+  [cmd]
+  (process-command cmd))
+
+(defn- game-read
+  "Reader function to parse commandline.
+   Reads user input as a string and converts it to sexp."
+  []
+  (read-line))
+
+(defn- game-print
+  "Prints prompt and responses to user."
+  [in])
+
 (defn -main
   "Starts the engine repl for input handling."
   [& args]
   (init-engine)
-  (loop [input (read-line)]
-    (process-command input)
-    (recur (read-line))))
+  (loop []
+    (-> (game-read)
+        game-eval
+        game-print)
+    (recur)))
