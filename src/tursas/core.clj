@@ -428,14 +428,12 @@
          "gs - calculates score for the current game state"
          "es - evaluates current game state"
          "pf n - calculate perft score to depth of n"
-         ;;"uci - enable uci mode"
          "xboard - enable CECP mode"
          "quit - quite the Tursas engine"
          ""))
-      (let [prot (get-protocol)]
-        (cond (= prot :uci) (print-uci-usage)
-              (= prot :cecp) (print-cecp-usage)
-              :else nil))))
+      (case (get-protocol)
+            :general nil
+            :cecp (print-cecp-usage))))
 
 (defn process-command
   "Processes command given by user."
@@ -453,13 +451,11 @@
                    (display-board))
           "es" (eval-current-state)
           "pf" (display-perft (second words))
-          ;;"uci"  (set-repl! :uci)
           "xboard" (set-protocol! :cecp)
           "quit" (quit)
           (case (get-protocol)
                 :general (when-not (empty? (rest words))
                            (recur (rest words)))
-                :uci (process-uci-command words)
                 :cecp (process-cecp-command words)))))
 
 (defn set-player!
