@@ -74,38 +74,36 @@
   (dosync (ref-set game-state (cons new-state @game-state))))
 
 (defn- game-result
-  "Function to print game result."
+  "Returns game result string."
   []
-  (println "RESULT "
-           (let [state (first @game-state)]
-             (when (game-end? (first @game-state))
-               (result state)))))
+  (str "RESULT " (let [state (first @game-state)]
+                   (when (game-end? (first @game-state))
+                     (result state)))))
 
 (defn display-board
   "Displays the current chess board in ASCII."
   []
-  (println
-   (if (empty? @game-state)
-     "Can't print empty board!"
-     (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
-           side (second fen-list)]
-       (str (s/map-str (fn [[index piece]]
-                         (str (- 8 index) "|" piece "\n"))
-                       (seq/indexed (->> fen-list
-                                         first
-                                         (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                         (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                         (s/split #"/+"))))
-            "------------------\n"
-            " | a b c d e f g h\n"
-            (if (= side "w")
-              "  WHITE"
-              "  BLACK")
-            " TO MOVE"
-            (when (check? (first @game-state))
-              (if (= (turn (first @game-state)) :white)
-                ", WHITE IN CHECK!"
-                ", BLACK IN CHECK!")))))))
+  (if (empty? @game-state)
+    "Can't print empty board!"
+    (let [fen-list (re-seq #"\S+" (state->fen (first @game-state)))
+          side (second fen-list)]
+      (str (s/map-str (fn [[index piece]]
+                        (str (- 8 index) "|" piece "\n"))
+                      (seq/indexed (->> fen-list
+                                        first
+                                        (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                        (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                        (s/split #"/+"))))
+           "------------------\n"
+           " | a b c d e f g h\n"
+           (if (= side "w")
+             "  WHITE"
+             "  BLACK")
+           " TO MOVE"
+           (when (check? (first @game-state))
+             (if (= (turn (first @game-state)) :white)
+               ", WHITE IN CHECK!"
+               ", BLACK IN CHECK!"))))))
 
 (defn display-fen
   "Display FEN of currect game state."
@@ -118,20 +116,19 @@
 (defn display-perft
   "Display Perft of given depth."
   [depth]
-  (println
-   (if (empty? @game-state)
-     "Can't calculate perft from empty state!"
-     (time (-> @game-state
-               first
-               (perft (Integer/parseInt depth)))))))
+  (if (empty? @game-state)
+    "Can't calculate perft from empty state!"
+    (time (-> @game-state
+              first
+              (perft (Integer/parseInt depth))))))
 
 (defn list-moves
   "List all available moves from currect state."
   []
-  (dorun (map #(println (move->coord %))
-              (->> @game-state
-                   first
-                   legal-moves))))
+  (map #(move->coord %)
+       (->> @game-state
+            first
+            legal-moves)))
 
 (defn- all-moves
   "Generates all available states from given state.
@@ -154,41 +151,39 @@
                                      inf
                                      (:depth-limit @game-options)))]
         (do (add-game-state move)
-            (println "move " (move->coord (last-move (first @game-state)))))))))
+            (str "move " (move->coord (last-move (first @game-state)))))))))
 
 (defn get-score
   "Calculates state's score by checking child states
    to certain depth using alpha-beta algorithm."
   []
-  (println
-   (if (empty? @game-state)
-     "Can't calculate score from empty state!"
-     (first (alpha-beta (first @game-state)
-                        -inf
-                        inf
-                        (:depth-limit @game-options))))))
+  (if (empty? @game-state)
+    "Can't calculate score from empty state!"
+    (first (alpha-beta (first @game-state)
+                       -inf
+                       inf
+                       (:depth-limit @game-options)))))
 
 (defn eval-current-state
   "Evaluates the current state and prints its score."
   []
-  (println (if (empty? @game-state)
-             "Can't evaluate score from empty game state!"
-             (->> @game-state
-                  first
-                  evaluate))))
+  (if (empty? @game-state)
+    "Can't evaluate score from empty game state!"
+    (->> @game-state
+         first
+         evaluate)))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
   []
-  (println
-   (if (empty? @game-state)
-     "Can't calculate legal moves from empty state!"
-     (->> @game-state
-          first
-          all-moves
-          (take 5)
-          rand-nth
-          last-move))))
+  (if (empty? @game-state)
+    "Can't calculate legal moves from empty state!"
+    (->> @game-state
+         first
+         all-moves
+         (take 5)
+         rand-nth
+         last-move)))
 
 (defn set-game!
   "Sets game to given FEN state."
@@ -235,8 +230,8 @@
         (if-let [new-state (apply-move state (coord->move s))]
           (do (add-game-state new-state)
               (ai-move))
-          (println "Illegal move: " s))))
-    (println "Illegal move: " s)))
+          (str "Illegal move: " s))))
+    (str "Illegal move: " s)))
 
 (defn undo-move
   "Undo last move or if N given, N last moves."
@@ -250,62 +245,59 @@
 (defn cecp-print-supported-features
   "Prints the default features of the engine."
   []
-  (dorun (map println
-              (for [option (keys cecp-supported-features)]
-                (format "feature %s=%s"
-                        (s/as-str option)
-                        (cecp-supported-features option))))))
+  (for [option (keys cecp-supported-features)]
+    (format "feature %s=%s"
+            (s/as-str option)
+            (cecp-supported-features option))))
 
 (defn print-cecp-usage
   "Prints the available commands of the repl."
   []
-  (s/map-str
-   println
-   '("Available Cecp commands are:"
-     "protover N - change engine to use protocol version N"
-     "accepted - Accept last feature"
-     "reject - Reject last feature"
-     "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
-     "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
-     "random - Tell engine to add little random elements"
-     "force - Disable engine AI"
-     "go - Enable engine AI"
-     ;;"playother - Tell AI to switch sides"
-     ;;"white - Tell white to move, engine to play black [obsolete]"
-     ;;"black - Tell black to move, engine to play white [obsolete]"
-     ;;"level MPS BASE INC - set time controls"
-     ;;"st TIME - set time controls"
-     "sd DEPTH - set search depth to DEPTH"
-     ;;"nps NODE_RATE - search only NODE_RATE nodes"
-     ;;"time N - set the engine clock to N centiseconds"
-     ;;"otim N - set the opponents clock"
-     "usermove MOVE - make given MOVE if legal"
-     ;;"? - Tell Engine to stop thinking and make its move now"
-     "ping N - Pings the engine for pong reply"
-     ;;"draw - offer draw to engine"
-     "result RESULT {COMMENTS} - give the game RESULT to engine"
-     "setboard FEN - Set the game board to given FEN."
-     ;;"edit - enable edit mode [obsolete]"
-     ;;". - exit edit mode"
-     "hint - prompt move hint from engine"
-     ;;"bk - use book"
-     "undo - tell engine to undo last move"
-     "remove - tell engine to undo last two moves"
-     ;;"hard - tell engine to ponder during players turn"
-     ;;"easy - tell engine to ponder only during its turn"
-     ;;"post - tell engine to send ponder output"
-     ;;"nopost - tell engine not to send ponder output"
-     ;;"analyse - tell engine to engage analyse mode"
-     "name X - tell engine its opponents name"
-     "rating - ask engine its rating"
-     ;;"ics - tell engine its engaging in ICS game"
-     "computer - tell engine that its playing against cpu"
-     ;;"pause - pause all actions"
-     ;;"resume - resume all paused actions"
-     ;;"memory N - specify how much engine can use memory"
-     ;;"cores N - tell engine how many cpu cores it can use"
-     ;;"egtpath PATH - tell engine to use end-game tables from PATH"
-     "option NAME[=VALUE] - tell engine to use new option")))
+  (list "Available Cecp commands are:"
+        "protover N - change engine to use protocol version N"
+        "accepted - Accept last feature"
+        "reject - Reject last feature"
+        "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
+        "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
+        "random - Tell engine to add little random elements"
+        "force - Disable engine AI"
+        "go - Enable engine AI"
+        ;;"playother - Tell AI to switch sides"
+        ;;"white - Tell white to move, engine to play black [obsolete]"
+        ;;"black - Tell black to move, engine to play white [obsolete]"
+        ;;"level MPS BASE INC - set time controls"
+        ;;"st TIME - set time controls"
+        "sd DEPTH - set search depth to DEPTH"
+        ;;"nps NODE_RATE - search only NODE_RATE nodes"
+        ;;"time N - set the engine clock to N centiseconds"
+        ;;"otim N - set the opponents clock"
+        "usermove MOVE - make given MOVE if legal"
+        ;;"? - Tell Engine to stop thinking and make its move now"
+        "ping N - Pings the engine for pong reply"
+        ;;"draw - offer draw to engine"
+        "result RESULT {COMMENTS} - give the game RESULT to engine"
+        "setboard FEN - Set the game board to given FEN."
+        ;;"edit - enable edit mode [obsolete]"
+        ;;". - exit edit mode"
+        "hint - prompt move hint from engine"
+        ;;"bk - use book"
+        "undo - tell engine to undo last move"
+        "remove - tell engine to undo last two moves"
+        ;;"hard - tell engine to ponder during players turn"
+        ;;"easy - tell engine to ponder only during its turn"
+        ;;"post - tell engine to send ponder output"
+        ;;"nopost - tell engine not to send ponder output"
+        ;;"analyse - tell engine to engage analyse mode"
+        "name X - tell engine its opponents name"
+        "rating - ask engine its rating"
+        ;;"ics - tell engine its engaging in ICS game"
+        "computer - tell engine that its playing against cpu"
+        ;;"pause - pause all actions"
+        ;;"resume - resume all paused actions"
+        ;;"memory N - specify how much engine can use memory"
+        ;;"cores N - tell engine how many cpu cores it can use"
+        ;;"egtpath PATH - tell engine to use end-game tables from PATH"
+        "option NAME[=VALUE] - tell engine to use new option"))
 
 (defn cecp-accept-feature
   "Tells the engine that GUI accepts last feature."
@@ -323,7 +315,7 @@
   "Tells Cecp to wait for all the stuff to complete given before this
    and once done, respond with pong"
   [n]
-  (println (str "pong " n)))
+  (str "pong " n))
 
 (defn cecp-result
   "Sets the game result to engine, for learning purposes
@@ -337,7 +329,7 @@
 (defn cecp-send-rating
   "Prompts the Engine to send its rating."
   []
-  (println "100"))
+  "100")
 
 (defn cecp-parse-option
   "Wrapper to parse options from string and set them."
@@ -416,9 +408,7 @@
 (defn- print-usage
   "Prints the available commands of the repl."
   []
-  (do (s/map-str
-       println
-       '("Available general commands:"
+  (str '("Available general commands:"
          "help - display this help"
          "load - load the last saved game from file"
          "save - store the current game to file"
@@ -429,11 +419,10 @@
          "es - evaluates current game state"
          "pf n - calculate perft score to depth of n"
          "xboard - enable CECP mode"
-         "quit - quite the Tursas engine"
-         ""))
-      (case (get-protocol)
-            :general nil
-            :cecp (print-cecp-usage))))
+         "quit - quite the Tursas engine")
+       (case (get-protocol)
+             :general nil
+             :cecp (print-cecp-usage))))
 
 (defn process-command
   "Processes command given by user."
@@ -466,13 +455,14 @@
 (defn- init-engine
   "Initializes the chess engine."
   []
-  (do (println "# Welcome to Tursas Chess Engine!")
-      (println "# Type 'help' to get list of supported commands")))
+  (s/map-str println
+             '("# Welcome to Tursas Chess Engine!"
+               "# Type 'help' to get list of supported commands")))
 
 (defn- game-eval
   "Evaluates given engine protocol command."
-  [cmd]
-  (process-command cmd))
+  [s]
+  (process-command s))
 
 (defn- game-read
   "Reader function to parse commandline.
@@ -482,7 +472,11 @@
 
 (defn- game-print
   "Prints prompt and responses to user."
-  [in])
+  [output]
+  (cond (keyword? output) nil
+        (empty? output) nil
+        (seq? output) (s/map-str println output)
+        (string? output) (println output)))
 
 (defn -main
   "Starts the engine repl for input handling."
