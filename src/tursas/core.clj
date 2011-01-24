@@ -473,10 +473,9 @@
 (defn- game-print
   "Prints prompt and responses to user."
   [output]
-  (cond (keyword? output) nil
-        (empty? output) nil
-        (seq? output) (s/map-str println output)
-        (string? output) (println output)))
+  (cond (seq? output) (s/map-str println output)
+        (string? output) (println output)
+        :else nil))
 
 (defn -main
   "Starts the engine repl for input handling."
