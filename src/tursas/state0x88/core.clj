@@ -188,10 +188,10 @@
   (when-not (nil? state)
     (-> state
         (update-move move)
+        (update-half-moves move)
         (update-board move)
         (update-castling move)
         (update-en-passant move)
-        (update-half-moves move)
         update-full-moves
         update-check
         update-turn)))
