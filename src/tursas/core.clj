@@ -190,15 +190,6 @@
          (= fen "prom") (fen->state prom-fen)
          :else (fen->state fen))))
 
-(defn set-clock!
-  "Sets player's clock to given time."
-  [player time]
-  (dosync
-   (ref-set (if (= player :white)
-              *white-clock*
-              *black-clock*)
-            time)))
-
 (defn set-option!
   "Sets game option of given key to value."
   [k v]
