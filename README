@@ -84,7 +84,6 @@ Available XBoard commands are:
  ping N - Pings the engine for pong reply
  result RESULT {COMMENTS} - give the game RESULT to engine
  setboard FEN - Set the game board to given FEN.
- hint - prompt move hint from engine
  undo - tell engine to undo last move
  remove - tell engine to undo last two moves
  name X - tell engine its opponents name
@@ -98,8 +97,16 @@ Currently the game engine will occasionally crash when playing it with
 XBoard.  Seems the when black player is in check, it might try to make
 illegal move for some reason.
 
+Also, game doesn't seem to detect end-game condition correctly. When
+white is in check-mate the game won't quit, it just waits for a move.
+
 There seems to be some hidden bug in threaten-by-king function
-which causes fill-square to fail with IllegalArgumentException.
+which causes fill-square part of it to fail with IllegalArgumentException: Key must be Integer.
+Trying to fix it with (int ...).
+
+And some issues with alpha-beta search. At least when black is played
+by AI it selects very poor moves when search depth is set to 3, works
+fine with 4. Need to test if this is some odd/even think in the code.
 
 ## License
 
