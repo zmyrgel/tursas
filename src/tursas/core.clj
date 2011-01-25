@@ -72,7 +72,7 @@
 
 (defn- game-result
   "Returns game result string."
-  []
+  [state]
   (str "RESULT " (result state)))
 
 (defn display-board
@@ -139,7 +139,7 @@
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
     (if (game-end? (first @game-state))
-      (do (game-result)
+      (do (game-result (first @game-state))
           (quit))
       (let [move (second (alpha-beta (first @game-state)
                                      -inf
@@ -220,7 +220,7 @@
   (if (move-string? s)
     (let [state (first @game-state)]
       (if (game-end? state)
-        (do (game-result)
+        (do (game-result state)
             (quit))
         (if-let [new-state (apply-move state (coord->move s))]
           (do (add-game-state new-state)
