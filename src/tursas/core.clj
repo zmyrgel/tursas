@@ -67,7 +67,8 @@
 (defn- add-game-state
   "Adds given state to game state."
   [new-state]
-  (dosync (ref-set game-state (cons new-state @game-state))))
+  (do (dosync (ref-set game-state (cons new-state @game-state)))
+      nil))
 
 (defn- game-result
   "Returns game result string."
