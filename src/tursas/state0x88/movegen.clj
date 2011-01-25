@@ -306,23 +306,24 @@
 (defn- piece-moves
   "Returns a list of possible piece moves in board index."
   [board player index piece]
-  (let [slider (fn [directions]
-                 (mapcat (partial slide-in-dir player board index) directions))
-        mover (fn [movement]
-                (mapcat (partial move-to-place player board index) movement))]
-    (cond (or (== piece WHITE-PAWN)
-              (== piece BLACK-PAWN)) (list-pawn-moves player board index)
-          (or (== piece WHITE-BISHOP)
-              (== piece BLACK-BISHOP)) (slider bishop-directions)
-          (or (== piece WHITE-KNIGHT)
-              (== piece BLACK-KNIGHT)) (mover knight-movement)
-          (or (== piece WHITE-ROOK)
-              (== piece BLACK-ROOK)) (slider rook-directions)
-          (or (== piece WHITE-QUEEN)
-              (== piece BLACK-QUEEN)) (slider queen-directions)
-          (or (== piece WHITE-KING)
-              (== piece BLACK-KING)) (list-king-moves player board index)
-          :else nil)))
+  (lazy-seq
+   (let [slider (fn [directions]
+                  (mapcat (partial slide-in-dir player board index) directions))
+         mover (fn [movement]
+                  (mapcat (partial move-to-place player board index) movement))]
+     (cond (or (== piece WHITE-PAWN)
+               (== piece BLACK-PAWN)) (list-pawn-moves player board index)
+           (or (== piece WHITE-BISHOP)
+               (== piece BLACK-BISHOP)) (slider bishop-directions)
+           (or (== piece WHITE-KNIGHT)
+               (== piece BLACK-KNIGHT)) (mover knight-movement)
+           (or (== piece WHITE-ROOK)
+               (== piece BLACK-ROOK)) (slider rook-directions)
+           (or (== piece WHITE-QUEEN)
+               (== piece BLACK-QUEEN)) (slider queen-directions)
+           (or (== piece WHITE-KING)
+               (== piece BLACK-KING)) (list-king-moves player board index)
+           :else nil))))
 
 (defn pseudo-moves
   "Lists all pseudo-moves for player in state.
