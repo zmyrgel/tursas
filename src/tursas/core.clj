@@ -72,9 +72,7 @@
 (defn- game-result
   "Returns game result string."
   []
-  (str "RESULT " (let [state (first @game-state)]
-                   (when (game-end? (first @game-state))
-                     (result state)))))
+  (str "RESULT " (result state)))
 
 (defn display-board
   "Displays the current chess board in ASCII."
