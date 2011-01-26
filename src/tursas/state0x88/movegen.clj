@@ -195,8 +195,8 @@
                         (map #(+ index %) king-movement)))
       false
       (-> board
-          (fill-square index opp-king)
-          (threatened? index player)))))
+          (fill-square (int index) opp-king)
+          (threatened? (int index) player)))))
 
 (defn threatened?
   "Checks if given index in state is under threath of enemy."
