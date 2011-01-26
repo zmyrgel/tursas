@@ -20,7 +20,7 @@
           rank (- (int (nth s 1)) 48)]
       (+ (* (dec rank) 16) file))))
 
-(defrecord HexMove [from to promotion]
+(defrecord Move0x88 [from to promotion]
   Move
   (move->coord [move]
     (str (index->coord (:from move))
@@ -39,7 +39,7 @@
 (defn make-move
   "Constructor for moves."
   [from to promotion]
-  (HexMove. from to promotion))
+  (Move0x88. from to promotion))
 
 (defn coord->move
   "Make a Move from given string.
