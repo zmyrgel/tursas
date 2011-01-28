@@ -336,7 +336,7 @@
         "accepted" (cecp-accept-feature)
         "rejected" (cecp-reject-feature)
         "new" (do (set-game! "startpos")
-                  (set-option! :ai-mode false))
+                  (set-option! :ai-mode true))
         "variant" (set-option! :variant (second words))
         "quit" (quit)
         ;;"random" (toggle-option! :random-mode)
