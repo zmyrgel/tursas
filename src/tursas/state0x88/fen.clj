@@ -6,10 +6,9 @@
 (defn- castling->str
   "Converts internal castling representation to string."
   [board]
-  (let [castling (byte (get board CASTLING-STORE))
-        result (s/map-str (fn [[value letter]]
-                            (when (pos? (bit-and castling value))
-                             letter))
+  (let [result (s/map-str (fn [[value letter]]
+                            (when (pos? (bit-and (byte (get board CASTLING-STORE)) value))
+                              letter))
                           '([8 \K] [4 \Q] [2 \k] [1 \q]))]
     (when (empty? result)
       "-"
