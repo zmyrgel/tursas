@@ -378,7 +378,7 @@
         "rating" (cecp-send-rating)
         ;; set ics=1 to enable
         ;;"ics" (cecp-ics)
-        "computer" (set-option! :opponent "cpu")
+        "computer" (set-option! :opponent :cpu)
         ;; set pause=1 to enable
         ;;"pause" (cecp-pause)
         ;;"resume" (cecp-resume)
