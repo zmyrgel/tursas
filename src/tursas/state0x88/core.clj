@@ -162,23 +162,29 @@
                (fill-square PREV-MOVE-TO (:to move))
                (fill-square PREV-PIECE (get (:board state) (:from move)))))))
 
-(defn- update-check
-  "Updates check status bit on the state.
-   First checkes that players own move won't cause it's king to be threatened.
-   Then checks if opponents king is threatened and enables check bit accordingly."
+(defn- update-player-check
+  "Checks that players move won't leave the players king in check."
   [state]
   (when-not (nil? state)
     (let [player (get (:board state) TURN-STORE)]
       (when-not (threatened? (:board state)
                              (king-index state player)
                              (opponent player))
-        (assoc state :board
-               (fill-square (:board state) CHECK-STORE
-                            (if (threatened? (:board state)
-                                             (king-index state (opponent player))
-                                             player)
-                              1
-                              0)))))))
+        state))))
+
+(defn- update-opponent-check
+  "Updates opponents check status bit on the state.
+   Enables check bit in state if opponents king is threatened."
+  [state]
+  (when-not (nil? state)
+    (let [player (get (:board state) TURN-STORE)]
+      (assoc state :board
+             (fill-square (:board state) CHECK-STORE
+                          (if (threatened? (:board state)
+                                           (king-index state (opponent player))
+                                           player)
+                            1
+                            0))))))
 
 (defn- update-state
   "Updates game state to reflect changes from move.
@@ -192,7 +198,8 @@
         (update-castling move)
         (update-en-passant move)
         update-full-moves
-        update-check
+        update-player-check
+        update-opponent-check
         update-turn)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
@@ -267,4 +274,4 @@
 (defn fen->state
   "Convert given FEN to state representation."
   [fen]
-  (update-check (parse-fen fen (State0x88. nil nil nil))))
+  (update-opponent-check (parse-fen fen (State0x88. nil nil nil))))
