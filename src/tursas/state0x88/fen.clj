@@ -113,7 +113,7 @@
                                              WHITE BLACK))
                    (fill-square CASTLING-STORE (castling->value (nth fen-list 2)))
                    (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
-                                                   EN-PASSANT-STORE
+                                                   -1
                                                    (coord->index (nth fen-list 3))))
                    (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
                    (add-full-moves (Integer/parseInt (nth fen-list 5)))))
