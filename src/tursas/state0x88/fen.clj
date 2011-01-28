@@ -132,7 +132,7 @@
     (s/join " " (list (board->fen-board board)
                       (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
                       (castling-str board)
-                      (if (== (int (get board EN-PASSANT-STORE)) EN-PASSANT-STORE)
+                      (if (== (int (get board EN-PASSANT-STORE)) -1)
                         "-"
                         (index->coord (get board EN-PASSANT-STORE)))
                       (get board HALF-MOVE-STORE)
