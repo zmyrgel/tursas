@@ -50,6 +50,35 @@
   [state]
   false)
 
+(defn- update-move
+  "Update the previous move of board.
+   Stores previous move to 'off-board' locations"
+  [state move]
+  (when-not (nil? state)
+    (assoc state :board
+           (-> (:board state)
+               (fill-square PREV-MOVE-FROM (:from move))
+               (fill-square PREV-MOVE-TO (:to move))
+               (fill-square PREV-PIECE (get (:board state) (:from move)))))))
+
+(defn- pawn-or-capture-move?
+  "Predicate to see if move was pawn move or a capture"
+  [board move]
+  (or (== (get board (:from move)) WHITE-PAWN)
+      (== (get board (:from move)) BLACK-PAWN)
+      (not= (get board (:to move)) EMPTY)))
+
+(defn- update-half-moves
+  "Increases half move count on board unless the move
+   was pawn or a capture move."
+  [state move]
+  (when-not (nil? state)
+    (assoc state :board
+           (fill-square (:board state) HALF-MOVE-STORE
+                        (if (pawn-or-capture-move? (:board state) move)
+                          0
+                          (inc (get (:board state) HALF-MOVE-STORE)))))))
+
 (defn- update-board
   "Returns state with new board after applying move to state."
   [state move]
@@ -85,14 +114,6 @@
                                     (== (:to move) opp-rk-k-sq) (bit-and castling opp-rkk-mask)
                                     :else castling))))))))
 
-(defn- update-turn
-  "Updates player turn value on board."
-  [state]
-  (when-not (nil? state)
-    (assoc state :board
-           (fill-square (:board state) TURN-STORE
-                        (opponent (get (:board state) TURN-STORE))))))
-
 (defn- update-en-passant
   "Associates new en-passant value with given state based on the move.
    If pawn moves two steps next to opponents pawn, place en-passant
@@ -117,24 +138,6 @@
                                2)
                             -1))))))
 
-(defn- pawn-or-capture-move?
-  "Predicate to see if move was pawn move or a capture"
-  [board move]
-  (or (== (get board (:from move)) WHITE-PAWN)
-      (== (get board (:from move)) BLACK-PAWN)
-      (not= (get board (:to move)) EMPTY)))
-
-(defn- update-half-moves
-  "Increases half move count on board unless the move
-   was pawn or a capture move."
-  [state move]
-  (when-not (nil? state)
-    (assoc state :board
-           (fill-square (:board state) HALF-MOVE-STORE
-                        (if (pawn-or-capture-move? (:board state) move)
-                          0
-                          (inc (get (:board state) HALF-MOVE-STORE)))))))
-
 (defn- update-full-moves
   "Updates full move count on board."
   [state]
@@ -150,17 +153,6 @@
                  (fill-square (:board state) FULL-MOVE-STORE
                               (inc moves)))))
       state)))
-
-(defn- update-move
-  "Update the previous move of board.
-   Stores previous move to 'off-board' locations"
-  [state move]
-  (when-not (nil? state)
-    (assoc state :board
-           (-> (:board state)
-               (fill-square PREV-MOVE-FROM (:from move))
-               (fill-square PREV-MOVE-TO (:to move))
-               (fill-square PREV-PIECE (get (:board state) (:from move)))))))
 
 (defn- update-player-check
   "Checks that players move won't leave the players king in check."
@@ -185,6 +177,14 @@
                                            player)
                             1
                             0))))))
+
+(defn- update-turn
+  "Updates player turn value on board."
+  [state]
+  (when-not (nil? state)
+    (assoc state :board
+           (fill-square (:board state) TURN-STORE
+                        (opponent (get (:board state) TURN-STORE))))))
 
 (defn- update-state
   "Updates game state to reflect changes from move.
