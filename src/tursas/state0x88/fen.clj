@@ -7,26 +7,22 @@
   "Converts internal castling representation to string."
   [board]
   (let [castling (byte (get board CASTLING-STORE))
-        to-char (fn [castling value letter]
-                   (when (pos? (bit-and castling value)) letter))]
-    (str (to-char castling 8 \K)
-         (to-char castling 4 \Q)
-         (to-char castling 2 \k)
-         (to-char castling 1 \q))))
+        result (s/map-str #(when (pos? (bit-and castling (first %)))
+                             (second %))
+                          '([8 \K] [4 \Q] [2 \k] [1 \q]))]
+    (when (empty? result)
+      "-"
+      result)))
 
 (defn- castling->value
   "Convers string representing castling to
    internal castling value."
   [s]
-  (letfn [(convert [letter value result]
+  (reduce (fn [result [value letter]]
             (if (some #(= % letter) s)
               (+ result value)
-              result))]
-    (->> 0
-         (convert \K 8)
-         (convert \Q 4)
-         (convert \k 2)
-         (convert \q 1))))
+              result))
+          0 '([8 \K] [4 \Q] [2 \k] [1 \q])))
 
 (defn- find-king-index
   "Seeks king's index from piece-map.
