@@ -10,7 +10,7 @@
                             (when (pos? (bit-and castling value))
                               letter))
                           '([8 \K] [4 \Q] [2 \k] [1 \q]))]
-    (when (empty? result)
+    (if (empty? result)
       "-"
       result)))
 
@@ -111,8 +111,7 @@
                (-> (fen-board->0x88board (first fen-list))
                    (fill-square TURN-STORE (if (= (second fen-list) "w")
                                              WHITE BLACK))
-                   (fill-square CASTLING-STORE (castling->value
-                                                (nth fen-list 2)))
+                   (fill-square CASTLING-STORE (castling->value (nth fen-list 2)))
                    (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
                                                    EN-PASSANT-STORE
                                                    (coord->index (nth fen-list 3))))
