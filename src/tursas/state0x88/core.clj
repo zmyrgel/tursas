@@ -238,8 +238,7 @@
             (map (partial apply-move state)
                  (pseudo-moves (get (:board state) TURN-STORE) state))))
   (legal-moves [state]
-    (filter #(not (nil? (apply-move state %)))
-            (pseudo-moves (get (:board state) TURN-STORE) state)))
+    (map last-move (legal-states state)))
   (turn [state]
     (if (== (get (:board state) TURN-STORE) WHITE)
       :white
