@@ -164,22 +164,19 @@
 
 (defn- update-check
   "Updates check status bit on the state.
-   Check for check condition by testing if players king
-   is threatened by the last player."
+   First checkes that players own move won't cause it's king to be threatened.
+   Then checks if opponents king is threatened and enables check bit accordingly."
   [state]
   (when-not (nil? state)
-    (let [player (get (:board state) TURN-STORE)
-          check-store (if (== player WHITE)
-                        WHITE-CHECK-STORE
-                        BLACK-CHECK-STORE)
-          prev-check (int (get (:board state) check-store))
-          in-check? (threatened? (:board state)
-                                 (king-index state player)
-                                 (opponent player))]
-      (when-not (and (== prev-check 1) in-check?)
+    (let [player (get (:board state) TURN-STORE)]
+      (when-not (threatened? (:board state)
+                             (king-index state player)
+                             (opponent player))
         (assoc state :board
-               (fill-square (:board state) check-store
-                            (if in-check?
+               (fill-square (:board state) CHECK-STORE
+                            (if (threatened? (:board state)
+                                             (king-index state (opponent player))
+                                             player)
                               1
                               0)))))))
 
@@ -207,12 +204,10 @@
   (white? [state index]
     (occupied-by? (:board state) index WHITE))
   (check? [state]
-    (let [store (if (== (int (get (:board state) TURN-STORE)) WHITE)
-                  WHITE-CHECK-STORE BLACK-CHECK-STORE)]
-      (== (get (:board state) store) 1)))
+    (== (get (:board state) CHECK-STORE) 1))
   (mate? [state]
     (and (check? state)
-         (empty? (legal-moves state))))
+         (empty? (legal-states state))))
   (draw? [state]
     (or (fifty-move-rule? state)
         (fide-draw? state)
