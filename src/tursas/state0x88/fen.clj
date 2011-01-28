@@ -3,10 +3,10 @@
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
-(defn- castling-str
+(defn- castling->str
   "Converts internal castling representation to string."
   [board]
-  (let [castling (get board CASTLING-STORE)
+  (let [castling (byte (get board CASTLING-STORE))
         to-char (fn [castling value letter]
                    (when (pos? (bit-and castling value)) letter))]
     (str (to-char castling 8 \K)
@@ -14,7 +14,7 @@
          (to-char castling 2 \k)
          (to-char castling 1 \q))))
 
-(defn- castling-value
+(defn- castling->value
   "Convers string representing castling to
    internal castling value."
   [s]
@@ -115,7 +115,7 @@
                (-> (fen-board->0x88board (first fen-list))
                    (fill-square TURN-STORE (if (= (second fen-list) "w")
                                              WHITE BLACK))
-                   (fill-square CASTLING-STORE (castling-value
+                   (fill-square CASTLING-STORE (castling->value
                                                 (nth fen-list 2)))
                    (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
                                                    EN-PASSANT-STORE
@@ -131,7 +131,7 @@
   (let [board (:board state)]
     (s/join " " (list (board->fen-board board)
                       (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
-                      (castling-str board)
+                      (castling->str board)
                       (if (== (int (get board EN-PASSANT-STORE)) -1)
                         "-"
                         (index->coord (get board EN-PASSANT-STORE)))
