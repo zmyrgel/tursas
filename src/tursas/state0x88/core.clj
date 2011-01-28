@@ -94,7 +94,9 @@
                         (opponent (get (:board state) TURN-STORE))))))
 
 (defn- update-en-passant
-  "Associates new en-passant string with given STATE based on the MOVE."
+  "Associates new en-passant value with given state based on the move.
+   If pawn moves two steps next to opponents pawn, place en-passant
+   value as board index just behind moved pawn, otherwise -1."
   [state move]
   (when-not (nil? state)
     (assoc state :board
@@ -113,7 +115,7 @@
                             (/ (+ (:to move)
                                   (:from move))
                                2)
-                            EMPTY))))))
+                            -1))))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
