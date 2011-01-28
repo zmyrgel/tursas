@@ -5,9 +5,9 @@
 
 (defn- castling->str
   "Converts internal castling representation to string."
-  [board]
+  [castling]
   (let [result (s/map-str (fn [[value letter]]
-                            (when (pos? (bit-and (byte (get board CASTLING-STORE)) value))
+                            (when (pos? (bit-and castling value))
                               letter))
                           '([8 \K] [4 \Q] [2 \k] [1 \q]))]
     (when (empty? result)
@@ -127,7 +127,7 @@
   (let [board (:board state)]
     (s/join " " (list (board->fen-board board)
                       (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
-                      (castling->str board)
+                      (castling->str (int (get board CASTLING-STORE)))
                       (if (== (int (get board EN-PASSANT-STORE)) -1)
                         "-"
                         (index->coord (get board EN-PASSANT-STORE)))
