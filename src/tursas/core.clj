@@ -215,7 +215,8 @@
             (quit))
         (if-let [new-state (apply-move state (coord->move s))]
           (do (add-game-state new-state)
-              (ai-move))
+              (when (get-option :ai-mode)
+                (ai-move)))
           (str "Illegal move: " s))))
     (str "Illegal move: " s)))
 
