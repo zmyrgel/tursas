@@ -171,7 +171,7 @@
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
   [board index opponent piece places]
-  (any? #(= (get board %) piece)
+  (any? #(= (get board (+ index %)) piece)
         places))
 
 (defn- threaten-by-slider?
