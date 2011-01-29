@@ -463,8 +463,7 @@
   "Prints prompt and responses to user."
   [output]
   (cond (seq? output) (s/map-str println output)
-        (string? output) (println output)
-        :else nil))
+        (string? output) (println output)))
 
 (defn -main
   "Starts the engine repl for input handling."
