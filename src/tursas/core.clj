@@ -10,6 +10,7 @@
 (def cast-fen "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")
 (def prom-fen "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7")
 (def mate-fen "3brr2/7b/8/2pN3Q/2p2k2/5P2/4P1KR/2N2RB1 b - - 1 18")
+(def mate-1-fen "3brr2/2N4b/8/2p4Q/2p2k2/5P2/4P1KR/2N2RB1 w - - 1 17")
 
 (def inf Integer/MAX_VALUE)
 (def -inf (+ Integer/MIN_VALUE 1))
@@ -190,6 +191,7 @@
          (= fen "cast") (fen->state cast-fen)
          (= fen "prom") (fen->state prom-fen)
          (= fen "mate") (fen->state mate-fen)
+         (= fen "bmate") (fen->state mate-1-fen)
          :else (fen->state fen))))
 
 (defn set-option!
