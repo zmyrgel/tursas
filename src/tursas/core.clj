@@ -156,10 +156,10 @@
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (first (alpha-beta (first @game-state)
+    (str (first (alpha-beta (first @game-state)
                        -inf
                        inf
-                       (:depth-limit @game-options)))))
+                       (:depth-limit @game-options))))))
 
 (defn eval-current-state
   "Evaluates the current state and prints its score."
@@ -168,7 +168,8 @@
     "Can't evaluate score from empty game state!"
     (->> @game-state
          first
-         evaluate)))
+         evaluate
+         str)))
 
 (defn get-hint
   "Evaluates all states and chooses one from top five moves at random."
