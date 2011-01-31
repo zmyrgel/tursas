@@ -195,10 +195,10 @@
         (update-move move)
         (update-half-moves move)
         (update-board move)
+        update-player-check
         (update-castling move)
         (update-en-passant move)
         update-full-moves
-        update-player-check
         update-opponent-check
         update-turn)))
 
