@@ -3,6 +3,44 @@
         (tursas.state0x88 eval movegen util common fen move)
         [clojure.contrib.math :only [abs]]))
 
+(defn- calculate-castling
+  "Utility to calculate new castling value."
+  [castling player from to]
+  (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
+         rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
+        (if (== player WHITE)
+          [ 3 11  7 0x04 0x00 0x07 14 13 0x70 0x77]
+          [12 14 13 0x74 0x70 0x77 11 7 0x00 0x07])]
+    (cond (== from king-sq) (bit-and castling k-mask)
+          (== from rook-q-sq) (bit-and castling qr-mask)
+          (== from rook-k-sq) (bit-and castling kr-mask)
+          (== to opp-rk-q-sq) (bit-and castling opp-rkq-mask)
+          (== to opp-rk-k-sq) (bit-and castling opp-rkk-mask)
+          :else castling)))
+
+(defn- calculate-en-passant
+  "Utility to calculate new en-passant value."
+  [player piece west-piece east-piece from to]
+  (let [opp-pawn (if (== player WHITE) BLACK-PAWN WHITE-PAWN)]
+    (if (and (or (== piece WHITE-PAWN)
+                 (== piece BLACK-PAWN))
+             (== (abs (- to from)) 0x20)
+             (or (== opp-pawn west-piece)
+                 (== opp-pawn east-piece)))
+      (/ (+ to from) 2)
+      -1)))
+
+(defn- inc-full-moves
+  "Utility to increase full moves on the board"
+  [board]
+  (let [moves (get board FULL-MOVE-STORE)
+        n-moves (get board FULL-MOVE-N-STORE)]
+    (if (== moves 127)
+      (-> board
+          (fill-square FULL-MOVE-N-STORE (inc n-moves))
+          (fill-square FULL-MOVE-STORE 0))
+      (fill-square board FULL-MOVE-STORE (inc moves)))))
+
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
   [state]
