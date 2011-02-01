@@ -128,6 +128,10 @@
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
                                                                   QUEEN-SIDE KING-SIDE))
+            (en-passant? (:board state) moving-piece move) (-> (move-piece state move)
+                                                               (remove-piece (+ (:to move)
+                                                                                (if (== player WHITE)
+                                                                                  -16 16))))
             :else (move-piece state move)))))
 
 (defn- update-castling
