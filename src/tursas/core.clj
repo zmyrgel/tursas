@@ -143,12 +143,8 @@
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
     (if (game-end? (first @game-state))
-      (do (game-result (first @game-state))
-          (quit))
-      (let [move (second (alpha-beta (first @game-state)
-                                     -inf
-                                     inf
-                                     (:depth-limit @game-options)))]
+      (result (first @game-state))
+      (let [move (second (alpha-beta (first @game-state) -inf inf (:depth-limit @game-options)))]
         (do (add-game-state move)
             (str "move " (move->coord (last-move (first @game-state)))))))))
 
@@ -217,14 +213,16 @@
   [s]
   (if (move-string? s)
     (let [state (first @game-state)]
-      (if (game-end? state)
-        (do (game-result state)
-            (quit))
-        (if-let [new-state (apply-move state (coord->move s))]
-          (do (add-game-state new-state)
-              (when (get-option :ai-mode)
-                (ai-move)))
-          (str "Illegal move: " s))))
+      (if-let [new-state (apply-move state (coord->move s))]
+        (do (add-game-state new-state)
+            (when (game-end? new-state)
+              (result new-state))
+            (when (get-option :ai-mode)
+              (let [move (ai-move)]
+                (if (game-end? new-state)
+                  (result new-state)
+                  move))))
+        (str "Illegal move: " s)))
     (str "Illegal move: " s)))
 
 (defn undo-move
