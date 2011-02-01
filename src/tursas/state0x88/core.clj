@@ -231,7 +231,7 @@
           (repetition? state) "1/2-1/2 {Draw by repetition}"
           (mate? state) (if (== (int (get (:board state) TURN-STORE)) WHITE)
                           "0-1 {Black mates}"
-                          "1-1 {White mates}")))
+                          "1-0 {White mates}")))
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
