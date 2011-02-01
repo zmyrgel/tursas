@@ -439,11 +439,6 @@
                            (recur (rest words)))
                 :cecp (process-cecp-command words)))))
 
-(defn set-player!
-  "Sets the given player's repl.
-   This determines if the player is AI or human."
-  [player repl])
-
 (defn- init-engine
   "Initializes the chess engine."
   []
