@@ -134,6 +134,16 @@
                                                                                   -16 16))))
             :else (move-piece state move)))))
 
+(defn- update-player-check
+  "Checks that players move won't leave the players king in check."
+  [state]
+  (when-not (nil? state)
+    (let [player (get (:board state) TURN-STORE)]
+      (when-not (threatened? (:board state)
+                             (king-index state player)
+                             (opponent player))
+        state))))
+
 (defn- update-castling
   "Updates states castling value for move
    checks for king or rook moves."
