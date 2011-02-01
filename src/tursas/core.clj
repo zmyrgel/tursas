@@ -97,10 +97,12 @@
              "  WHITE"
              "  BLACK")
            " TO MOVE"
-           (when (check? (first @game-state))
-             (if (= (turn (first @game-state)) :white)
-               ", WHITE IN CHECK!"
-               ", BLACK IN CHECK!"))))))
+           (cond (mate? (first @game-state)) (if (= (turn (first @game-state)) :white)
+                                               ", WHITE IN MATE!"
+                                               ", BLACK IN MATE!")
+                 (check? (first @game-state)) (if (= (turn (first @game-state)) :white)
+                                                ", WHITE IN CHECK!"
+                                                ", BLACK IN CHECK!"))))))
 
 (defn display-fen
   "Display FEN of currect game state."
