@@ -154,10 +154,10 @@
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (str (first (alpha-beta (first @game-state)
-                       -inf
-                       inf
-                       (:depth-limit @game-options))))))
+    (-> (first @game-state)
+        (alpha-beta -inf inf (:depth-limit @game-options))
+        first
+        str)))
 
 (defn eval-current-state
   "Evaluates the current state and prints its score."
