@@ -337,8 +337,8 @@
    Prevents players from moving each others pieces."
   [state move]
   (let [player (int (get (:board state) TURN-STORE))
-        piece (int (get (:board state) (:from move)))]
-    (and (occupied-by? (:board state) (:from move) player)
+        piece (int (get (:board state) (int (:from move))))]
+    (and (occupied-by? (:board state) (int (:from move)) player)
          (any? #(and (== (:from move) (:from %))
                      (== (:to move) (:to %)))
                (piece-moves (:board state) player (:from move) piece)))))
