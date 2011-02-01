@@ -134,6 +134,15 @@
        (== 2 (abs (- (:to move)
                      (:from move))))))
 
+(defn en-passant?
+  "Is the given move an en-passant move"
+  [board piece move]
+  (let [movement (- (:to move) (:from move))]
+    (and (or (== piece WHITE-PAWN)
+             (== piece BLACK-PAWN))
+         (any? #(= % movement) [-17 -15 15 17])
+         (empty-square? board (:to move)))))
+
 (defn- slide-in-dir
   "Returns a list of possible moves by sliding piece
    from index to given direction on the board.
