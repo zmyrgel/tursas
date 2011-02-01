@@ -127,9 +127,10 @@
     (s/join " " (list (board->fen-board board)
                       (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
                       (castling->str (int (get board CASTLING-STORE)))
-                      (if (== (int (get board EN-PASSANT-STORE)) -1)
-                        "-"
-                        (index->coord (get board EN-PASSANT-STORE)))
+                      (let [en-passant (int (get board EN-PASSANT-STORE))]
+                        (if (== en-passant -1)
+                          "-"
+                          (index->coord en-passant)))
                       (get board HALF-MOVE-STORE)
                       (+ (* (get board FULL-MOVE-N-STORE) 127)
                          (get board FULL-MOVE-STORE))))))
