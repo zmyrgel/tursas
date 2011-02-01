@@ -321,8 +321,7 @@
            (or (== piece WHITE-QUEEN)
                (== piece BLACK-QUEEN)) (slider queen-directions)
            (or (== piece WHITE-KING)
-               (== piece BLACK-KING)) (list-king-moves player board index)
-           :else nil))))
+               (== piece BLACK-KING)) (list-king-moves player board index)))))
 
 (defn pseudo-moves
   "Lists all pseudo-moves for player in state.
