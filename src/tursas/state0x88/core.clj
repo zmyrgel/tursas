@@ -140,17 +140,10 @@
         state
         (assoc state :board
                (fill-square (:board state) CASTLING-STORE
-                            (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
-                                   rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
-                                  (if (== (get (:board state) TURN-STORE) WHITE)
-                                    [ 3 11  7 0x04 0x00 0x07 14 13 0x70 0x77]
-                                    [12 14 13 0x74 0x70 0x77 11 7 0x00 0x07])]
-                              (cond (== (:from move) king-sq) (bit-and castling k-mask)
-                                    (== (:from move) rook-q-sq) (bit-and castling qr-mask)
-                                    (== (:from move) rook-k-sq) (bit-and castling kr-mask)
-                                    (== (:to move) opp-rk-q-sq) (bit-and castling opp-rkq-mask)
-                                    (== (:to move) opp-rk-k-sq) (bit-and castling opp-rkk-mask)
-                                    :else castling))))))))
+                            (calculate-castling castling
+                                                (get (:board state) TURN-STORE)
+                                                (:from move)
+                                                (:to move))))))))
 
 (defn- update-en-passant
   "Associates new en-passant value with given state based on the move.
@@ -160,47 +153,20 @@
   (when-not (nil? state)
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
-                        (let [piece (int (get (:board state) (:from move)))
-                              opp-pawn (if (== (get (:board state) TURN-STORE) WHITE)
-                                         BLACK-PAWN
-                                         WHITE-PAWN)]
-                          (if (and (or (== piece WHITE-PAWN)
-                                       (== piece BLACK-PAWN))
-                                   (== (abs (- (:to move) (:from move))) 0x20)
-                                   (or (== opp-pawn (int (get (:board state)
-                                                              (+ (:to move) WEST))))
-                                       (== opp-pawn (int (get (:board state)
-                                                              (+ (:to move) EAST))))))
-                            (/ (+ (:to move)
-                                  (:from move))
-                               2)
-                            -1))))))
+                        (calculate-en-passant (int (get (:board state) TURN-STORE))
+                                              (int (get (:board state) (:to move)))
+                                              (int (get (:board state) (+ (:to move) WEST)))
+                                              (int (get (:board state) (+ (:to move) EAST)))
+                                              (int (:from move))
+                                              (int (:to move)))))))
 
 (defn- update-full-moves
   "Updates full move count on board."
   [state]
   (when-not (nil? state)
     (if (== (get (:board state) TURN-STORE) BLACK)
-      (assoc state :board
-             (let [moves (get (:board state) FULL-MOVE-STORE)
-                   n-moves (get (:board state) FULL-MOVE-N-STORE)]
-               (if (== moves 127)
-                 (-> (:board state)
-                     (fill-square FULL-MOVE-N-STORE (inc n-moves))
-                     (fill-square FULL-MOVE-STORE 0))
-                 (fill-square (:board state) FULL-MOVE-STORE
-                              (inc moves)))))
+      (assoc state :board (inc-full-moves (:board state)))
       state)))
-
-(defn- update-player-check
-  "Checks that players move won't leave the players king in check."
-  [state]
-  (when-not (nil? state)
-    (let [player (get (:board state) TURN-STORE)]
-      (when-not (threatened? (:board state)
-                             (king-index state player)
-                             (opponent player))
-        state))))
 
 (defn- update-opponent-check
   "Updates opponents check status bit on the state.
