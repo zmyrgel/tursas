@@ -72,11 +72,6 @@
   (do (dosync (ref-set game-state (cons new-state @game-state)))
       nil))
 
-(defn- game-result
-  "Returns game result string."
-  [state]
-  (str "RESULT " (result state)))
-
 (defn display-board
   "Displays the current chess board in ASCII."
   []
