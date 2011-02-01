@@ -215,7 +215,8 @@
    (ref-set game-state
             (if (nil? n)
               (rest @game-state)
-              (nthnext @game-state n)))))
+              (nthnext @game-state n)))
+   nil))
 
 (defn cecp-print-supported-features
   "Prints the default features of the engine."
