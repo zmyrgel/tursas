@@ -190,7 +190,7 @@
   (let [[player opp-king] (if (== opponent WHITE)
                             [BLACK WHITE-KING]
                             [WHITE BLACK-KING])]
-    (if (empty? (filter #(== (int (get board %)) (int opp-king))
+    (if (empty? (filter #(= (get board %) opp-king)
                         (map #(+ index %) king-movement)))
       false
       (not (-> board
