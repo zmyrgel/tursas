@@ -267,7 +267,7 @@
   (evaluate [state]
     (heuristic-value state))
   (full-moves [state]
-    (int (get (:board state) FULL-MOVE-STORE)))
+    (get (:board state) FULL-MOVE-STORE))
   (game-end? [state]
     (or (draw? state)
         (mate? state)))
