@@ -158,12 +158,11 @@
   []
   (if (empty? @game-state)
     "Can't calculate legal moves from empty state!"
-    (->> @game-state
-         first
-         all-moves
-         (take 5)
-         rand-nth
-         last-move)))
+    (map #(move->coord (last-move (second %)))
+         (->> @game-state
+              first
+              all-moves
+              (take 3)))))
 
 (defn set-game!
   "Sets game to given FEN state."
