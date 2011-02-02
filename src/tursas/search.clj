@@ -185,19 +185,19 @@
   "Find the best state, from initial state by searching to given depth
    and backing up values using cutoff whenever possible.
    Based on alpha-beta presented in PAIP"
-  [state achievable cutoff depth]
+  [state alpha beta depth]
   (let [f (fn [states best-state ac depth]
             (if (empty? states)
               [ac best-state]
               (let [[val _] (alpha-beta (first states)
-                                        (- cutoff) (- ac) depth)
+                                        (- beta) (- ac) depth)
                     value (int (- val))]
-                (cond (>= ac cutoff) [ac best-state]
+                (cond (>= ac beta) [ac best-state]
                       (> value ac) (recur (rest states) (first states) value depth)
                       :else (recur (rest states) best-state ac depth)))))]
     (cond (game-end? state) [(game-score state) nil]
           (zero? depth) [(evaluate state) nil]
           :else (let [children (legal-states state)]
                   (if (empty? children)
-                    (f nil nil (evaluate state) depth)
-                    (f children (first children) achievable (dec depth)))))))
+                    (f nil nil (evaluate state) 0)
+                    (f children (first children) alpha (dec depth)))))))
