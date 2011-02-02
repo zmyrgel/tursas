@@ -19,23 +19,22 @@ Version 0.1:
 Possibly added in later versions:
 - UCI protocol interface
 - Bitboard state representation
-- Negascount, MDF replacement for alphabeta
+- Negascount replacement for alphabeta
 - Full Chess Engine Communication Protocol implementation
 
 ## Status
 
-- Game REPL: Done except there's no error detection in it
-- XBoard interface : Some commands implemented so its playable
+- Game REPL: Done except there's isn't error detection in it
+- XBoard interface : Small subset of commands implemented
 - Saving / Loading game: Completed
-- Game: Needs testing to detect end-game conditions properly
+- Game: XBoard UI won't detect that game has ended yet
 - State representation: Completed with 0x88 board
-- Move generation: Done, bug hunting going on
-- Search algorithm: Very lightly tested alphabeta
+- Move generation: Done, testing things
+- Search algorithm: Simple alphabeta
 - Evaluator: Material balance and board location scores
 
-The game is somewhat playable via repl. It is very much work
-in progress state.
-I'm working on ironing out the bugs in the move generation code to get all the basics working.
+The game is somewhat playable via repl. Currently debugging why XBoard
+UI won't cause game to end once mate has been achieved.
 
 ## Installation
 
@@ -99,10 +98,6 @@ illegal move for some reason.
 
 Also, game doesn't seem to detect end-game condition correctly. When
 white is in check-mate the game won't quit, it just waits for a move.
-
-There seems to be some hidden bug in threaten-by-king function
-which causes fill-square part of it to fail with IllegalArgumentException: Key must be Integer.
-Trying to fix it with (int ...).
 
 And some issues with alpha-beta search. At least when black is played
 by AI it selects very poor moves when search depth is set to 3, works
