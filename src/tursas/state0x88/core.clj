@@ -168,9 +168,9 @@
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
                         (calculate-en-passant (int (get (:board state) TURN-STORE))
-                                              (int (get (:board state) (:to move)))
-                                              (int (get (:board state) (+ (:to move) WEST)))
-                                              (int (get (:board state) (+ (:to move) EAST)))
+                                              (int (get (:board state) (int (:to move)) 0))
+                                              (int (get (:board state) (+ (int (:to move)) WEST) 0))
+                                              (int (get (:board state) (+ (int (:to move)) EAST) 0))
                                               (int (:from move))
                                               (int (:to move)))))))
 
