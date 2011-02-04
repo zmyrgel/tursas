@@ -118,7 +118,7 @@
    Returns list of two element vectors. The first member of
    vector is the heuristic value and second is the actual state."
   [state]
-  (map #(alpha-beta % -inf inf (:depth-limit @game-options))
+  (map #(alpha-beta % -inf inf 2)
        (legal-states state)))
 
 (defn ai-move
