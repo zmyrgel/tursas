@@ -140,7 +140,7 @@
   (let [movement (- (:to move) (:from move))]
     (and (or (== piece WHITE-PAWN)
              (== piece BLACK-PAWN))
-         (any? #(= % movement) [-17 -15 15 17])
+         (any? #(= % movement) [SW SE NE NW])
          (empty-square? board (:to move)))))
 
 (defn- slide-in-dir
