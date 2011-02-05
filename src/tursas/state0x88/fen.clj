@@ -3,13 +3,15 @@
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
+(def castling-values (list [8 \K] [4 \Q] [2 \k] [1 \q]))
+
 (defn- castling->str
   "Converts internal castling representation to string."
   [castling]
   (let [result (s/map-str (fn [[value letter]]
                             (when (pos? (bit-and castling value))
                               letter))
-                          '([8 \K] [4 \Q] [2 \k] [1 \q]))]
+                          castling-values)]
     (if (empty? result)
       "-"
       result)))
@@ -22,7 +24,7 @@
             (if (some #(= % letter) s)
               (+ result value)
               result))
-          0 '([8 \K] [4 \Q] [2 \k] [1 \q])))
+          0 castling-values))
 
 (defn- find-king-index
   "Seeks king's index from piece-map.
