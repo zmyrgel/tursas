@@ -48,11 +48,11 @@
   (reduce (fn [board [index piece]]
             (fill-square board index (piece-value piece)))
           (init-game-board)
-          (seq/indexed (s/map-str #(str % "EEEEEEEE")
-                                  (->> s
-                                       (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \E)))
-                                       (s/split #"/+")
-                                       reverse)))))
+          (seq/indexed
+           (s/map-str #(str % "EEEEEEEE")
+                      (->> (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt s) \E)))
+                           (s/split #"/+")
+                           reverse)))))
 
 (defn- make-fen-row
   "Builds single fen row from given BOARD and ROW index."
