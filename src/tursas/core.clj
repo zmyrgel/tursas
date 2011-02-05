@@ -229,7 +229,8 @@
         "protover N - change engine to use protocol version N"
         "accepted - Accept last feature"
         "reject - Reject last feature"
-        "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
+        "new - Sets the board to the chess starting position. Set White on move.
+               Leave force mode and set the engine to play Black. Sets random to false."
         "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
         "random - Tell engine to add little random elements, known but unused"
         "force - Disable engine AI"
