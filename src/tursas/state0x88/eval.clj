@@ -202,7 +202,7 @@
 
 (defn- score
   "Calculates score for side."
-  [state pieces situation]
+  [pieces situation]
   (reduce (fn [score [index piece]]
             (+ score
                (material-value piece)
@@ -215,8 +215,8 @@
   (let [pieces (if (= (:turn state) WHITE)
                  (list (:white-pieces state) (:black-pieces state))
                  (list (:black-pieces state) (:white-pieces state)))]
-    (+ (score state (first pieces) situation)
-       (- (score state (second pieces) situation)))))
+    (+ (score (first pieces) situation)
+       (- (score (second pieces) situation)))))
 
 (defn end-score [state]
   (if (mate? state)
