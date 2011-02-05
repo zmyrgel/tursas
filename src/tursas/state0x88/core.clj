@@ -19,7 +19,9 @@
           :else castling)))
 
 (defn- calculate-en-passant
-  "Utility to calculate new en-passant value."
+  "Utility to calculate new en-passant value.
+   If pawn moves two steps next to opponents pawn, place en-passant
+   value as board index just behind moved pawn, otherwise -1."
   [player piece west-piece east-piece from to]
   (let [opp-pawn (if (== player WHITE) BLACK-PAWN WHITE-PAWN)]
     (if (and (or (== piece WHITE-PAWN)
@@ -171,9 +173,7 @@
                                                 (:to move))))))))
 
 (defn- update-en-passant
-  "Associates new en-passant value with given state based on the move.
-   If pawn moves two steps next to opponents pawn, place en-passant
-   value as board index just behind moved pawn, otherwise -1."
+  "Associates new en-passant value with given state based on the move."
   [state move]
   (when-not (nil? state)
     (assoc state :board
