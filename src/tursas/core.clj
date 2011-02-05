@@ -93,8 +93,7 @@
   []
   (->> @game-state
        first
-       state->fen
-       println))
+       state->fen))
 
 (defn display-perft
   "Display Perft of given depth."
