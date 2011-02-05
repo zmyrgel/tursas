@@ -51,8 +51,7 @@
 (defn print-board
   "Return picture of board in ASCII from fen string."
   [fen]
-  (let [fen-list (re-seq #"\S+" fen)
-        side (second fen-list)]
+  (let [fen-list (re-seq #"\S+" fen)]
     (str (s/map-str (fn [[index piece]]
                       (str (- 8 index) "|" piece "\n"))
                     (seq/indexed (->> fen-list
