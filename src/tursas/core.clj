@@ -117,11 +117,14 @@
   []
   (if (empty? @game-state)
     "Can't calculate score from empty state!"
-    (if (game-end? (first @game-state))
-      (result (first @game-state))
-      (let [move (second (alpha-beta (first @game-state) -inf inf (:depth-limit @game-options)))]
-        (do (add-game-state move)
-            (str "move " (move->coord (last-move (first @game-state)))))))))
+    (let [old-state (first @game-state)
+          depth (:depth-limit @game-options)]
+      (if (game-end? old-state)
+        (result old-state)
+        (do (add-game-state (second (alpha-beta old-state -inf inf depth)))
+            (str "move " (-> (first @game)
+                             last-move
+                             move->coord)))))))
 
 (defn get-score
   "Calculates state's score by checking child states
