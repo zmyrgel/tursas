@@ -122,7 +122,7 @@
       (if (game-end? old-state)
         (result old-state)
         (do (add-game-state! (second (alpha-beta old-state -inf inf depth)))
-            (str "move " (-> (first @game)
+            (str "move " (-> (first @game-state)
                              last-move
                              move->coord)))))))
 
