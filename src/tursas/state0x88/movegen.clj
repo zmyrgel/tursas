@@ -201,12 +201,11 @@
   (let [king-sq-1 (int (+ index dir))
         king-sq-2 (int (+ king-sq-1 dir))
         opponent (opponent player)
-        safe? (fn [idx]
-                (and (empty-square? board idx)
-                     (not (threatened? board idx opponent))))]
+        safe-index? #(and (empty-square? board %)
+                          (not (threatened? board % opponent)))]
     (and (not (threatened? board index opponent))
-         (safe? king-sq-1)
-         (safe? king-sq-2)
+         (safe-index? king-sq-1)
+         (safe-index? king-sq-2)
          (if (== dir WEST)
            (empty-square? board (+ king-sq-2 dir))
            true))))
