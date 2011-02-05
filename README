@@ -19,7 +19,7 @@ Version 0.1:
 Possibly added in later versions:
 - UCI protocol interface
 - Bitboard state representation
-- Negascount replacement for alphabeta
+- Negascout replacement for alphabeta
 - Full Chess Engine Communication Protocol implementation
 
 ## Status
