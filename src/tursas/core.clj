@@ -204,7 +204,7 @@
         (str "Illegal move: " s)))
     (str "Illegal move: " s)))
 
-(defn undo-move
+(defn undo-move!
   "Undo last move or if N given, N last moves."
   [& n]
   (dosync
@@ -351,8 +351,8 @@
         ;;"." (cecp-exit-edit-mode)
         "hint" (get-hint)
         ;;"bk" (cecp-bk)
-        "undo" (undo-move)
-        "remove" (undo-move 2)
+        "undo" (undo-move!)
+        "remove" (undo-move! 2)
         ;;"hard" (set-option! :ponder true)
         ;;"easy" (set-option! :ponder false)
         ;;"post" (set-option! :ponder-output true)
