@@ -55,7 +55,7 @@
 
 (defn- promotion-piece
   "Helper function to return promotion piece value.
-    Reads the char from move or if nil, defaults to queen."
+    Reads the promotion piece value from move, defaults to queen."
   [player move]
   (let [piece (:promotion move)]
     (if (zero? piece)
