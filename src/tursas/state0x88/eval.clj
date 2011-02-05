@@ -212,7 +212,7 @@
 (defn heuristic-value
   "Calculates heuristic value for given state."
   [player whites blacks situation]
-  (let [pieces (if (== (int player) WHITE)
+  (let [pieces (if (== player WHITE)
                  (list whites blacks)
                  (list blacks whites))]
     (+ (score (first pieces) situation)
