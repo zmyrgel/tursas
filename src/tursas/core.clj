@@ -112,14 +112,6 @@
             first
             legal-moves)))
 
-(defn- all-moves
-  "Generates all available states from given state.
-   Returns list of two element vectors. The first member of
-   vector is the heuristic value and second is the actual state."
-  [state]
-  (map #(alpha-beta % -inf inf 2)
-       (legal-states state)))
-
 (defn ai-move
   "Prompt a move from AI and add it to game-state."
   []
