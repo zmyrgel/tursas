@@ -146,15 +146,6 @@
                                 (get black-king-table index))
         :else 0))
 
-(defn- check-situation
-  "Checks which situation, opening, middle or end-game the game is."
-  [state]
-  (let [pieces (merge (:white-pieces state)
-                      (:black-pieces state))]
-    (cond (< (count (keys pieces)) 15) END-GAME
-          (> (get (:board state) FULL-MOVE-STORE) 10) MIDDLE-GAME
-          :else OPENING-GAME)))
-
 (defn- pawn-shield-bonus
   "Returns pawn-shield bonus to score if king is castled and pawns protect it."
   [state]
@@ -220,9 +211,8 @@
 
 (defn heuristic-value
   "Calculates heuristic value for given state."
-  [state]
-  (let [situation (check-situation state)
-        pieces (if (= (:turn state) WHITE)
+  [state situation]
+  (let [pieces (if (= (:turn state) WHITE)
                  (list (:white-pieces state) (:black-pieces state))
                  (list (:black-pieces state) (:white-pieces state)))]
     (+ (score state (first pieces) situation)

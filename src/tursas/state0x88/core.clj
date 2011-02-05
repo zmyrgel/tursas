@@ -240,6 +240,15 @@
         update-opponent-check
         update-turn)))
 
+(defn- check-situation
+  "Checks which situation, opening, middle or end-game the game is."
+  [state]
+  (let [pieces (merge (:white-pieces state)
+                      (:black-pieces state))]
+    (cond (< (count (keys pieces)) 15) END-GAME
+          (> (get (:board state) FULL-MOVE-STORE) 10) MIDDLE-GAME
+          :else OPENING-GAME)))
+
 (defrecord State0x88 [board black-pieces white-pieces]
   State
   (occupied? [state index]
@@ -299,7 +308,7 @@
   (dynamic? [state]
     (== (get (:board state) DYNAMIC-STORE) 1))
   (evaluate [state]
-    (heuristic-value state))
+    (heuristic-value state (check-situation state)))
   (full-moves [state]
     (get (:board state) FULL-MOVE-STORE))
   (game-end? [state]
