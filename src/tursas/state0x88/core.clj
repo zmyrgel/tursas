@@ -40,7 +40,10 @@
       -1)))
 
 (defn- inc-full-moves
-  "Utility to increase full moves on the board"
+  "Utility to increase full moves on the board.
+   Uses two vector indexes because of the limitation of byte value.
+   If full moves get to 127 increase multiplier store and reduce full move
+   store to 0. This gets full move count to get high enough."
   [board]
   (let [moves (get board FULL-MOVE-STORE)
         n-moves (get board FULL-MOVE-N-STORE)]
