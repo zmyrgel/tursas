@@ -67,7 +67,7 @@
   [prot]
   (dosync (ref-set protocol prot)))
 
-(defn- add-game-state
+(defn- add-game-state!
   "Adds given state to game state."
   [new-state]
   (do (dosync (ref-set game-state (cons new-state @game-state)))
@@ -121,7 +121,7 @@
           depth (:depth-limit @game-options)]
       (if (game-end? old-state)
         (result old-state)
-        (do (add-game-state (second (alpha-beta old-state -inf inf depth)))
+        (do (add-game-state! (second (alpha-beta old-state -inf inf depth)))
             (str "move " (-> (first @game)
                              last-move
                              move->coord)))))))
@@ -162,7 +162,7 @@
 (defn set-game!
   "Sets game to given FEN state."
   [fen]
-  (add-game-state
+  (add-game-state!
    (cond (= fen "startpos") (fen->state startpos)
          (= fen "check") (fen->state check-fen)
          (= fen "cast") (fen->state cast-fen)
@@ -193,7 +193,7 @@
   (if (move-string? s)
     (let [state (first @game-state)]
       (if-let [new-state (apply-move state (coord->move s))]
-        (do (add-game-state new-state)
+        (do (add-game-state! new-state)
             (when (game-end? new-state)
               (result new-state))
             (when (get-option :ai-mode)
