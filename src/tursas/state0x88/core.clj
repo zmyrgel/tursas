@@ -4,7 +4,14 @@
         [clojure.contrib.math :only [abs]]))
 
 (defn- calculate-castling
-  "Utility to calculate new castling value."
+  "Utility to calculate new castling value.
+   Castling value is updated if either our king or rook moves or rook gets captured.
+   Castling value is kept as single digit and operated at bit level.
+   Castling value is composesd as:
+       K = 8
+       Q = 4
+       k = 2
+       q = 1"
   [castling player from to]
   (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
          rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
@@ -158,8 +165,7 @@
         state))))
 
 (defn- update-castling
-  "Updates states castling value for move
-   checks for king or rook moves."
+  "Updates states castling value by checking move with current castling value."
   [state move]
   (when-not (nil? state)
     (let [castling (byte (get (:board state) CASTLING-STORE))]
