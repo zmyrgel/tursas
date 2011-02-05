@@ -231,7 +231,7 @@
         "reject - Reject last feature"
         "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
         "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
-        ;;"random - Tell engine to add little random elements"
+        "random - Tell engine to add little random elements, known but unused"
         "force - Disable engine AI"
         "go - Enable engine AI"
         ;;"playother - Tell AI to switch sides"
@@ -321,10 +321,11 @@
         "accepted" (cecp-accept-feature)
         "rejected" (cecp-reject-feature)
         "new" (do (set-game! "startpos")
-                  (set-option! :ai-mode true))
+                  (set-option! :ai-mode true)
+                  (set-option! :random-mode false))
         "variant" (set-option! :variant (second words))
         "quit" (quit)
-        ;;"random" (toggle-option! :random-mode)
+        "random" (toggle-option! :random-mode)
         "force" (set-option! :ai-mode false)
         "go" (set-option! :ai-mode true)
         ;; set playother=1 to enable
