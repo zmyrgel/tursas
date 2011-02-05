@@ -142,7 +142,7 @@
             (en-passant? (:board state) moving-piece move) (-> (move-piece state move)
                                                                (remove-piece (+ (:to move)
                                                                                 (if (== player WHITE)
-                                                                                  -16 16))))
+                                                                                  SOUTH NORTH))))
             :else (move-piece state move)))))
 
 (defn- update-player-check
