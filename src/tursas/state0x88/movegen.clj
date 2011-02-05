@@ -3,17 +3,6 @@
         (tursas.state0x88 common util move)
         [clojure.contrib.math :only [abs]]))
 
-(def NORTH 16)
-(def NN 32)
-(def SOUTH -16)
-(def SS -32)
-(def EAST 1)
-(def WEST -1)
-(def NE 17)
-(def SW -17)
-(def NW 15)
-(def SE -15)
-
 (def rook-directions (list NORTH SOUTH EAST WEST))
 (def bishop-directions (list NW SW NE SE))
 (def queen-directions (concat rook-directions bishop-directions))

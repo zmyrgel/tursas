@@ -43,3 +43,13 @@
 (def WHITE-ROOK 5)
 (def WHITE-QUEEN 6)
 
+(def NORTH 16)
+(def NN 32)
+(def SOUTH -16)
+(def SS -32)
+(def EAST 1)
+(def WEST -1)
+(def NE 17)
+(def SW -17)
+(def NW 15)
+(def SE -15)
