@@ -41,6 +41,17 @@
           (fill-square FULL-MOVE-STORE 0))
       (fill-square board FULL-MOVE-STORE (inc moves)))))
 
+(defn- promotion-piece
+  "Helper function to return promotion piece value.
+    Reads the char from move or if nil, defaults to queen."
+  [player move]
+  (let [piece (:promotion move)]
+    (if (zero? piece)
+      (if (== player WHITE)
+        WHITE-QUEEN BLACK-QUEEN)
+      (if (== player WHITE)
+        (- piece) piece))))
+
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
   [state]
@@ -123,8 +134,8 @@
   (when-not (nil? state)
     (let [player (int (get (:board state) TURN-STORE))
           moving-piece (int (get (:board state) (:from move)))]
-      (cond (promotion? moving-piece move) (-> (move-piece state move)
-                                               (promote-piece player move))
+      (cond (promotion? moving-piece move) (-> (remove-piece state (:from move))
+                                               (add-piece (:to move) (promotion-piece player move)))
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
                                                                   QUEEN-SIDE KING-SIDE))
