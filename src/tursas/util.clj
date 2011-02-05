@@ -7,7 +7,7 @@
 (defn any?
   "Predicate to see if any of the items of coll return true on pred."
   [pred coll]
-  (not (nil? (some pred coll))))
+  (true? (some pred coll)))
 
 (defn valid-coord?
   "Predicate to check given coord for valid chess coordinate."
