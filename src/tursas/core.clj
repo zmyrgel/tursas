@@ -157,11 +157,12 @@
   []
   (if (empty? @game-state)
     "Can't calculate legal moves from empty state!"
-    (map #(move->coord (last-move (second %)))
-         (->> @game-state
-              first
-              all-moves
-              (take 3)))))
+    (-> @game-state
+        first
+        (alpha-beta -inf inf 2)
+        second
+        last-move
+        move->coord)))
 
 (defn set-game!
   "Sets game to given FEN state."
@@ -255,7 +256,7 @@
         "setboard FEN - Set the game board to given FEN."
         ;;"edit - enable edit mode [obsolete]"
         ;;". - exit edit mode"
-        ;;"hint - prompt move hint from engine"
+        "hint - prompt move hint from engine"
         ;;"bk - use book"
         "undo - tell engine to undo last move"
         "remove - tell engine to undo last two moves"
@@ -353,7 +354,7 @@
         "setboard" (set-game! (second words))
         ;;"edit" (cecp-enter-edit-mode)
         ;;"." (cecp-exit-edit-mode)
-        ;;"hint" (get-hint)
+        "hint" (get-hint)
         ;;"bk" (cecp-bk)
         "undo" (undo-move)
         "remove" (undo-move 2)
