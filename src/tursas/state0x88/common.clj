@@ -53,3 +53,7 @@
 (def SW -17)
 (def NW 15)
 (def SE -15)
+
+(def OPENING-GAME 0)
+(def MIDDLE-GAME 1)
+(def END-GAME 2)

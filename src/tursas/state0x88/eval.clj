@@ -9,10 +9,6 @@
 (def QUEEN-VALUE 90)
 (def KING-VALUE 99999)
 
-(def OPENING-GAME 0)
-(def MIDDLE-GAME 1)
-(def END-GAME 2)
-
 ;; Score tables for each piece type
 ;; all tables are from white players point of view.
 (def pawn-scores [0   0   0   0   0   0   0   0
