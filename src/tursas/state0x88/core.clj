@@ -308,7 +308,10 @@
   (dynamic? [state]
     (== (get (:board state) DYNAMIC-STORE) 1))
   (evaluate [state]
-    (heuristic-value state (check-situation state)))
+    (heuristic-value (get (:board state) TURN-STORE)
+                     (:white-pieces state)
+                     (:black-pieces state)
+                     (check-situation state)))
   (full-moves [state]
     (get (:board state) FULL-MOVE-STORE))
   (game-end? [state]
