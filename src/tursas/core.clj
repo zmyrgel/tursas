@@ -310,7 +310,7 @@
   [option]
   (let [pair (s/split #"=" option)]
     (set-option! (keyword (first pair))
-                 (if (= (count pair) 1)
+                 (if (== (count pair) 1)
                    true
                    (second pair)))))
 
