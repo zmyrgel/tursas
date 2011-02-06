@@ -3,27 +3,33 @@
         (tursas.state0x88 eval movegen util common fen move)
         [clojure.contrib.math :only [abs]]))
 
-(defn- calculate-castling
-  "Utility to calculate new castling value.
-   Castling value is updated if either our king or rook moves or rook gets captured.
-   Castling value is kept as single digit and operated at bit level.
-   Castling value is composesd as:
-       K = 8
-       Q = 4
-       k = 2
-       q = 1"
-  [castling player from to]
-  (let [[k-mask qr-mask kr-mask king-sq rook-q-sq
-         rook-k-sq opp-rkq-mask opp-rkk-mask opp-rk-q-sq opp-rk-k-sq]
-        (if (== player WHITE)
-          [ 3 11  7 0x04 0x00 0x07 14 13 0x70 0x77]
-          [12 14 13 0x74 0x70 0x77 11 7 0x00 0x07])]
-    (cond (== from king-sq) (bit-and castling k-mask)
-          (== from rook-q-sq) (bit-and castling qr-mask)
-          (== from rook-k-sq) (bit-and castling kr-mask)
-          (== to opp-rk-q-sq) (bit-and castling opp-rkq-mask)
-          (== to opp-rk-k-sq) (bit-and castling opp-rkk-mask)
-          :else castling)))
+(defn- calculate-white-castling
+  "Utility to calculate new castling value for white player.
+   Castling value is updated if either our king or rook moves
+   or opponents rook gets captured.
+   Castling value is kept as single digit and is operated at bit level.
+   Castling value is composesd as: K = 8, Q = 4, k = 2, q = 1"
+  [castling move]
+  (cond (== (:from move) 0x04) (bit-and castling 3)
+        (== (:from move) 0x00) (bit-and castling 11)
+        (== (:from move) 0x07) (bit-and castling 7)
+        (== (:to move) 0x70) (bit-and castling 14)
+        (== (:to move) 0x77) (bit-and castling 13)
+        :else castling))
+
+(defn- calculate-black-castling
+  "Utility to calculate new castling value for black player.
+   Castling value is updated if either our king or rook moves
+   or opponents rook gets captured.
+   Castling value is kept as single digit and is operated at bit level.
+   Castling value is composesd as: K = 8, Q = 4, k = 2, q = 1"
+  [castling move]
+  (cond (== (:from move) 0x74) (bit-and castling 12)
+        (== (:from move) 0x70) (bit-and castling 14)
+        (== (:from move) 0x77) (bit-and castling 13)
+        (== (:to move) 0x00) (bit-and castling 11)
+        (== (:to move) 0x07) (bit-and castling 7)
+        :else castling))
 
 (defn- calculate-en-passant
   "Utility to calculate new en-passant value.
@@ -171,15 +177,14 @@
   "Updates states castling value by checking move with current castling value."
   [state move]
   (when-not (nil? state)
-    (let [castling (byte (get (:board state) CASTLING-STORE))]
+    (let [castling (int (get (:board state) CASTLING-STORE))]
       (if (zero? castling)
         state
         (assoc state :board
                (fill-square (:board state) CASTLING-STORE
-                            (calculate-castling castling
-                                                (get (:board state) TURN-STORE)
-                                                (:from move)
-                                                (:to move))))))))
+                            (if (== (get (:board state) TURN-STORE) WHITE)
+                              (calculate-white-castling castling move)
+                              (calculate-black-castling castling move))))))))
 
 (defn- update-en-passant
   "Associates new en-passant value with given state based on the move."
