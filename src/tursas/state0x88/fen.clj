@@ -50,7 +50,7 @@
           (init-game-board)
           (seq/indexed
            (s/map-str #(str % "EEEEEEEE")
-                      (->> (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt s) \E)))
+                      (->> (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \E)) s)
                            (s/split #"/+")
                            reverse)))))
 
