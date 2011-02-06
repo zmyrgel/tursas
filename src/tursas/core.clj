@@ -191,13 +191,19 @@
   (if (move-string? s)
     (if-let [new-state (apply-move (first @game-state) (coord->move s))]
       (do (add-game-state! new-state)
-          (cond (game-end? (first @game-state)) (result (first @game-state))
-                (get-option :ai-mode) (let [move (ai-move!)]
-                                        (if (game-end? (first @game-state))
-                                          (result (first @game-state))
-                                          move))))
+          (when (game-end? (first @game-state))
+            (result (first @game-state))))
       (str "Illegal move: " s))
     (str "Illegal move: " s)))
+
+(defn- user-move
+  "Helper function to handle user and ai moves."
+  [s]
+  (make-chess-move! s)
+  (when (get-option :ai-mode)
+    (let [move (ai-move!)]
+      (make-chess-move! move)
+      move)))
 
 (defn undo-move!
   "Undo last move or if N given, N last moves."
@@ -336,7 +342,7 @@
         ;; set time=1 to enable these
         ;;"time" (cecp-set-engine-clock (second words))
         ;;"otim" (cecp-set-opponent-clock (second words))
-        "usermove" (make-chess-move! (second words))
+        "usermove" (user-move (second words))
         ;;"?" (cecp-move-now)
         "ping" (cecp-ping (second words))
         ;; set draw=1 to enable
@@ -372,7 +378,7 @@
         ;;"egtpath" (cecp-set-egtpath (second words))
         "option" (cecp-parse-option (second words))
         (when (move-string? (first words))
-          (make-chess-move! (first words)))))
+          (user-move (first words)))))
 
 (defn- print-usage
   "Prints the available commands of the repl."
