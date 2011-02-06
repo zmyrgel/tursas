@@ -165,16 +165,15 @@
   "Can the piece in index on board be captured by opponents king.
    Checks this by looking for a king within next squares and then
    checking if it can move to index and not be threatened instead."
-  [board index opponent]
-  (let [[player opp-king] (if (== opponent WHITE)
-                            [BLACK WHITE-KING]
-                            [WHITE BLACK-KING])]
-    (if (empty? (filter #(= (get board %) opp-king)
-                      (map #(+ index %) king-movement)))
-      false
-      (not (-> board
-               (fill-square index opp-king)
-               (threatened? index player))))))
+  [board index opp]
+  (let [opp-king (if (== opp WHITE)
+                   WHITE-KING
+                   BLACK-KING)]
+    (and (not (empty? (filter #(= (get board %) opp-king)
+                              (map #(+ index %) king-movement))))
+         (not (-> board
+                  (fill-square (int index) opp-king)
+                  (threatened? (int index) (opponent opp)))))))
 
 (defn- threaten-by-white?
   "Checks if given index is threatened by white player."
