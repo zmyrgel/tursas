@@ -191,17 +191,16 @@
   "If given string represents chess move, apply it to current game."
   [s]
   (if (move-string? s)
-    (let [state (first @game-state)]
-      (if-let [new-state (apply-move state (coord->move s))]
-        (do (add-game-state! new-state)
-            (when (game-end? new-state)
-              (result new-state))
-            (when (get-option :ai-mode)
-              (let [move (ai-move!)]
-                (if (game-end? (first @game-state))
-                  (result (first @game-state))
-                  move))))
-        (str "Illegal move: " s)))
+    (if-let [new-state (apply-move (first @game-state) (coord->move s))]
+      (do (add-game-state! new-state)
+          (when (game-end? new-state)
+            (result new-state))
+          (when (get-option :ai-mode)
+            (let [move (ai-move!)]
+              (if (game-end? (first @game-state))
+                (result (first @game-state))
+                move))))
+      (str "Illegal move: " s))
     (str "Illegal move: " s)))
 
 (defn undo-move!
