@@ -193,13 +193,11 @@
   (if (move-string? s)
     (if-let [new-state (apply-move (first @game-state) (coord->move s))]
       (do (add-game-state! new-state)
-          (when (game-end? new-state)
-            (result new-state))
-          (when (get-option :ai-mode)
-            (let [move (ai-move!)]
-              (if (game-end? (first @game-state))
-                (result (first @game-state))
-                move))))
+          (cond (game-end? (first @game-state)) (result (first @game-state))
+                (get-option :ai-mode) (let [move (ai-move!)]
+                                        (if (game-end? (first @game-state))
+                                          (result (first @game-state))
+                                          move))))
       (str "Illegal move: " s))
     (str "Illegal move: " s)))
 
