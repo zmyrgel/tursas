@@ -176,24 +176,34 @@
                (fill-square (int index) opp-king)
                (threatened? (int index) player))))))
 
+(defn- threaten-by-white?
+  "Checks if given index is threatened by white player."
+  [board index]
+  (let [threaten-by-p? (partial threaten-by-piece? board index WHITE)
+        threaten-by-s? (partial threaten-by-slider? board index WHITE)]
+    (or (threaten-by-p? WHITE-KNIGHT knight-movement)
+        (threaten-by-s? [WHITE-QUEEN WHITE-ROOK] rook-directions)
+        (threaten-by-s? [WHITE-QUEEN WHITE-BISHOP] bishop-directions)
+        (threaten-by-p? WHITE-PAWN [SE SW])
+        (threaten-by-king? board index WHITE))))
+
+(defn- threaten-by-black?
+  "Checks if given index is threatened by black player."
+  [board index]
+  (let [threaten-by-p? (partial threaten-by-piece? board index BLACK)
+        threaten-by-s? (partial threaten-by-slider? board index BLACK)]
+    (or (threaten-by-p? BLACK-KNIGHT knight-movement)
+        (threaten-by-s? [BLACK-QUEEN BLACK-ROOK] rook-directions)
+        (threaten-by-s? [BLACK-QUEEN BLACK-BISHOP] bishop-directions)
+        (threaten-by-p? BLACK-PAWN [NE NW])
+        (threaten-by-king? board index BLACK))))
+
 (defn threatened?
-  "Checks if given index in state is under threath of enemy."
+  "Checks if given index on board is threatened by opponent."
   [board index opponent]
-  (let [threaten-by-p? (partial threaten-by-piece? board index opponent)
-        threaten-by-s? (partial threaten-by-slider? board index opponent)
-        [qb qr knight pawn pawn-places]
-        (if (== opponent WHITE)
-          [[WHITE-QUEEN WHITE-BISHOP]
-           [WHITE-QUEEN WHITE-ROOK]
-           WHITE-KNIGHT WHITE-PAWN [SE SW]]
-          [[BLACK-QUEEN BLACK-BISHOP]
-           [BLACK-QUEEN BLACK-ROOK]
-           BLACK-KNIGHT BLACK-PAWN [NE NW]])]
-    (or (threaten-by-p? knight knight-movement)
-        (threaten-by-s? qr rook-directions)
-        (threaten-by-s? qb bishop-directions)
-        (threaten-by-p? pawn pawn-places)
-        (threaten-by-king? board index opponent))))
+  (if (== opponent WHITE)
+    (threaten-by-white? board index)
+    (threaten-by-black? board index)))
 
 (defn- legal-castling?
   "Predicate to check if castling is possible on the board."
