@@ -187,7 +187,7 @@
   [option]
   (set-option! option (not (get-option option))))
 
-(defn make-chess-move
+(defn make-chess-move!
   "If given string represents chess move, apply it to current game."
   [s]
   (if (move-string? s)
@@ -341,7 +341,7 @@
         ;; set time=1 to enable these
         ;;"time" (cecp-set-engine-clock (second words))
         ;;"otim" (cecp-set-opponent-clock (second words))
-        "usermove" (make-chess-move (second words))
+        "usermove" (make-chess-move! (second words))
         ;;"?" (cecp-move-now)
         "ping" (cecp-ping (second words))
         ;; set draw=1 to enable
@@ -377,7 +377,7 @@
         ;;"egtpath" (cecp-set-egtpath (second words))
         "option" (cecp-parse-option (second words))
         (when (move-string? (first words))
-          (make-chess-move (first words)))))
+          (make-chess-move! (first words)))))
 
 (defn- print-usage
   "Prints the available commands of the repl."
