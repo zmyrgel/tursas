@@ -35,14 +35,14 @@
   "Utility to calculate new en-passant value.
    If pawn moves two steps next to opponents pawn, place en-passant
    value as board index just behind moved pawn, otherwise -1."
-  [player piece west-piece east-piece from to]
+  [player piece west-piece east-piece move]
   (let [opp-pawn (if (== player WHITE) BLACK-PAWN WHITE-PAWN)]
     (if (and (or (== piece WHITE-PAWN)
                  (== piece BLACK-PAWN))
-             (== (abs (- to from)) 0x20)
+             (== (abs (- (:to move) (:from move))) 0x20)
              (or (== opp-pawn west-piece)
                  (== opp-pawn east-piece)))
-      (/ (+ to from) 2)
+      (/ (+ (:to move) (:from move)) 2)
       -1)))
 
 (defn- inc-full-moves
@@ -192,12 +192,11 @@
   (when-not (nil? state)
     (assoc state :board
            (fill-square (:board state) EN-PASSANT-STORE
-                        (calculate-en-passant (int (get (:board state) TURN-STORE))
-                                              (int (get (:board state) (int (:to move)) 0))
-                                              (int (get (:board state) (+ (int (:to move)) WEST) 0))
-                                              (int (get (:board state) (+ (int (:to move)) EAST) 0))
-                                              (int (:from move))
-                                              (int (:to move)))))))
+                        (calculate-en-passant (get (:board state) TURN-STORE)
+                                              (get (:board state) (:to move) 0)
+                                              (get (:board state) (+ (:to move) WEST) 0)
+                                              (get (:board state) (+ (:to move) EAST) 0)
+                                              move)))))
 
 (defn- update-full-moves
   "Updates full move count on board."
