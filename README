@@ -93,15 +93,9 @@ Available XBoard commands are:
 ## Known issues
 
 Currently the game engine will occasionally crash when playing it with
-XBoard.  Seems the when black player is in check, it might try to make
-illegal move for some reason.
-
-Also, game doesn't seem to detect end-game condition correctly. When
-white is in check-mate the game won't quit, it just waits for a move.
-
-And some issues with alpha-beta search. At least when black is played
-by AI it selects very poor moves when search depth is set to 3, works
-fine with 4. Need to test if this is some odd/even think in the code.
+XBoard. AI seems to choose illegal moves occasionally. I have a hunch
+that this issue lies in the threaten-by-king function, particulary
+when king is threatened by opponents king.
 
 ## License
 
