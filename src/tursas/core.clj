@@ -112,7 +112,7 @@
             first
             legal-moves)))
 
-(defn ai-move
+(defn ai-move!
   "Prompt a move from AI and add it to game-state."
   []
   (if (empty? @game-state)
@@ -197,7 +197,7 @@
             (when (game-end? new-state)
               (result new-state))
             (when (get-option :ai-mode)
-              (let [move (ai-move)]
+              (let [move (ai-move!)]
                 (if (game-end? (first @game-state))
                   (result (first @game-state))
                   move))))
@@ -410,7 +410,7 @@
           "fd" (display-fen)
           "lm" (list-moves)
           "gs" (get-score)
-          "cp" (do (ai-move)
+          "cp" (do (ai-move!)
                    (display-board))
           "es" (eval-current-state)
           "pf" (display-perft (second words))
