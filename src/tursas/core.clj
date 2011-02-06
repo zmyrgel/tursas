@@ -180,7 +180,7 @@
   [option]
   (@game-options option))
 
-(defn toggle-option!
+(defn- toggle-option!
   "Toggles the value of given boolean game option."
   [option]
   (set-option! option (not (get-option option))))
