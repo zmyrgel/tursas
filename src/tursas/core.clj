@@ -112,18 +112,6 @@
             first
             legal-moves)))
 
-(defn ai-move!
-  "Prompt a move from AI and add it to game-state."
-  []
-  (if (empty? @game-state)
-    "Can't calculate score from empty state!"
-    (let [old-state (first @game-state)
-          depth (:depth-limit @game-options)]
-      (do (add-game-state! (second (alpha-beta old-state -inf inf depth)))
-          (str "move " (-> (first @game-state)
-                           last-move
-                           move->coord))))))
-
 (defn get-score
   "Calculates state's score by checking child states
    to certain depth using alpha-beta algorithm."
@@ -185,25 +173,38 @@
   [option]
   (set-option! option (not (get-option option))))
 
-(defn make-chess-move!
+(defn make-ai-move!
+  "Make a n AI move."
+  []
+  (if (empty? @game-state)
+    "Can't calculate score from empty state!"
+    (let [old-state (first @game-state)
+          depth (get-option :depth-limit)]
+      (do (add-game-state! (second (alpha-beta old-state -inf inf depth)))
+          (str "move " (-> (first @game-state)
+                           last-move
+                           move->coord))))))
+
+(defn make-human-move!
   "If given string represents chess move, apply it to current game."
   [s]
   (if (move-string? s)
     (if-let [new-state (apply-move (first @game-state) (coord->move s))]
-      (do (add-game-state! new-state)
-          (when (game-end? (first @game-state))
-            (result (first @game-state))))
+      (add-game-state! new-state)
       (str "Illegal move: " s))
     (str "Illegal move: " s)))
 
 (defn- user-move
   "Helper function to handle user and ai moves."
   [s]
-  (make-chess-move! s)
-  (when (get-option :ai-mode)
-    (let [move (ai-move!)]
-      (make-chess-move! move)
-      move)))
+  (make-human-move! s)
+  (if (game-end? (first @game-state))
+    (result (first @game-state))
+    (when (get-option :ai-mode)
+      (let [move (make-ai-move!)]
+        (if (game-end? (first @game-state))
+          (result (first @game-state))
+          move)))))
 
 (defn undo-move!
   "Undo last move or if N given, N last moves."
@@ -411,7 +412,7 @@
           "fd" (display-fen)
           "lm" (list-moves)
           "gs" (get-score)
-          "cp" (do (ai-move!)
+          "cp" (do (make-ai-move!)
                    (display-board))
           "es" (eval-current-state)
           "pf" (display-perft (second words))
