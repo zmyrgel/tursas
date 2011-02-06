@@ -144,7 +144,7 @@
            (fill-square (:board state) HALF-MOVE-STORE
                         (if (pawn-or-capture-move? (:board state) move)
                           0
-                          (inc (byte (get (:board state) HALF-MOVE-STORE))))))))
+                          (inc (get (:board state) HALF-MOVE-STORE)))))))
 
 (defn- update-board
   "Returns state with new board after applying move to state."
