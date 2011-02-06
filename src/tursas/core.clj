@@ -198,8 +198,8 @@
               (result new-state))
             (when (get-option :ai-mode)
               (let [move (ai-move)]
-                (if (game-end? new-state)
-                  (result new-state)
+                (if (game-end? (first @game-state))
+                  (result (first @game-state))
                   move))))
         (str "Illegal move: " s)))
     (str "Illegal move: " s)))
