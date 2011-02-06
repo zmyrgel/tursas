@@ -92,10 +92,13 @@ Available XBoard commands are:
 
 ## Known issues
 
-Currently the game engine will occasionally crash when playing it with
-XBoard. AI seems to choose illegal moves occasionally. I have a hunch
-that this issue lies in the threaten-by-king function, particulary
-when king is threatened by opponents king.
+- The game engine will occasionally crash when playing it with
+  XBoard. AI seems to choose illegal moves occasionally. I have a hunch
+  that this issue lies in the threaten-by-king function, particulary
+  when king is threatened by opponents king.
+
+- The game will end occasionally to mate condition after AI move
+  although white king is not even in check. Investigating this.
 
 ## License
 
