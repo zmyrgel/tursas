@@ -148,7 +148,7 @@
          (= fen "mate") (fen->state mate-fen)
          (= fen "bmate") (fen->state mate-1-fen)
          (= fen "en") (fen->state en-fen)
-         :else (fen->state fen))))
+         :else (fen->state (s/join " " fen)))))
 
 (defn set-option!
   "Sets game option of given key to value."
@@ -343,7 +343,7 @@
         ;;"draw" (cecp-draw)
         "result" (cecp-result (rest words))
         ;; setboard=0 to disable setboard and use edit words
-        "setboard" (set-game! (second words))
+        "setboard" (set-game! (rest words))
         ;;"edit" (cecp-enter-edit-mode)
         ;;"." (cecp-exit-edit-mode)
         "hint" (get-hint)
@@ -396,7 +396,7 @@
 (defn process-command
   "Processes command given by user."
   [command]
-  (loop [words (re-seq #"\w+" command)]
+  (loop [words (re-seq #"\S+" command)]
     (case (first words)
           "help" (print-usage)
           "load" (load-game)
