@@ -167,10 +167,9 @@
   "Checks that players move won't leave the players king in check."
   [state]
   (when-not (nil? state)
-    (let [player (get (:board state) TURN-STORE)]
-      (when-not (threatened? (:board state)
-                             (king-index state player)
-                             (opponent player))
+    (let [board (:board state)
+          player (get board TURN-STORE)]
+      (when-not (threatened? board (king-index board player) (opponent player))
         state))))
 
 (defn- update-castling
@@ -211,11 +210,12 @@
    Enables check bit in state if opponents king is threatened."
   [state]
   (when-not (nil? state)
-    (let [player (get (:board state) TURN-STORE)]
+    (let [board (:board state)
+          player (get board TURN-STORE)]
       (assoc state :board
-             (fill-square (:board state) CHECK-STORE
-                          (if (threatened? (:board state)
-                                           (king-index state (opponent player))
+             (fill-square board CHECK-STORE
+                          (if (threatened? board
+                                           (king-index board (opponent player))
                                            player)
                             1
                             0))))))

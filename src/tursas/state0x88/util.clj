@@ -149,10 +149,10 @@
 
 (defn king-index
   "Gets the kings index in state for side."
-  [state player]
-  (get (:board state) (if (= player WHITE)
-                        WHITE-KING-STORE
-                        BLACK-KING-STORE)))
+  [board player]
+  (get board (if (= player WHITE)
+               WHITE-KING-STORE
+               BLACK-KING-STORE)))
 
 (defn update-king-index
   "Updates index of given player's king in outer board."
