@@ -180,33 +180,33 @@
 (defn make-human-move!
   "If given string represents chess move, apply it to current game."
   [s]
-  (if (move-string? s)
-    (if-let [new-state (apply-move (first @game-state) (coord->move s))]
-      (add-game-state! new-state)
-      (str "Illegal move: " s))
-    (str "Illegal move: " s)))
+  (when (move-string? s)
+    (when-let [new-state (apply-move (first @game-state) (coord->move s))]
+      (do (add-game-state! new-state)
+          true))))
 
 (defn- user-move
   "Helper function to handle user and ai moves."
   [s]
-  (make-human-move! s)
-  (if (game-end? (first @game-state))
-    (result (first @game-state))
-    (when (get-option :ai-mode)
-      (let [move (make-ai-move!)]
-        (if (game-end? (first @game-state))
-          (result (first @game-state))
-          move)))))
+  (if (nil? (make-human-move! s))
+    (str "Illegal move: " s)
+    (if (game-end? (first @game-state))
+      (result (first @game-state))
+      (when (get-option :ai-mode)
+        (let [move (make-ai-move!)]
+          (if (game-end? (first @game-state))
+            (result (first @game-state))
+            move))))))
 
 (defn undo-move!
   "Undo last move or if N given, N last moves."
   [& n]
-  (dosync
-   (ref-set game-state
-            (if (nil? n)
-              (rest @game-state)
-              (nthnext @game-state n)))
-   nil))
+  (do (dosync
+       (ref-set game-state
+                (if (nil? n)
+                  (rest @game-state)
+                  (nthnext @game-state n))))
+      nil))
 
 (defn cecp-print-supported-features
   "Prints the default features of the engine."
