@@ -16,27 +16,19 @@
 (def inf Integer/MAX_VALUE)
 (def -inf (+ Integer/MIN_VALUE 1))
 
-(def cecp-supported-features {:ping 1, :setboard 1, :playother 1, :san 0
-                              :usermove 0, :time 0, :draw 1, :sigint 0
-                              :sigterm 0, :reuse 0, :analyse 0
-                              :myname "\"Tursas 0.1\"", :variants "\"normal\""
-                              :colors 0, :ics 0, :name 0, :pause 0, :nps 0
-                              :debug 0, :memory 0, :smp 0, :done 1})
+(def cecp-supported-features {:ping 1 :setboard 1 :playother 1 :san 0
+                              :usermove 0 :time 0 :draw 1 :sigint 0
+                              :sigterm 0 :reuse 0 :analyse 0
+                              :myname "\"Tursas 0.1\"" :variants "\"normal\""
+                              :colors 0 :ics 0 :name 0 :pause 0 :nps 0
+                              :debug 0 :memory 0 :smp 0 :done 1})
 
 (def protocol (ref :general))
 (def game-state (ref ()))
-(def game-options (ref {:depth-limit 4
-                        :random-mode false
-                        :ai-mode false
-                        :cecp-protocol-version 1
-                        :debug false
-                        :ponder false
-                        :ponder-output false
-                        :movestogo 0
-                        :white-increment 0
-                        :black-increment 0
-                        :move-limit nil
-                        :search-time 0}))
+(def game-options (ref {:depth-limit 4 :random-mode false :ai-mode false
+                        :cecp-protocol-version 1 :debug false :ponder false
+                        :ponder-output false :movestogo 0 :white-increment 0
+                        :black-increment 0 :move-limit nil :search-time 0}))
 
 (defn quit
   "Function to handle closing the engine."
