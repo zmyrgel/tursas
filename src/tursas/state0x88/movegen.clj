@@ -168,12 +168,13 @@
   [board index opp]
   (let [opp-king (if (== opp WHITE)
                    WHITE-KING
-                   BLACK-KING)]
+                   BLACK-KING)
+        idx (int index)]
     (and (not (empty? (filter #(= (get board %) opp-king)
-                              (map #(+ index %) king-movement))))
+                              (map #(+ idx %) king-movement))))
          (not (-> board
-                  (fill-square (int index) opp-king)
-                  (threatened? (int index) (opponent opp)))))))
+                  (fill-square idx opp-king)
+                  (threatened? idx (opponent opp)))))))
 
 (defn- threaten-by-white?
   "Checks if given index is threatened by white player."
