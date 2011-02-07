@@ -231,8 +231,6 @@
         "force - Disable engine AI"
         "go - Enable engine AI"
         ;;"playother - Tell AI to switch sides"
-        ;;"white - Tell white to move, engine to play black [obsolete]"
-        ;;"black - Tell black to move, engine to play white [obsolete]"
         ;;"level MPS BASE INC - set time controls"
         ;;"st TIME - set time controls"
         "sd DEPTH - set search depth to DEPTH"
@@ -327,8 +325,6 @@
         ;; set playother=1 to enable
         ;;"playother" (cecp-playother)
         ;; set colors=1 to enable these
-        ;;"white" (cecp-white)
-        ;;"black" (cecp-black)
         ;;"level" (set-option! :level (rest words))
         ;;"st" (set-option! :time (second words))
         "sd" (set-option! :depth-limit (second words))
