@@ -141,14 +141,15 @@
   "Sets game to given FEN state."
   [fen]
   (add-game-state!
-   (cond (= fen "startpos") (fen->state startpos)
-         (= fen "check") (fen->state check-fen)
-         (= fen "cast") (fen->state cast-fen)
-         (= fen "prom") (fen->state prom-fen)
-         (= fen "mate") (fen->state mate-fen)
-         (= fen "bmate") (fen->state mate-1-fen)
-         (= fen "en") (fen->state en-fen)
-         :else (fen->state (s/join " " fen)))))
+   (let [fen (s/join " " fen)]
+     (cond (= fen "startpos") (fen->state startpos)
+           (= fen "check") (fen->state check-fen)
+           (= fen "cast") (fen->state cast-fen)
+           (= fen "prom") (fen->state prom-fen)
+           (= fen "mate") (fen->state mate-fen)
+           (= fen "bmate") (fen->state mate-1-fen)
+           (= fen "en") (fen->state en-fen)
+           :else (fen->state fen)))))
 
 (defn set-option!
   "Sets game option of given key to value."
