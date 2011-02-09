@@ -79,7 +79,7 @@
   "Check if given state is in stalemate."
   [state]
   (and (not (check? state))
-       (empty? (legal-moves state))))
+       (empty? (legal-states state))))
 
 (defn- fide-draw?
   "Checks if state is draw according to FIDE rules:
