@@ -139,9 +139,9 @@
 
 (defn set-game!
   "Sets game to given FEN state."
-  [s]
+  [lst]
   (add-game-state!
-   (let [fen (s/join " " s)]
+   (let [fen (first lst)]
      (cond (= fen "startpos") (fen->state startpos)
            (= fen "check") (fen->state check-fen)
            (= fen "cast") (fen->state cast-fen)
@@ -149,7 +149,7 @@
            (= fen "mate") (fen->state mate-fen)
            (= fen "bmate") (fen->state mate-1-fen)
            (= fen "en") (fen->state en-fen)
-           :else (fen->state fen)))))
+           :else (fen->state (s/join " " lst))))))
 
 (defn set-option!
   "Sets game option of given key to value."
@@ -315,7 +315,7 @@
                        (cecp-print-supported-features))
         "accepted" (cecp-accept-feature)
         "rejected" (cecp-reject-feature)
-        "new" (do (set-game! "startpos")
+        "new" (do (set-game! '("startpos"))
                   (set-option! :ai-mode true)
                   (set-option! :random-mode false))
         "variant" (set-option! :variant (second words))
