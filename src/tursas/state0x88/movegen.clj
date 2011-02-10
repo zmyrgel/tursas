@@ -110,7 +110,7 @@
   (let [movement (- (:to move) (:from move))]
     (and (or (== piece WHITE-PAWN)
              (== piece BLACK-PAWN))
-         (any? #(= % movement) [SW SE NE NW])
+         (true? (some #(== % movement) [SW SE NE NW]))
          (empty-square? board (:to move)))))
 
 (defn- slide-in-dir
@@ -145,20 +145,21 @@
   (let [new-index (int (+ index dir))]
     (cond (not (board-index? new-index)) false
           (empty-square? board new-index) (recur board new-index dir pieces)
-          :else (any? #(= (get board new-index) %) pieces))))
+          :else (true? (some #(== (get board new-index) %)
+                             pieces)))))
 
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
   [board index opponent piece places]
-  (any? #(= (get board (+ index %)) piece)
-        places))
+  (true? (some #(= (get board (+ index %)) piece)
+               places)))
 
 (defn- threaten-by-slider?
   "Can the piece in index of board be captured
    by opponents queen or rook?"
   [board index opponent pieces directions]
-  (any? true? (map #(ray-to-pieces? board index % pieces)
-                   directions)))
+  (true? (some true? (map #(ray-to-pieces? board index % pieces)
+                          directions))))
 
 (declare threatened?)
 (defn- threaten-by-king?
@@ -331,6 +332,6 @@
   (let [player (int (get (:board state) TURN-STORE))
         piece (int (get (:board state) (int (:from move))))]
     (and (occupied-by? (:board state) (int (:from move)) player)
-         (any? #(and (== (:from move) (:from %))
-                     (== (:to move) (:to %)))
-               (piece-moves (:board state) player (:from move) piece)))))
+         (true? (some #(and (== (:from move) (:from %))
+                            (== (:to move) (:to %)))
+                      (piece-moves (:board state) player (:from move) piece))))))

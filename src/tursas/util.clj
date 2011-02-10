@@ -4,17 +4,13 @@
 
 (def promotion-chars "rnbq")
 
-(defn any?
-  "Predicate to see if any of the items of coll return true on pred."
-  [pred coll]
-  (true? (some pred coll)))
-
 (defn valid-coord?
   "Predicate to check given coord for valid chess coordinate."
   [coord]
-  (any? #(= coord %)
-        (for [x (range 8) y (range 8)]
-          (str (get "abcdefgh" x) (inc y)))))
+  (true?
+   (some #(= coord %)
+         (for [x (range 8) y (range 8)]
+           (str (get "abcdefgh" x) (inc y))))))
 
 (defn split-move
   "Partitions chess move given in coordinate notation to pair of coordinates
