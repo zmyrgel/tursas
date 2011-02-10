@@ -166,19 +166,15 @@
    Checks this by looking for a king within next squares and then
    checking if it can move to index and not be threatened instead."
   [board index opp]
-  (let [[player king opp-king] (if (== opp WHITE)
-                                 [BLACK BLACK-KING WHITE-KING]
-                                 [WHITE WHITE-KING BLACK-KING])
-        idx (int index)
-        opp-king-idx (king-index board opp)]
-    (and (number? (some #{opp-king-idx}
-                        (map #(+ idx %) king-movement)))
-         (not (-> (if (== (get board index) king)
-                    (update-king-index board 0x7F player)
-                    board)
-                  (clear-square (int opp-king-idx))
-                  (fill-square idx opp-king)
-                  (threatened? idx player))))))
+  (let [[player opp-king] (if (== opp WHITE)
+                            [BLACK WHITE-KING]
+                            [WHITE BLACK-KING])]
+    (if (empty? (filter #(= (get board %) opp-king)
+                        (map #(+ index %) king-movement)))
+      false
+      (not (-> board
+               (fill-square (int index) opp-king)
+               (threatened? (int index) player))))))
 
 (defn- threaten-by-white?
   "Checks if given index is threatened by white player."
