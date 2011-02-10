@@ -108,17 +108,17 @@
 (defn parse-fen
   "Parses information from given FEN and applies it to given state."
   [s state]
-  (when-let [fen-list (re-seq #"\S+" s)]
+  (when-let [[board turn cast en-pass half full] (re-seq #"\S+" s)]
     (-> (assoc state :board
-               (-> (fen-board->0x88board (first fen-list))
-                   (fill-square TURN-STORE (if (= (second fen-list) "w")
+               (-> (fen-board->0x88board board)
+                   (fill-square TURN-STORE (if (= turn "w")
                                              WHITE BLACK))
-                   (fill-square CASTLING-STORE (castling->value (nth fen-list 2)))
-                   (fill-square EN-PASSANT-STORE (if (= (nth fen-list 3) "-")
+                   (fill-square CASTLING-STORE (castling->value cast))
+                   (fill-square EN-PASSANT-STORE (if (= en-pass "-")
                                                    -1
-                                                   (coord->index (nth fen-list 3))))
-                   (fill-square HALF-MOVE-STORE (Integer/parseInt (nth fen-list 4)))
-                   (add-full-moves (Integer/parseInt (nth fen-list 5)))))
+                                                   (coord->index en-pass)))
+                   (fill-square HALF-MOVE-STORE (Integer/parseInt half))
+                   (add-full-moves (Integer/parseInt full))))
         add-pieces
         add-king-indexes)))
 
