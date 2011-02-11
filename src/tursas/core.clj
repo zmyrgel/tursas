@@ -197,10 +197,10 @@
       (when (get-option :ai-mode)
         (let [move (make-ai-move!)]
           (if (game-end? (first @game-state))
-            (result (first @game-state))
+            (s/join "\n" [move (result (first @game-state))])
             move))))))
 
-(defn undo-move!
+(defn- undo-move!
   "Undo last move or if N given, N last moves."
   [& n]
   (do (dosync
