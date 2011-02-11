@@ -345,7 +345,6 @@
         "usermove" (user-move (second words))
         ;;"?" (cecp-move-now)
         "ping" (cecp-ping (second words))
-        ;; set draw=1 to enable
         "draw" (cecp-draw)
         "result" (cecp-result (rest words))
         ;; setboard=0 to disable setboard and use edit words
