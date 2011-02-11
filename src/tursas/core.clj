@@ -30,18 +30,18 @@
                         :ponder-output false :movestogo 0 :white-increment 0
                         :black-increment 0 :move-limit nil :search-time 0}))
 
-(defn quit
+(defn- quit
   "Function to handle closing the engine."
   []
   (System/exit 0))
 
-(defn save-game
+(defn- save-game
   "Saves the current game by writing game-state to file."
   []
   (binding [*out* (java.io.FileWriter. "saved-game.txt")]
     (prn @game-state)))
 
-(defn load-game
+(defn- load-game
   "Loads the game-state from file to resume the previous game."
   []
   (try
@@ -49,12 +49,12 @@
       (dosync (ref-set game-state state)))
     (catch Exception e nil)))
 
-(defn get-protocol
+(defn- get-protocol
   "Returns currently active reader protocol"
   []
   @protocol)
 
-(defn set-protocol!
+(defn- set-protocol!
   "Sets the currently active reader protocol"
   [prot]
   (dosync (ref-set protocol prot)))
@@ -65,7 +65,7 @@
   (do (dosync (ref-set game-state (cons new-state @game-state)))
       nil))
 
-(defn display-board
+(defn- display-board
   "Displays the current chess board in ASCII."
   []
   (if (empty? @game-state)
@@ -80,14 +80,14 @@
                                                 ", WHITE IN CHECK!"
                                                 ", BLACK IN CHECK!")))))
 
-(defn display-fen
+(defn- display-fen
   "Display FEN of currect game state."
   []
   (->> @game-state
        first
        state->fen))
 
-(defn display-perft
+(defn- display-perft
   "Display Perft of given depth."
   [depth]
   (if (empty? @game-state)
@@ -96,7 +96,7 @@
               first
               (perft (Integer/parseInt depth))))))
 
-(defn list-moves
+(defn- list-moves
   "List all available moves from currect state."
   []
   (map #(move->coord %)
@@ -104,7 +104,7 @@
             first
             legal-moves)))
 
-(defn get-score
+(defn- get-score
   "Calculates state's score by checking child states
    to certain depth using alpha-beta algorithm."
   []
@@ -115,7 +115,7 @@
         first
         str)))
 
-(defn eval-current-state
+(defn- eval-current-state
   "Evaluates the current state and prints its score."
   []
   (if (empty? @game-state)
@@ -125,7 +125,7 @@
          evaluate
          str)))
 
-(defn get-hint
+(defn- get-hint
   "Evaluates all states and chooses one from top five moves at random."
   []
   (if (empty? @game-state)
@@ -137,7 +137,7 @@
         last-move
         move->coord)))
 
-(defn set-game!
+(defn- set-game!
   "Sets game to given FEN state."
   [lst]
   (add-game-state!
@@ -151,13 +151,13 @@
            (= fen "en") (fen->state en-fen)
            :else (fen->state (s/join " " lst))))))
 
-(defn set-option!
+(defn- set-option!
   "Sets game option of given key to value."
   [k v]
   (do (dosync (alter game-options assoc k v))
       nil))
 
-(defn get-option
+(defn- get-option
   "Returns value of given game option"
   [option]
   (@game-options option))
@@ -167,7 +167,7 @@
   [option]
   (set-option! option (not (get-option option))))
 
-(defn make-ai-move!
+(defn- make-ai-move!
   "Make a n AI move."
   []
   (if (empty? @game-state)
@@ -179,7 +179,7 @@
                            last-move
                            move->coord))))))
 
-(defn make-human-move!
+(defn- make-human-move!
   "If given string represents chess move, apply it to current game."
   [s]
   (when (move-string? s)
@@ -210,7 +210,7 @@
                   (nthnext @game-state n))))
       nil))
 
-(defn cecp-print-supported-features
+(defn- cecp-print-supported-features
   "Prints the default features of the engine."
   []
   (for [option (keys cecp-supported-features)]
@@ -218,7 +218,7 @@
             (s/as-str option)
             (cecp-supported-features option))))
 
-(defn print-cecp-usage
+(defn- print-cecp-usage
   "Prints the available commands of the repl."
   []
   (list "Available Cecp commands are:"
@@ -266,39 +266,41 @@
         ;;"egtpath PATH - tell engine to use end-game tables from PATH"
         "option NAME[=VALUE] - tell engine to use new option"))
 
-(defn cecp-accept-feature
+(defn- cecp-accept-feature
   "Tells the engine that GUI accepts last feature."
   [])
 
-(defn cecp-reject-feature
+(defn- cecp-reject-feature
   "Tells the engine that GUI rejects given feature."
   [])
 
-(defn cecp-move-now
+(defn- cecp-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
 
-(defn cecp-ping
+(defn- cecp-ping
   "Tells Cecp to wait for all the stuff to complete given before this
    and once done, respond with pong"
   [n]
   (str "pong " n))
 
-(defn cecp-result
+(defn- cecp-result
   "Sets the game result to engine, for learning purposes
    discarded by Tursas for now."
   [result])
 
-(defn cecp-bk
+(defn- cecp-draw)
+
+(defn- cecp-bk
   "Tells the Cecp to use Book"
   [])
 
-(defn cecp-send-rating
+(defn- cecp-send-rating
   "Prompts the Engine to send its rating."
   []
   "100")
 
-(defn cecp-parse-option
+(defn- cecp-parse-option
   "Wrapper to parse options from string and set them."
   [option]
   (let [pair (s/split #"=" option)]
@@ -307,7 +309,7 @@
                    true
                    (second pair)))))
 
-(defn process-cecp-command
+(defn- process-cecp-command
   "Processes command in cecp mode."
   [words]
   (case (first words)
@@ -390,7 +392,7 @@
              :general nil
              :cecp (print-cecp-usage))))
 
-(defn process-command
+(defn- process-command
   "Processes command given by user."
   [command]
   (loop [words (re-seq #"\S+" command)]
