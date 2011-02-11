@@ -241,7 +241,7 @@
         "usermove MOVE - make given MOVE if legal"
         ;;"? - Tell Engine to stop thinking and make its move now"
         "ping N - Pings the engine for pong reply"
-        ;;"draw - offer draw to engine"
+        "draw - offer draw to engine"
         "result RESULT {COMMENTS} - give the game RESULT to engine"
         "setboard FEN - Set the game board to given FEN."
         ;;"edit - enable edit mode [obsolete]"
@@ -289,7 +289,14 @@
    discarded by Tursas for now."
   [result])
 
-(defn- cecp-draw)
+(defn- cecp-draw
+  "Offer draw to opponent."
+  []
+  (when (get-option :ai-mode)
+    (str "1/2-1/2 {" (if (= (turn (first @game-state)) :white)
+                       "WHITE"
+                       "BLACK")
+         " offered a draw!}")))
 
 (defn- cecp-bk
   "Tells the Cecp to use Book"
@@ -339,7 +346,7 @@
         ;;"?" (cecp-move-now)
         "ping" (cecp-ping (second words))
         ;; set draw=1 to enable
-        ;;"draw" (cecp-draw)
+        "draw" (cecp-draw)
         "result" (cecp-result (rest words))
         ;; setboard=0 to disable setboard and use edit words
         "setboard" (set-game! (rest words))
