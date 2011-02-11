@@ -92,19 +92,7 @@ Available XBoard commands are:
 
 ## Known issues
 
-- Occasional crashes on AI moves
-
-  The game engine will occasionally crash when playing it with
-  XBoard. AI seems to choose illegal moves occasionally. I have a
-  hunch that this issue lies in the threaten-by-king function,
-  particulary when king is threatened by opponents king.  (possibly
-  fixed, checking if this still comes up)
-
-- Incorrect check-mates
-
-  There seems to be some error in mate?  check. Game will randomly end
-  in blacks mate after white players turn. Not a clue yet what could
-  be causing this.
+None at the moment
 
 ## License
 
