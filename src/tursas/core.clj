@@ -333,7 +333,6 @@
         "ping" (cecp-ping (second words))
         "draw" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
         "result" (cecp-result (rest words))
-        ;; setboard=0 to disable setboard and use edit words
         "setboard" (set-game! (rest words))
         ;;"edit" (cecp-enter-edit-mode)
         ;;"." (cecp-exit-edit-mode)
@@ -345,21 +344,15 @@
         ;;"easy" (set-option! :ponder false)
         ;;"post" (set-option! :ponder-output true)
         ;;"nopost" (set-option! :ponder-output false)
-        ;; set analyse=1 to enable
         ;;"analyse" (cecp-analyse-mode)
         "name" (set-option! :opponent-name (second words))
         "rating" (cecp-send-rating)
-        ;; set ics=1 to enable
         ;;"ics" (cecp-ics)
         "computer" (set-option! :opponent :cpu)
-        ;; set pause=1 to enable
         ;;"pause" (cecp-pause)
         ;;"resume" (cecp-resume)
-        ;; set memory=1 to enable
         ;;"memory" (cecp-set-memory (second words))
-        ;; set smp=1
         ;;"cores" (cecp-set-cores (second words))
-        ;; set egtpath to enable
         ;;"egtpath" (cecp-set-egtpath (second words))
         "option" (cecp-parse-option (second words))
         (when (move-string? (first words))
