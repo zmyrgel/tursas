@@ -60,7 +60,7 @@
 
   Here's the planned command list for 1.0 version:
 
-  Available general commands:
+**** Available general commands:
   - help :: display this help
   - load :: load the last saved game from file
   - save :: store the current game to file
@@ -73,7 +73,7 @@
   - xboard :: enable xboard mode
   - quit :: quite the Tursas engine
 
-  Available XBoard commands are:
+**** Available XBoard commands are:
   - protover N :: change engine to use protocol version N
   - accepted :: Accept last feature
   - reject :: Reject last feature
