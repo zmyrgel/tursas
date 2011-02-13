@@ -59,6 +59,15 @@
   [prot]
   (dosync (ref-set protocol prot)))
 
+(defn- tursas-cmd
+  "Wrapper for commands which use current game state."
+  [msg f & args]
+  (if (empty? (first @game-state))
+    msg
+    (if (nil? args)
+      (f (first @game-state))
+      (apply f (first @game-state) args))))
+
 (defn- add-game-state!
   "Adds given state to game state."
   [new-state]
