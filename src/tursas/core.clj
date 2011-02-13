@@ -230,8 +230,6 @@
         "draw - offer draw to engine"
         "RESULT {COMMENTS} - give the game RESULT to engine"
         "setboard FEN - Set the game board to given FEN."
-        ;;"edit - enable edit mode [obsolete]"
-        ;;". - exit edit mode"
         "hint - prompt move hint from engine"
         ;;"bk - use book"
         "undo - tell engine to undo last move"
@@ -334,8 +332,6 @@
         "draw" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
         "result" (cecp-result (rest words))
         "setboard" (set-game! (rest words))
-        ;;"edit" (cecp-enter-edit-mode)
-        ;;"." (cecp-exit-edit-mode)
         "hint" (get-hint)
         ;;"bk" (cecp-bk)
         "undo" (undo-move!)
