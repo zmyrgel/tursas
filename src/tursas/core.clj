@@ -316,14 +316,11 @@
         "random" (toggle-option! :random-mode)
         "force" (set-option! :ai-mode false)
         "go" (set-option! :ai-mode true)
-        ;; set playother=1 to enable
         ;;"playother" (cecp-playother)
-        ;; set colors=1 to enable these
         ;;"level" (set-option! :level (rest words))
         ;;"st" (set-option! :time (second words))
         "sd" (set-option! :depth-limit (second words))
         ;;"nps" (set-option! :nps (rest words))
-        ;; set time=1 to enable these
         ;;"time" (cecp-set-engine-clock (second words))
         ;;"otim" (cecp-set-opponent-clock (second words))
         "usermove" (user-move (second words))
