@@ -1,116 +1,116 @@
 * Tursas
 
-Tursas is a chess engine implemented in Clojure. It tries to follow functional
-programming style throughout the code.
+  Tursas is a chess engine implemented in Clojure. It tries to follow functional
+  programming style throughout the code.
 
-This is my first project using either Lisp or functional programming style and
-this will reflect in the code too.
+  This is my first project using either Lisp or functional programming style and
+  this will reflect in the code too.
 
 * Roadmap
 
-These are my aims for the Tursas project.
+  These are my aims for the Tursas project.
 
 *** Version 0.1:
-- Subset of Chess Engine Communication Protocol implemented so engine can be played.
-- Working alphabeta algorithm
-- Game state representation with 0x88 board
-- Working evaluator which playes according to rules and can win weakest of
-  players
+    - Subset of Chess Engine Communication Protocol implemented so engine can be played.
+    - Working alphabeta algorithm
+    - Game state representation with 0x88 board
+    - Working evaluator which playes according to rules and can win weakest of
+      players
 
 *** Later versions
 
-Possibly added in later versions:
-- UCI protocol interface
-- Bitboard state representation
-- Negascout replacement for alphabeta
-- Full Chess Engine Communication Protocol implementation
+    Possibly added in later versions:
+    - UCI protocol interface
+    - Bitboard state representation
+    - Negascout replacement for alphabeta
+    - Full Chess Engine Communication Protocol implementation
 
 * Status
 
-- Game REPL: Done except there's isn't error detection in it
-- XBoard interface : Small subset of commands implemented
-- Saving / Loading game: Completed
-- Game: XBoard UI won't detect that game has ended yet
-- State representation: Completed with 0x88 board
-- Move generation: Done, testing things
-- Search algorithm: Simple alphabeta
-- Evaluator: Material balance and board location scores
+  - Game REPL: Done except there's isn't error detection in it
+  - XBoard interface : Small subset of commands implemented
+  - Saving / Loading game: Completed
+  - Game: XBoard UI won't detect that game has ended yet
+  - State representation: Completed with 0x88 board
+  - Move generation: Done, testing things
+  - Search algorithm: Simple alphabeta
+  - Evaluator: Material balance and board location scores
 
-The game is somewhat playable via repl. Currently debugging why XBoard
-UI won't cause game to end once mate has been achieved.
+    The game is somewhat playable via repl. Currently debugging why XBoard
+    UI won't cause game to end once mate has been achieved.
 
 * Installation
 
-Use leiningen to build the project.
-lein uberjar
+  Use leiningen to build the project.
+  lein uberjar
 
 * Running
 
-After making the jar file you can run the engine with
-java -jar tursas-0.1-standalone.jar
-or if using XBoard you can specify the engine via command:
-"xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
+  After making the jar file you can run the engine with
+  java -jar tursas-0.1-standalone.jar
+  or if using XBoard you can specify the engine via command:
+  "xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
 
 * Usage
 
-The game tries to support both UCI and XBoard protocol.  General repl
-commands are always available for use.  Once the uci or xboard command
-is given the active repl is changed and available command list is
-extended to support uci or xboard commands.
+  The game tries to support both UCI and XBoard protocol.  General repl
+  commands are always available for use.  Once the uci or xboard command
+  is given the active repl is changed and available command list is
+  extended to support uci or xboard commands.
 
-Here's the planned command list for 1.0 version:
+  Here's the planned command list for 1.0 version:
 
-Available general commands:
-  help - display this help
-  load - load the last saved game from file
-  save - store the current game to file
-  bd - display the board on the screen
-  fd - display current game state in FEN
-  lm - print a list of all available moves
-  gs - calculates score for the current game state
-  es - evaluates current game state
-  pf n - calculate perft score to depth of n
-  xboard - enable xboard mode
-  quit - quite the Tursas engine
+  Available general commands:
+  - help :: display this help
+  - load :: load the last saved game from file
+  - save :: store the current game to file
+  - bd :: display the board on the screen
+  - fd :: display current game state in FEN
+  - lm :: print a list of all available moves
+  - gs :: calculates score for the current game state
+  - es :: evaluates current game state
+  - pf n :: calculate perft score to depth of n
+  - xboard :: enable xboard mode
+  - quit :: quite the Tursas engine
 
-Available XBoard commands are:
- protover N - change engine to use protocol version N
- accepted - Accept last feature
- reject - Reject last feature
- variant VARIANT - change to use VARIANT rules. Only 'normal' supported
- random - Tell engine to add little random elements
- force - Disable engine AI
- go - Enable engine AI
- sd DEPTH - set search depth to DEPTH
- usermove MOVE - make given MOVE if legal
- ping N - Pings the engine for pong reply
- result RESULT {COMMENTS} - give the game RESULT to engine
- setboard FEN - Set the game board to given FEN.
- undo - tell engine to undo last move
- remove - tell engine to undo last two moves
- name X - tell engine its opponents name
- rating - ask engine its rating
- computer - tell engine that its playing against cpu
- option NAME[=VALUE] - tell engine to use new option
+  Available XBoard commands are:
+  - protover N :: change engine to use protocol version N
+  - accepted :: Accept last feature
+  - reject :: Reject last feature
+  - variant VARIANT :: change to use VARIANT rules. Only 'normal' supported
+  - random :: Tell engine to add little random elements
+  - force :: Disable engine AI
+  - go :: Enable engine AI
+  - sd DEPTH :: set search depth to DEPTH
+  - usermove MOVE :: make given MOVE if legal
+  - ping N :: Pings the engine for pong reply
+  - RESULT {COMMENTS} :: give the game RESULT to engine
+  - setboard FEN :: Set the game board to given FEN.
+  - undo :: tell engine to undo last move
+  - remove :: tell engine to undo last two moves
+  - name X :: tell engine its opponents name
+  - rating :: ask engine its rating
+  - computer :: tell engine that its playing against cpu
+  - option NAME[=VALUE] :: tell engine to use new option
 
 * Known issues
 
-None at the moment
+  None at the moment
 
 * License
 
-Copyright (c) 2010, Timo Myyrä
+  Copyright (c) 2010, Timo Myyrä
 
-Permission to use, copy, modify, and/or distribute this software for
-any purpose with or without fee is hereby granted, provided that the
-above copyright notice and this permission notice appear in all
-copies.
+  Permission to use, copy, modify, and/or distribute this software for
+  any purpose with or without fee is hereby granted, provided that the
+  above copyright notice and this permission notice appear in all
+  copies.
 
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
-WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
-AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
-PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+  WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+  AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+  DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+  PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+  TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+  PERFORMANCE OF THIS SOFTWARE.
