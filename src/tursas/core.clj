@@ -76,75 +76,55 @@
 
 (defn- display-board
   "Displays the current chess board in ASCII."
-  []
-  (if (empty? @game-state)
-    "Can't print empty board!"
-    (str (print-board (state->fen (first @game-state)))
-         (if (= (turn (first @game-state)) :white) "  WHITE" "  BLACK")
-           " TO MOVE"
-           (cond (mate? (first @game-state)) (if (= (turn (first @game-state)) :white)
-                                               ", WHITE IN MATE!"
-                                               ", BLACK IN MATE!")
-                 (check? (first @game-state)) (if (= (turn (first @game-state)) :white)
-                                                ", WHITE IN CHECK!"
-                                                ", BLACK IN CHECK!")))))
+  [state]
+  (str (print-board (state->fen state))
+       (if (= (turn state) :white) "  WHITE" "  BLACK")
+       " TO MOVE"
+       (cond (mate? state) (if (= (turn state) :white)
+                             ", WHITE IN MATE!"
+                             ", BLACK IN MATE!")
+             (check? state) (if (= (turn state) :white)
+                              ", WHITE IN CHECK!"
+                              ", BLACK IN CHECK!"))))
 
 (defn- display-fen
   "Display FEN of currect game state."
-  []
-  (->> @game-state
-       first
-       state->fen))
+  [state]
+  (state->fen state))
 
 (defn- display-perft
   "Display Perft of given depth."
-  [depth]
-  (if (empty? @game-state)
-    "Can't calculate perft from empty state!"
-    (time (-> @game-state
-              first
-              (perft (Integer/parseInt depth))))))
+  [state depth]
+  (time (perft state (Integer/parseInt depth))))
 
 (defn- list-moves
   "List all available moves from currect state."
-  []
+  [state]
   (map #(move->coord %)
-       (->> @game-state
-            first
-            legal-moves)))
+       (legal-moves state)))
 
 (defn- get-score
   "Calculates state's score by checking child states
    to certain depth using alpha-beta algorithm."
-  []
-  (if (empty? @game-state)
-    "Can't calculate score from empty state!"
-    (-> (first @game-state)
-        (alpha-beta -inf inf (:depth-limit @game-options))
-        first
-        str)))
+  [state]
+  (-> state
+      (alpha-beta -inf inf (:depth-limit @game-options))
+      first
+      str))
 
 (defn- eval-current-state
   "Evaluates the current state and prints its score."
-  []
-  (if (empty? @game-state)
-    "Can't evaluate score from empty game state!"
-    (->> @game-state
-         first
-         evaluate
-         str)))
+  [state]
+  (str (evaluate state)))
 
 (defn- get-hint
   "Evaluates all states and chooses one from top five moves at random."
-  []
-  (if (empty? @game-state)
-    "Can't calculate legal moves from empty state!"
-    (-> @game-state
-        first
-        (alpha-beta -inf inf 2)
-        second
-        last-move
-        move->coord)))
+  [state]
+  (-> state
+      (alpha-beta -inf inf 2)
+      second
+      last-move
+      move->coord))
 
 (defn- set-game!
   "Sets game to given FEN state."
@@ -178,33 +158,30 @@
 
 (defn- make-ai-move!
   "Make a n AI move."
-  []
-  (if (empty? @game-state)
-    "Can't calculate score from empty state!"
-    (let [old-state (first @game-state)
-          depth (get-option :depth-limit)]
-      (do (add-game-state! (second (alpha-beta old-state -inf inf depth)))
-          (str "move " (-> (first @game-state)
-                           last-move
-                           move->coord))))))
+  [state]
+  (let [depth (get-option :depth-limit)]
+    (do (add-game-state! (second (alpha-beta state -inf inf depth)))
+        (str "move " (-> (first @game-state)
+                         last-move
+                         move->coord)))))
 
 (defn- make-human-move!
   "If given string represents chess move, apply it to current game."
-  [s]
+  [state s]
   (when (move-string? s)
-    (when-let [new-state (apply-move (first @game-state) (coord->move s))]
+    (when-let [new-state (apply-move state (coord->move s))]
       (do (add-game-state! new-state)
           true))))
 
 (defn- user-move
   "Helper function to handle user and ai moves."
   [s]
-  (if (nil? (make-human-move! s))
+  (if (nil? (make-human-move! (first @game-state) s))
     (str "Illegal move: " s)
     (if (game-end? (first @game-state))
       (result (first @game-state))
       (when (get-option :ai-mode)
-        (let [move (make-ai-move!)]
+        (let [move (make-ai-move! (first @game-state))]
           (if (game-end? (first @game-state))
             (s/join "\n" [move (result (first @game-state))])
             move))))))
@@ -300,9 +277,9 @@
 
 (defn- cecp-draw
   "Offer draw to opponent."
-  []
+  [state]
   (when (get-option :ai-mode)
-    (str "1/2-1/2 {" (if (= (turn (first @game-state)) :white)
+    (str "1/2-1/2 {" (if (= (turn state) :white)
                        "WHITE"
                        "BLACK")
          " offered a draw!}")))
@@ -354,7 +331,7 @@
         "usermove" (user-move (second words))
         ;;"?" (cecp-move-now)
         "ping" (cecp-ping (second words))
-        "draw" (cecp-draw)
+        "draw" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
         "result" (cecp-result (rest words))
         ;; setboard=0 to disable setboard and use edit words
         "setboard" (set-game! (rest words))
@@ -415,14 +392,14 @@
           "help" (print-usage)
           "load" (load-game)
           "save" (save-game)
-          "bd"   (display-board)
-          "fd" (display-fen)
-          "lm" (list-moves)
-          "gs" (get-score)
-          "cp" (do (make-ai-move!)
-                   (display-board))
-          "es" (eval-current-state)
-          "pf" (display-perft (second words))
+          "bd"   (tursas-cmd "Can't print empty board!" display-board)
+          "fd" (tursas-cmd "Can't display FEN for empty state." display-fen)
+          "lm" (tursas-cmd "Can't list moves from empty state." list-moves)
+          "gs" (tursas-cmd "Can't calculate score from empty state." get-score)
+          "cp" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
+                   (tursas-cmd "Can't print empty board!" display-board))
+          "es" (tursas-cmd "Can't eval empty game state!" eval-current-state)
+          "pf" (tursas-cmd "Can't calculate perft from game-state!" display-perft (second words))
           "xboard" (set-protocol! :cecp)
           "quit" (quit)
           (case (get-protocol)
