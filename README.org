@@ -1,20 +1,23 @@
-# tursas
+* Tursas
 
-Tursas is a chess engine implemented in Clojure. It tries to follow
-functional programming style throughout the code.
+Tursas is a chess engine implemented in Clojure. It tries to follow functional
+programming style throughout the code.
 
-This is my first project using either Lisp or functional programming
-style and this will reflect in the code too.
+This is my first project using either Lisp or functional programming style and
+this will reflect in the code too.
 
-## Roadmap
+* Roadmap
 
 These are my aims for the Tursas project.
 
-Version 0.1:
+*** Version 0.1:
 - Subset of Chess Engine Communication Protocol implemented so engine can be played.
 - Working alphabeta algorithm
 - Game state representation with 0x88 board
-- Working evaluator which playes according to rules and can win weakest of players
+- Working evaluator which playes according to rules and can win weakest of
+  players
+
+*** Later versions
 
 Possibly added in later versions:
 - UCI protocol interface
@@ -22,7 +25,7 @@ Possibly added in later versions:
 - Negascout replacement for alphabeta
 - Full Chess Engine Communication Protocol implementation
 
-## Status
+* Status
 
 - Game REPL: Done except there's isn't error detection in it
 - XBoard interface : Small subset of commands implemented
@@ -36,19 +39,19 @@ Possibly added in later versions:
 The game is somewhat playable via repl. Currently debugging why XBoard
 UI won't cause game to end once mate has been achieved.
 
-## Installation
+* Installation
 
 Use leiningen to build the project.
 lein uberjar
 
-## Running
+* Running
 
 After making the jar file you can run the engine with
 java -jar tursas-0.1-standalone.jar
 or if using XBoard you can specify the engine via command:
 "xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
 
-## Usage
+* Usage
 
 The game tries to support both UCI and XBoard protocol.  General repl
 commands are always available for use.  Once the uci or xboard command
@@ -90,11 +93,11 @@ Available XBoard commands are:
  computer - tell engine that its playing against cpu
  option NAME[=VALUE] - tell engine to use new option
 
-## Known issues
+* Known issues
 
 None at the moment
 
-## License
+* License
 
 Copyright (c) 2010, Timo Myyrä
 
