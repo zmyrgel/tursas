@@ -1,43 +1,65 @@
 * Tursas
 
-  Tursas is a chess engine implemented in Clojure. It tries to follow functional
-  programming style throughout the code.
+  Tursas is a chess engine implemented in Clojure. It tries to follow
+  functional programming style throughout the code. This is my first project
+  using either Lisp or functional programming style and this will reflect in
+  the code too.
 
-  This is my first project using either Lisp or functional programming style and
-  this will reflect in the code too.
+  Currently Tursas is playable using XBoard as UI program or by using the
+  console interface and I consider this as the 0.1 version. See roadmap
+  section on what I've planned on adding until 1.0 version is attained.
 
-* Roadmap
+  Tursas uses simple alphabeta algorithm to search moves and uses 0x88 board
+  as board representation.
 
-  These are my aims for the Tursas project.
+* ChangeLog:
 
-*** Version 0.1:
+  I'll try to update here the major points in each version of the chess
+  engine. For detailed list check the commit log.
+
+*** Version 0.1
     - Subset of Chess Engine Communication Protocol implemented so engine can be played.
     - Working alphabeta algorithm
     - Game state representation with 0x88 board
     - Working evaluator which playes according to rules and can win weakest of
       players
 
-*** Later versions
+* Roadmap
 
-    Possibly added in later versions:
+  These are my aims for the Tursas project.
+
+  Version 0.2
+    - add unit tests to detect regressions and such
+    - add more error detection to repl commands
+
+  Version 0.3
+    - More functional version of alphabeta search
+
+  Version 0.4
+    - Incremental move generation
+
+  Version 0.5
+    - NPS command
+
+  Version 0.6
+    - Analyse mode
+
+  Version 0.7
+    - AI Pondering mode
+
+  Version 0.8
+    - Time controls
+
+  Version 0.9
+    - Core/Mem limits for engine
+
+  Version 1.0
+    - Clean up and testing
+
+*** Possibly added in later versions
     - UCI protocol interface
     - Bitboard state representation
     - Negascout replacement for alphabeta
-    - Full Chess Engine Communication Protocol implementation
-
-* Status
-
-  - Game REPL: Done except there's isn't error detection in it
-  - XBoard interface : Small subset of commands implemented
-  - Saving / Loading game: Completed
-  - Game: XBoard UI won't detect that game has ended yet
-  - State representation: Completed with 0x88 board
-  - Move generation: Done, testing things
-  - Search algorithm: Simple alphabeta
-  - Evaluator: Material balance and board location scores
-
-    The game is somewhat playable via repl. Currently debugging why XBoard
-    UI won't cause game to end once mate has been achieved.
 
 * Installation
 
