@@ -151,8 +151,9 @@
 (defn- threaten-by-piece?
   "Can piece in index be captured by opponents pieces."
   [board index opponent piece places]
-  (true? (some #(= (get board (+ index %)) piece)
-               places)))
+  (true? (some #(= (get board %) piece)
+               (filter board-index?
+                       (map #(+ index %) places)))))
 
 (defn- threaten-by-slider?
   "Can the piece in index of board be captured
