@@ -168,7 +168,8 @@
 (defn- make-human-move!
   "If given string represents chess move, apply it to current game."
   [state s]
-  (when (move-string? s)
+  (when (and (move-string? s)
+             (allowed? state (coord->move s)))
     (when-let [new-state (apply-move state (coord->move s))]
       (do (add-game-state! new-state)
           true))))

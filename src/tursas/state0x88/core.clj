@@ -284,9 +284,8 @@
   (state->fen [state]
     (parse-state state))
   (apply-move [state move]
-    (when (allowed-move? state move)
-      (when-let [new-state (update-state state move)]
-        new-state)))
+    (when-let [new-state (update-state state move)]
+      new-state))
   (legal-states [state]
     (filter #(not (nil? %))
             (map (partial apply-move state)
