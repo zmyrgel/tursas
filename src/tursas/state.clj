@@ -1,6 +1,7 @@
 (ns tursas.state)
 
 (defprotocol State
+  (allowed? [state move])
   (occupied? [state index])
   (black? [state index])
   (white? [state index])

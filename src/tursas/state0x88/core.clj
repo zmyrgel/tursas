@@ -255,6 +255,8 @@
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
+  (allowed? [state move]
+    (allowed-move? state move))
   (occupied? [state index]
     (board-occupied? (:board state) index))
   (black? [state index]
