@@ -268,10 +268,6 @@
                        "BLACK")
          " offered a draw!}")))
 
-(defn- cecp-bk
-  "Tells the Cecp to use Book"
-  [])
-
 (defn- cecp-send-rating
   "Prompts the Engine to send its rating."
   []
