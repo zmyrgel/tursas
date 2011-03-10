@@ -208,7 +208,7 @@
 (def cecp-usage '("Available Cecp commands are:"
                   "protover N - change engine to use protocol version N"
                   "accepted - Accept last feature"
-                  "reject - Reject last feature"
+                  "rejected - Reject last feature"
                   "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
                   "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
                   "force - Disable engine AI"
