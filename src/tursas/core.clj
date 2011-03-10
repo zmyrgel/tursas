@@ -1,7 +1,8 @@
 (ns tursas.core
   (:gen-class)
   (:require [clojure.contrib.string :as s]
-            [clojure.contrib.seq :as seq])
+            [clojure.contrib.seq :as seq]
+            [matchure :as m])
   (:use (tursas search state move util)
         (tursas.state0x88 core move)))
 
