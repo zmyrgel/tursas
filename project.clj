@@ -6,5 +6,6 @@
   :dev-dependencies [[swank-clojure "1.3.0-SNAPSHOT"]]
   :warn-on-reflection false
   :dependencies [[org.clojure/clojure "1.2.0"]
-                 [org.clojure/clojure-contrib "1.2.0"]]
+                 [org.clojure/clojure-contrib "1.2.0"]
+                 [matchure "0.10.1"]]
   :main tursas.core)
