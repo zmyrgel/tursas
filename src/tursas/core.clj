@@ -373,26 +373,25 @@
 
 (defn- process-command
   "Processes command given by user."
-  [command]
-  (loop [words (re-seq #"\S+" command)]
-    (case (first words)
-          "help" (print-usage)
-          "load" (load-game)
-          "save" (save-game)
-          "bd"   (tursas-cmd "Can't print empty board!" display-board)
-          "fd" (tursas-cmd "Can't display FEN for empty state." display-fen)
-          "lm" (tursas-cmd "Can't list moves from empty state." list-moves)
-          "gs" (tursas-cmd "Can't calculate score from empty state." get-score)
-          "cp" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
-                   (tursas-cmd "Can't print empty board!" display-board))
-          "es" (tursas-cmd "Can't eval empty game state!" eval-current-state)
-          "pf" (tursas-cmd "Can't calculate perft from game-state!" display-perft (second words))
-          "xboard" (set-protocol! :cecp)
-          "quit" (quit)
-          (case (get-protocol)
-                :general (when-not (empty? (rest words))
-                           (recur (rest words)))
-                :cecp (process-cecp-command words)))))
+  [words]
+  (case (first words)
+        "help" (print-usage)
+        "load" (load-game)
+        "save" (save-game)
+        "bd"   (tursas-cmd "Can't print empty board!" display-board)
+        "fd" (tursas-cmd "Can't display FEN for empty state." display-fen)
+        "lm" (tursas-cmd "Can't list moves from empty state." list-moves)
+        "gs" (tursas-cmd "Can't calculate score from empty state." get-score)
+        "cp" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
+                 (tursas-cmd "Can't print empty board!" display-board))
+        "es" (tursas-cmd "Can't eval empty game state!" eval-current-state)
+        "pf" (tursas-cmd "Can't calculate perft from game-state!" display-perft (second words))
+        "xboard" (set-protocol! :cecp)
+        "quit" (quit)
+        (case (get-protocol)
+              :general (when-not (empty? (rest words))
+                         (recur (rest words)))
+              :cecp (process-cecp-command words))))
 
 (defn- init-engine
   "Initializes the chess engine."
@@ -404,7 +403,7 @@
 (defn- game-eval
   "Evaluates given engine protocol command."
   [s]
-  (process-command s))
+  (process-command (re-seq #"\S+" s)))
 
 (defn- game-read
   "Reader function to parse commandline.
