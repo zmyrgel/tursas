@@ -206,7 +206,8 @@
             (s/as-str option)
             (cecp-supported-features option))))
 
-(def cecp-usage '("Available Cecp commands are:"
+(def cecp-usage '(""
+                  "Available Cecp commands are:"
                   "protover N - change engine to use protocol version N"
                   "accepted - Accept last feature"
                   "rejected - Reject last feature"
