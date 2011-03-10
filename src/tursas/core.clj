@@ -205,51 +205,46 @@
             (s/as-str option)
             (cecp-supported-features option))))
 
-(defn- print-cecp-usage
-  "Prints the available commands of the repl."
-  []
-  (list "Available Cecp commands are:"
-        "protover N - change engine to use protocol version N"
-        "accepted - Accept last feature"
-        "reject - Reject last feature"
-        "new - Sets the board to the chess starting position. Set White on move.
-               Leave force mode and set the engine to play Black. Sets random to false."
-        "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
-        "random - Tell engine to add little random elements, known but unused"
-        "force - Disable engine AI"
-        "go - Enable engine AI"
-        ;;"playother - Tell AI to switch sides"
-        ;;"level MPS BASE INC - set time controls"
-        ;;"st TIME - set time controls"
-        "sd DEPTH - set search depth to DEPTH"
-        ;;"nps NODE_RATE - search only NODE_RATE nodes"
-        ;;"time N - set the engine clock to N centiseconds"
-        ;;"otim N - set the opponents clock"
-        "usermove MOVE - make given MOVE if legal"
-        ;;"? - Tell Engine to stop thinking and make its move now"
-        "ping N - Pings the engine for pong reply"
-        "draw - offer draw to engine"
-        "RESULT {COMMENTS} - give the game RESULT to engine"
-        "setboard FEN - Set the game board to given FEN."
-        "hint - prompt move hint from engine"
-        ;;"bk - use book"
-        "undo - tell engine to undo last move"
-        "remove - tell engine to undo last two moves"
-        ;;"hard - tell engine to ponder during players turn"
-        ;;"easy - tell engine to ponder only during its turn"
-        ;;"post - tell engine to send ponder output"
-        ;;"nopost - tell engine not to send ponder output"
-        ;;"analyse - tell engine to engage analyse mode"
-        "name X - tell engine its opponents name"
-        "rating - ask engine its rating"
-        ;;"ics - tell engine its engaging in ICS game"
-        "computer - tell engine that its playing against cpu"
-        ;;"pause - pause all actions"
-        ;;"resume - resume all paused actions"
-        ;;"memory N - specify how much engine can use memory"
-        ;;"cores N - tell engine how many cpu cores it can use"
-        ;;"egtpath PATH - tell engine to use end-game tables from PATH"
-        "option NAME[=VALUE] - tell engine to use new option"))
+(def cecp-usage '("Available Cecp commands are:"
+                  "protover N - change engine to use protocol version N"
+                  "accepted - Accept last feature"
+                  "reject - Reject last feature"
+                  "new - Sets the board to the chess starting position. Set White on move. Leave force mode and set the engine to play Black."
+                  "variant VARIANT - change to use VARIANT rules. Only 'normal' supported"
+                  "force - Disable engine AI"
+                  "go - Enable engine AI"
+                  ;;"playother - Tell AI to switch sides"
+                  ;;"level MPS BASE INC - set time controls"
+                  ;;"st TIME - set time controls"
+                  "sd DEPTH - set search depth to DEPTH"
+                  ;;"nps NODE_RATE - search only NODE_RATE nodes"
+                  ;;"time N - set the engine clock to N centiseconds"
+                  ;;"otim N - set the opponents clock"
+                  "usermove MOVE - make given MOVE if legal"
+                  ;;"? - Tell Engine to stop thinking and make its move now"
+                  "ping N - Pings the engine for pong reply"
+                  "draw - offer draw to engine"
+                  "RESULT {COMMENTS} - give the game RESULT to engine"
+                  "setboard FEN - Set the game board to given FEN."
+                  "hint - prompt move hint from engine"
+                  ;;"bk - use book"
+                  "undo - tell engine to undo last move"
+                  "remove - tell engine to undo last two moves"
+                  ;;"hard - tell engine to ponder during players turn"
+                  ;;"easy - tell engine to ponder only during its turn"
+                  ;;"post - tell engine to send ponder output"
+                  ;;"nopost - tell engine not to send ponder output"
+                  ;;"analyse - tell engine to engage analyse mode"
+                  "name X - tell engine its opponents name"
+                  "rating - ask engine its rating"
+                  ;;"ics - tell engine its engaging in ICS game"
+                  "computer - tell engine that its playing against cpu"
+                  ;;"pause - pause all actions"
+                  ;;"resume - resume all paused actions"
+                  ;;"memory N - specify how much engine can use memory"
+                  ;;"cores N - tell engine how many cpu cores it can use"
+                  ;;"egtpath PATH - tell engine to use end-game tables from PATH"
+                  "option NAME[=VALUE] - tell engine to use new option"))
 
 (defn- cecp-accept-feature
   "Tells the engine that GUI accepts last feature."
@@ -350,30 +345,30 @@
         (when (move-string? (first words))
           (user-move (first words)))))
 
-(defn- print-usage
+(defn- usage
   "Prints the available commands of the repl."
   []
-  (str '("Available general commands:"
-         "help - display this help"
-         "load - load the last saved game from file"
-         "save - store the current game to file"
-         "bd - display the board on the screen"
-         "fd - display current game state in FEN"
-         "lm - print a list of all available moves"
-         "gs - calculates score for the current game state"
-         "es - evaluates current game state"
-         "pf n - calculate perft score to depth of n"
-         "xboard - enable CECP mode"
-         "quit - quite the Tursas engine")
-       (case (get-protocol)
-             :general nil
-             :cecp (print-cecp-usage))))
+  (concat '("Available general commands:"
+            "help - display this help"
+            "load - load the last saved game from file"
+            "save - store the current game to file"
+            "bd - display the board on the screen"
+            "fd - display current game state in FEN"
+            "lm - print a list of all available moves"
+            "gs - calculates score for the current game state"
+            "es - evaluates current game state"
+            "pf n - calculate perft score to depth of n"
+            "xboard - enable CECP mode"
+            "quit - quite the Tursas engine")
+          (case (get-protocol)
+                :general nil
+                :cecp cecp-usage)))
 
 (defn- process-command
   "Processes command given by user."
   [words]
   (case (first words)
-        "help" (print-usage)
+        "help" (usage)
         "load" (load-game)
         "save" (save-game)
         "bd"   (tursas-cmd "Can't print empty board!" display-board)
