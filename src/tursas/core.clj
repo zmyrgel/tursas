@@ -248,10 +248,6 @@
                   ;;"egtpath PATH - tell engine to use end-game tables from PATH"
                   "option NAME[=VALUE] - tell engine to use new option"))
 
-(defn- cecp-move-now
-  "Tells the Engine to stop thinking and pick move immidiately."
-  [])
-
 (defn- cecp-ping
   "Tells Cecp to wait for all the stuff to complete given before this
    and once done, respond with pong"
