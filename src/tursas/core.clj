@@ -248,14 +248,6 @@
                   ;;"egtpath PATH - tell engine to use end-game tables from PATH"
                   "option NAME[=VALUE] - tell engine to use new option"))
 
-(defn- cecp-accept-feature
-  "Tells the engine that GUI accepts last feature."
-  [])
-
-(defn- cecp-reject-feature
-  "Tells the engine that GUI rejects given feature."
-  [])
-
 (defn- cecp-move-now
   "Tells the Engine to stop thinking and pick move immidiately."
   [])
@@ -368,25 +360,25 @@
 
 (defn- process-command
   "Processes command given by user."
-  [words]
-  (case (first words)
-        "help" (usage)
-        "load" (load-game)
-        "save" (save-game)
-        "bd"   (tursas-cmd "Can't print empty board!" display-board)
-        "fd" (tursas-cmd "Can't display FEN for empty state." display-fen)
-        "lm" (tursas-cmd "Can't list moves from empty state." list-moves)
-        "gs" (tursas-cmd "Can't calculate score from empty state." get-score)
-        "cp" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
-                 (tursas-cmd "Can't print empty board!" display-board))
-        "es" (tursas-cmd "Can't eval empty game state!" eval-current-state)
-        "pf" (tursas-cmd "Can't calculate perft from game-state!" display-perft (second words))
-        "xboard" (set-protocol! :cecp)
-        "quit" (quit)
-        (case (get-protocol)
-              :general (when-not (empty? (rest words))
-                         (recur (rest words)))
-              :cecp (process-cecp-command words))))
+  [command]
+  (m/cond-match command
+                #"^help$" (usage)
+                #"^load$" (load-game)
+                #"^save$" (save-game)
+                #"^bd$" (tursas-cmd "Can't print empty board!" display-board)
+                #"^fd$" (tursas-cmd "Can't display FEN for empty state." display-fen)
+                #"^lm$" (tursas-cmd "Can't list moves from empty state." list-moves)
+                #"^gs$" (tursas-cmd "Can't calculate score from empty state." get-score)
+                #"^cp$" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
+                            (tursas-cmd "Can't print empty board!" display-board))
+                #"^es$" (tursas-cmd "Can't eval empty game state!" eval-current-state)
+                #"^pf \d+$" (tursas-cmd "Can't calculate perft from empty game-state!" display-perft (parse-2nd-word command))
+                #"^xboard$" (set-protocol! :cecp)
+                #"^quit$" (quit)
+                #"^random$" nil ;; no-op
+                ? (if (= (get-protocol) :cecp)
+                    (process-cecp-command command)
+                    (str "Error (Invalid command): " command))))
 
 (defn- init-engine
   "Initializes the chess engine."
@@ -398,7 +390,7 @@
 (defn- game-eval
   "Evaluates given engine protocol command."
   [s]
-  (process-command (re-seq #"\S+" s)))
+  (process-command s))
 
 (defn- game-read
   "Reader function to parse commandline.
