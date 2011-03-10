@@ -129,17 +129,20 @@
 
 (defn- set-game!
   "Sets game to given FEN state."
-  [lst]
+  [s]
   (add-game-state!
-   (let [fen (first lst)]
-     (cond (= fen "startpos") (fen->state startpos)
-           (= fen "check") (fen->state check-fen)
-           (= fen "cast") (fen->state cast-fen)
-           (= fen "prom") (fen->state prom-fen)
-           (= fen "mate") (fen->state mate-fen)
-           (= fen "bmate") (fen->state mate-1-fen)
-           (= fen "en") (fen->state en-fen)
-           :else (fen->state (s/join " " lst))))))
+   (m/cond-match s
+                 #"^setboard startpos$" (fen->state startpos)
+                 #"^setboard check$" (fen->state check-fen)
+                 #"^setboard cast$" (fen->state cast-fen)
+                 #"^setboard prom$" (fen->state prom-fen)
+                 #"^setboard mate$" (fen->state mate-fen)
+                 #"^setboard bmate$" (fen->state mate-1-fen)
+                 #"^setboard en$" (fen->state en-fen)
+                 ? (let [fen (s/join " " (rest (re-seq #"\S+" s)))]
+                     (if (fen? fen)
+                       (fen->state fen)
+                       (str "Error (Invalid command): " s))))))
 
 (defn- set-option!
   "Sets game option of given key to value."
