@@ -73,8 +73,10 @@
 
   After making the jar file you can run the engine with
   java -jar tursas-0.1-standalone.jar
-  or if using XBoard you can specify the engine via command:
-  "xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
+
+  Its recommeded to run the engine with some external program to get more visual
+  appearance. I recommend using XBoard (WinBoard).  With XBoard you can use
+  tursas by starting xboard with command: "xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
 
 * Usage
 
