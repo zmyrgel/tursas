@@ -372,10 +372,10 @@
                 #"^cp$" (do (tursas-cmd "Can't make AI move on empty board!" make-ai-move!)
                             (tursas-cmd "Can't print empty board!" display-board))
                 #"^es$" (tursas-cmd "Can't eval empty game state!" eval-current-state)
-                #"^pf \d+$" (tursas-cmd "Can't calculate perft from empty game-state!" display-perft (parse-2nd-word command))
+                #"^pf \d+$" (tursas-cmd "Can't calculate perft from empty game-state!"
+                                        display-perft (second (re-seq #"\S+" command)))
                 #"^xboard$" (set-protocol! :cecp)
                 #"^quit$" (quit)
-                #"^random$" nil ;; no-op
                 ? (if (= (get-protocol) :cecp)
                     (process-cecp-command command)
                     (str "Error (Invalid command): " command))))
