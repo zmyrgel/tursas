@@ -13,6 +13,30 @@
          (for [x (range 8) y (range 8)]
            (str (get "abcdefgh" x) (inc y))))))
 
+(defn fen?
+  "Checks if given string is valid FEN string.
+   Doesn't do very precise work yet."
+  [s]
+  (println s)
+  (and (string? s)
+       (= (count (re-seq #"\S+" s)) 6)
+       (= (count (re-seq #"/" s)) 7)))
+
+(defn valid-variant?
+  "Checks if given string is valid and supported variant."
+  [s]
+  (= s "normal"))
+
+(defn result?
+  "Checks if given string is game result eg. 1/2-1/2 {Draw} or similar.
+   Needs more strict checks still."
+  [s]
+  (m/cond-match s
+                #"1/2-1/2" true
+                #"1-0" true
+                #"0-1" true
+                ? false))
+
 (defn split-move
   "Partitions chess move given in coordinate notation to pair of coordinates
    and possible promotion character."
