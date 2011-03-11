@@ -287,9 +287,8 @@
     (when-let [new-state (update-state state move)]
       new-state))
   (legal-states [state]
-    (filter #(not (nil? %))
-            (map (partial apply-move state)
-                 (pseudo-moves (get (:board state) TURN-STORE) state))))
+    (keep (partial apply-move state)
+          (pseudo-moves (get (:board state) TURN-STORE) state)))
   (legal-moves [state]
     (map last-move (legal-states state)))
   (turn [state]
