@@ -81,9 +81,7 @@
   [msg f & args]
   (if (empty? (current-game-state))
     msg
-    (if (nil? args)
-      (f (current-game-state))
-      (apply f (current-game-state) args))))
+    (apply f (current-game-state) args)))
 
 (defn- add-game-state!
   "Adds given state to game state."
