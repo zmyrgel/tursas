@@ -36,6 +36,11 @@
   []
   (System/exit 0))
 
+(defn- current-game-state
+  "Utility to return current game state or nil."
+  []
+  (first (@game-state)))
+
 (defn- save-game
   "Saves the current game by writing game-state to file."
   []
@@ -63,16 +68,16 @@
 (defn- tursas-cmd
   "Wrapper for commands which use current game state."
   [msg f & args]
-  (if (empty? (first @game-state))
+  (if (empty? (current-game-state))
     msg
     (if (nil? args)
-      (f (first @game-state))
-      (apply f (first @game-state) args))))
+      (f (current-game-state))
+      (apply f (currentgame-state) args))))
 
 (defn- add-game-state!
   "Adds given state to game state."
   [new-state]
-  (do (dosync (ref-set game-state (cons new-state @game-state)))
+  (do (dosync (ref-set game-state (cons new-state @game-state))) ;; XXX: use alter?
       nil))
 
 (defn- display-board
@@ -165,7 +170,7 @@
   [state]
   (let [depth (get-option :depth-limit)]
     (do (add-game-state! (second (alpha-beta state -inf inf depth)))
-        (str "move " (-> (first @game-state)
+        (str "move " (-> (current-game-state)
                          last-move
                          move->coord)))))
 
@@ -181,14 +186,14 @@
 (defn- user-move
   "Helper function to handle user and ai moves."
   [s]
-  (if (nil? (make-human-move! (first @game-state) s))
+  (if (nil? (make-human-move! (current-game-state) s))
     (str "Illegal move: " s)
-    (if (game-end? (first @game-state))
-      (result (first @game-state))
+    (if (game-end? (current-game-state))
+      (result (current-game-state))
       (when (get-option :ai-mode)
-        (let [move (make-ai-move! (first @game-state))]
-          (if (game-end? (first @game-state))
-            (s/join "\n" [move (result (first @game-state))])
+        (let [move (make-ai-move! (current-game-state))]
+          (if (game-end? (current-game-state))
+            (s/join "\n" [move (result (current-game-state))])
             move))))))
 
 (defn- undo-move!
