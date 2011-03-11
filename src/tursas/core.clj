@@ -88,7 +88,7 @@
 (defn- add-game-state!
   "Adds given state to game state."
   [new-state]
-  (do (dosync (ref-set game-state (cons new-state @game-state))) ;; XXX: use alter?
+  (do (dosync (alter game-state conj new-state))
       nil))
 
 (defn- display-board
