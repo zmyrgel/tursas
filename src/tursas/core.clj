@@ -233,7 +233,7 @@
                   ;;"? - Tell Engine to stop thinking and make its move now"
                   "ping N - Pings the engine for pong reply"
                   "draw - offer draw to engine"
-                  "RESULT {COMMENTS} - give the game RESULT to engine"
+                  ;;"RESULT {COMMENTS} - give the game RESULT to engine"
                   "setboard FEN - Set the game board to given FEN."
                   "hint - prompt move hint from engine"
                   ;;"bk - use book"
