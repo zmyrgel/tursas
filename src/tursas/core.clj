@@ -117,8 +117,7 @@
 (defn- list-moves
   "List all available moves from currect state."
   [state]
-  (map #(move->coord %)
-       (legal-moves state)))
+  (map move->coord (legal-moves state)))
 
 (defn- get-score
   "Calculates state's score by checking child states
