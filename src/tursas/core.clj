@@ -125,7 +125,7 @@
    to certain depth using alpha-beta algorithm."
   [state]
   (-> state
-      (alpha-beta -inf inf (:depth-limit @game-options))
+      (alpha-beta -inf inf (get-option :depth-limit))
       first
       str))
 
