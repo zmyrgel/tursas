@@ -41,6 +41,17 @@
   []
   (first (@game-state)))
 
+(defn- set-option!
+  "Sets game option of given key to value."
+  [k v]
+  (do (dosync (alter game-options assoc k v))
+      nil))
+
+(defn- get-option
+  "Returns value of given game option"
+  [option]
+  (@game-options option))
+
 (defn- save-game
   "Saves the current game by writing game-state to file."
   []
@@ -148,17 +159,6 @@
                      (if (fen? fen)
                        (fen->state fen)
                        (str "Error (Invalid command): " s))))))
-
-(defn- set-option!
-  "Sets game option of given key to value."
-  [k v]
-  (do (dosync (alter game-options assoc k v))
-      nil))
-
-(defn- get-option
-  "Returns value of given game option"
-  [option]
-  (@game-options option))
 
 (defn- toggle-option!
   "Toggles the value of given boolean game option."
