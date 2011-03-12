@@ -90,7 +90,6 @@
   [state]
   (let [pieces (merge (:white-pieces state)
                       (:black-pieces state))
-        keys (keys pieces)
         vals (vals pieces)
         piece-count (count keys)]
     (and (<= piece-count 4)
@@ -106,7 +105,7 @@
                       (== (count (filter #(= WHITE-KNIGHT %) vals)) 2)
                       (let [bishops (filter #(or (= BLACK-BISHOP (get pieces %))
                                                  (= WHITE-BISHOP (get pieces %)))
-                                            keys)]
+                                            (keys pieces))]
                         (cond (< (count bishops) 2) false
                               :else (same-color? (first (keys bishops))
                                                  (second (keys bishops)))))))))))
