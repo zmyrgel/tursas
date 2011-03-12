@@ -259,11 +259,6 @@
   [n]
   (str "pong " n))
 
-(defn- cecp-result
-  "Sets the game result to engine, for learning purposes
-   discarded by Tursas for now."
-  [result])
-
 (defn- cecp-draw
   "Offer draw to opponent."
   [state]
