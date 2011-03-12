@@ -17,7 +17,6 @@
   "Checks if given string is valid FEN string.
    Doesn't do very precise work yet."
   [s]
-  (println s)
   (and (string? s)
        (= (count (re-seq #"\S+" s)) 6)
        (= (count (re-seq #"/" s)) 7)))
