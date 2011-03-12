@@ -26,10 +26,9 @@
 
 (def protocol (ref :general))
 (def game-state (ref ()))
-(def game-options (ref {:depth-limit 4 :random-mode false :ai-mode false
-                        :cecp-protocol-version 1 :debug false :ponder false
-                        :ponder-output false :movestogo 0 :white-increment 0
-                        :black-increment 0 :move-limit nil :search-time 0}))
+(def game-options (ref {:depth-limit 4 :ai-mode false
+                        :cecp-protocol-version 2 :debug false :ponder false
+                        :ponder-output false}))
 
 (defn- quit
   "Function to handle closing the engine."
