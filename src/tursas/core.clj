@@ -226,6 +226,7 @@
                   ;;"time N - set the engine clock to N centiseconds"
                   ;;"otim N - set the opponents clock"
                   "usermove MOVE - make given MOVE if legal"
+                  "MOVE - make given MOVE if legal"
                   ;;"? - Tell Engine to stop thinking and make its move now"
                   "ping N - Pings the engine for pong reply"
                   "draw - offer draw to engine"
