@@ -266,11 +266,6 @@
                        "BLACK")
          " offered a draw!}")))
 
-(defn- cecp-send-rating
-  "Prompts the Engine to send its rating."
-  []
-  "100")
-
 (defn- cecp-parse-option
   "Wrapper to parse options from string and set them."
   [option]
@@ -325,7 +320,7 @@
                 #"^nopost" (unsupported-command cmd) ;; (set-option! :ponder-output false)
                 #"^analyse$" (unsupported-command cmd) ;; (cecp-analyse-mode)
                 #"^name \w+$" (set-option! :opponent-name (s/drop 5 cmd))
-                #"^rating$" (cecp-send-rating)
+                #"^rating$" "100"
                 #"^ics$" (unsupported-command cmd) ;; (cecp-ics)
                 #"^computer$" (set-option! :opponent :cpu)
                 #"^pause$" (unsupported-command cmd) ;;(cecp-pause)
