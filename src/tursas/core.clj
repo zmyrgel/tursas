@@ -303,7 +303,7 @@
                 #"^playother$" (unsupported-command cmd) ;; (cecp-playother)
                 #"^level$" (unsupported-command cmd) ;; (set-option! :level (rest words))
                 #"^st$" (unsupported-command cmd) ;; (set-option! :time (second words))
-                #"^sd \d+$" (set-option! :depth-limit (second (re-seq #"\S+" cmd)))
+                #"^sd \d+$" (set-option! :depth-limit (s/drop 3 cmd))
                 #"^nps$" (unsupported-command cmd) ;; (set-option! :nps (rest words))
                 #"^time$" (unsupported-command cmd) ;; (cecp-set-engine-clock (second words))
                 #"^otim$" (unsupported-command cmd) ;; (cecp-set-opponent-clock (second words))
