@@ -117,7 +117,7 @@
   - sd DEPTH :: set search depth to DEPTH
   - usermove MOVE :: make given MOVE if legal
   - ping N :: Pings the engine for pong reply
-  - RESULT {COMMENTS} :: give the game RESULT to engine. Currently doesn't do anything
+  - result RESULT {COMMENTS} :: give the game RESULT to engine.
   - setboard FEN :: Set the game board to given FEN.
   - undo :: tell engine to undo last move
   - remove :: tell engine to undo last two moves
