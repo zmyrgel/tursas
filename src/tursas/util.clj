@@ -26,15 +26,6 @@
   [s]
   (= s "normal"))
 
-(defn result?
-  "Checks if given string is game result eg. 1/2-1/2 {Draw} or similar."
-  [s]
-  (m/cond-match s
-                #"1/2-1/2 \{.+\}" true
-                #"1-0 \{.+\}" true
-                #"0-1 \{.+\}" true
-                ? false))
-
 (defn split-move
   "Partitions chess move given in coordinate notation to pair of coordinates
    and possible promotion character."
