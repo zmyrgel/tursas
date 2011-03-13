@@ -13,14 +13,6 @@
          (for [x (range 8) y (range 8)]
            (str (get "abcdefgh" x) (inc y))))))
 
-(defn fen?
-  "Checks if given string is valid FEN string.
-   Doesn't do very precise work yet."
-  [s]
-  (and (string? s)
-       (= (count (re-seq #"\S+" s)) 6)
-       (= (count (re-seq #"/" s)) 7)))
-
 (defn valid-variant?
   "Checks if given string is valid and supported variant."
   [s]
