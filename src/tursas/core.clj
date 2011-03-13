@@ -79,7 +79,7 @@
   "Wrapper for commands which use current game state."
   [msg f & args]
   (if (empty? (current-game-state))
-    msg
+    (str "Error (" msg ")")
     (apply f (current-game-state) args)))
 
 (defn- add-game-state!
