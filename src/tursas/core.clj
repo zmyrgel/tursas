@@ -253,12 +253,6 @@
                   ;;"egtpath PATH - tell engine to use end-game tables from PATH"
                   "option NAME[=VALUE] - tell engine to use new option"))
 
-(defn- cecp-ping
-  "Tells Cecp to wait for all the stuff to complete given before this
-   and once done, respond with pong"
-  [n]
-  (str "pong " n))
-
 (defn- cecp-draw
   "Offer draw to opponent."
   [state]
@@ -308,7 +302,7 @@
                                                                                    user-move (s/drop 9 cmd))
                 #"^[a-h]{1}[1-8]{1}[a-h]{1}[1-8]{1}[rnbq]?+$" (tursas-cmd "Can't make move in a empty board!" user-move cmd)
                 #"^\?$" (unsupported-command cmd) ;; (cecp-move-now)
-                #"^ping \d+$" (cecp-ping (s/drop 5 cmd))
+                #"^ping \d+$" (str "pong " (Integer/parseInt (s/drop 5 cmd))))
                 #"^draw$" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
                 #"^result (1/2-1/2 \{.+\}|1-0 \{.+\}|0-1 \{.+\}|\*)$" nil ;; no-op
                 #"^setboard" (set-game! (s/drop 9 cmd))
