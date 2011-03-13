@@ -291,7 +291,8 @@
                 #"^random$" nil   ;; no-op
                 #"^new$" (do (set-game! "startpos")
                              (set-option! :ai-mode true))
-                #"^variant$" (set-option! :variant (s/drop 8 cmd))
+                #"^variant normal$" (set-option! :variant (s/drop 8 cmd))
+                #"^variant \w+$" (str "Error (unsupported variant given): " (s/drop 8 cmd))
                 #"^force$" (set-option! :ai-mode false)
                 #"^go$" (set-option! :ai-mode true)
                 #"^playother$" (str "Error (Unsupported command): " cmd) ;; (cecp-playother)

@@ -13,11 +13,6 @@
          (for [x (range 8) y (range 8)]
            (str (get "abcdefgh" x) (inc y))))))
 
-(defn valid-variant?
-  "Checks if given string is valid and supported variant."
-  [s]
-  (= s "normal"))
-
 (defn split-move
   "Partitions chess move given in coordinate notation to pair of coordinates
    and possible promotion character."
