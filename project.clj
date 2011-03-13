@@ -1,5 +1,5 @@
 (defproject tursas "0.2"
-  :description "Chess AI engine supporting UCI and XBoard protocol."
+  :description "Simple chess engine which uses XBoard protocol."
   :license {:name "ISC license"
             :url "http://opensource.org/licenses/isc-license.txt"
             :distribution :repo}
