@@ -326,9 +326,9 @@
                 #"^computer$" (set-option! :opponent :cpu)
                 #"^pause$" (unsupported-command cmd) ;;(cecp-pause)
                 #"^resume$" (unsupported-command cmd) ;; (cecp-resume)
-                #"^memory$" (unsupported-command cmd) ;; (cecp-set-memory (second words))
-                #"^cores$" (unsupported-command cmd) ;;(cecp-set-cores (second words))
-                #"^egtpath$" (unsupported-command cmd) ;;(cecp-set-egtpath (second words))
+                #"^memory \d+$" (unsupported-command cmd) ;; (set-option! :memory-limit (Integer/parseInt (s/drop 7 cmd)))
+                #"^cores \d+$" (unsupported-command cmd) ;;(set-option! :core-limit (Integer/parseInt (s/drop 6 cmd)))
+                #"^egtpath [\w\\/]+$" (unsupported-command cmd) ;;(set-option! :egtpath (s/drop 8 cmd))
                 #"^option \w+$" (cecp-parse-option (s/drop 7 cmd))
                 ? (str "Error (Invalid command): " cmd)))
 
