@@ -230,7 +230,7 @@
                   ;;"? - Tell Engine to stop thinking and make its move now"
                   "ping N - Pings the engine for pong reply"
                   "draw - offer draw to engine"
-                  ;;"RESULT {COMMENTS} - give the game RESULT to engine"
+                  "result RESULT {COMMENTS} - give the game RESULT to engine, discarded currently"
                   "setboard FEN - Set the game board to given FEN."
                   "hint - prompt move hint from engine"
                   ;;"bk - use book"
@@ -309,7 +309,7 @@
                 #"^\?$" (unsupported-command cmd) ;; (cecp-move-now)
                 #"^ping \d+$" (cecp-ping (s/drop 5 cmd))
                 #"^draw$" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
-                #"^1/2-1/2 \{.+\}$|^1-0 \{.+\}$|^0-1 \{.+\}$" nil ;; no-op
+                #"^result (1/2-1/2 \{.+\}|1-0 \{.+\}|0-1 \{.+\}|\*)$" nil ;; no-op
                 #"^setboard" (set-game! (s/drop 9 cmd))
                 #"^hint$" (tursas-cmd "Can't print hint from a empty board!" get-hint)
                 #"^bk$" (unsupported-command cmd) ;; (cecp-bk)
