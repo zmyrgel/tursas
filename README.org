@@ -5,17 +5,24 @@
   using either Lisp or functional programming style and this will reflect in
   the code too.
 
-  Currently Tursas is playable using XBoard as UI program or by using the
-  console interface and I consider this as the 0.1 version. See roadmap
-  section on what I've planned on adding until 1.0 version is attained.
+  Currently Tursas is somewhat playable. I've used it with the XBoard program as
+  UI but the engine can also be played from the console. To make the console
+  interface more usable I've included some utility commands in Tursas. These
+  commands can print the board in ASCII or list available moves to user. There
+  are also some undocumented commands but these are little use to casual user
+  and are used mostly for debugging the engine from the console. I'm planning to
+  add full XBoard protocol support to Tursas eventually.
 
-  Tursas uses simple alphabeta algorithm to search moves and uses 0x88 board
-  as board representation.
+  The engine itself uses alphabeta algorithm to search moves and uses 0x88 as
+  board representation. The move generation is still problematic as it generates
+  all the moves eagerly instead of using laziness. Laziness would help making
+  few constructs easier in the code but I haven't yet figured out a way to get
+  to work in a good way.
 
 * ChangeLog:
 
   I'll try to update here the major points in each version of the chess
-  engine. For detailed list check the commit log.
+  engine. For detailed list check the [[https://github.com/zmyrgel/tursas/commits/0.1-release][commits]].
 
 *** Version 0.1
     - Subset of Chess Engine Communication Protocol implemented so engine can be played.
@@ -27,7 +34,7 @@
 * Roadmap
 
   These are some of my ideas what could be done in the Tursas project.
-  I'm not planning to blindly following these but I think it gives nice rough
+  I'm not planning to blindly follow these but I think it gives nice rough
   idea what to except and in what point.
 
   Version 0.2
@@ -96,9 +103,6 @@
   - bd :: display the board on the screen
   - fd :: display current game state in FEN
   - lm :: print a list of all available moves
-  - gs :: calculates score for the current game state
-  - es :: evaluates current game state
-  - pf n :: calculate perft score to depth of n
   - xboard :: enable xboard mode
   - quit :: quite the Tursas engine
 
