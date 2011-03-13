@@ -26,7 +26,9 @@
 
 * Roadmap
 
-  These are my aims for the Tursas project.
+  These are some of my ideas what could be done in the Tursas project.
+  I'm not planning to blindly following these but I think it gives nice rough
+  idea what to except and in what point.
 
   Version 0.2
     - add unit tests to detect regressions and such
@@ -66,26 +68,26 @@
 
 * Installation
 
-  Use leiningen to build the project.
-  lein uberjar
+  The Tursas uses [[https://github.com/technomancy/leiningen][Leiningen]] to build the project. After setting it up you can
+  build the project with command "lein uberjar".
 
 * Running
 
   After making the jar file you can run the engine with
-  java -jar tursas-0.1-standalone.jar
+  java -jar tursas-0.2-standalone.jar
 
   Its recommeded to run the engine with some external program to get more visual
   appearance. I recommend using XBoard (WinBoard).  With XBoard you can use
-  tursas by starting xboard with command: "xboard -fcp 'java -jar tursas-0.1-standalone.jar'"
+  tursas by starting xboard with command: "xboard -fcp 'java -jar tursas-0.2-standalone.jar'"
 
 * Usage
 
-  The game tries to support both UCI and XBoard protocol.  General repl
-  commands are always available for use.  Once the uci or xboard command
-  is given the active repl is changed and available command list is
-  extended to support uci or xboard commands.
+  The game tries to support the XBoard protocol with some custom extensions.
+  Once the engine is started you should start by giving the "xboard"
+  command. This command makes the engine use xboard protocol. For more
+  information type "help" in the repl or see the [[http://home.hccnet.nl/h.g.muller/engine-intf.html][XBoard protocol definition]].
 
-  Here's the planned command list for 1.0 version:
+  Here are the currently supported commands:
 
 **** Available general commands:
   - help :: display this help
@@ -105,18 +107,18 @@
   - accepted :: Accept last feature
   - reject :: Reject last feature
   - variant VARIANT :: change to use VARIANT rules. Only 'normal' supported
-  - random :: Tell engine to add little random elements
+  - random :: Tursas doesn't support this so this does nothing
   - force :: Disable engine AI
   - go :: Enable engine AI
   - sd DEPTH :: set search depth to DEPTH
   - usermove MOVE :: make given MOVE if legal
   - ping N :: Pings the engine for pong reply
-  - RESULT {COMMENTS} :: give the game RESULT to engine
+  - RESULT {COMMENTS} :: give the game RESULT to engine. Currently doesn't do anything
   - setboard FEN :: Set the game board to given FEN.
   - undo :: tell engine to undo last move
   - remove :: tell engine to undo last two moves
   - name X :: tell engine its opponents name
-  - rating :: ask engine its rating
+  - rating :: ask engine its rating, simply prints out 100.
   - computer :: tell engine that its playing against cpu
   - option NAME[=VALUE] :: tell engine to use new option
 
