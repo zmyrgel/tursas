@@ -109,7 +109,7 @@
 (defn- display-perft
   "Display Perft of given depth."
   [state depth]
-  (time (perft state (Integer/parseInt depth))))
+  (time (perft state depth)))
 
 (defn- list-moves
   "List all available moves from currect state."
@@ -365,7 +365,7 @@
                             (tursas-cmd "Can't print empty board!" display-board))
                 #"^es$" (tursas-cmd "Can't eval empty game state!" eval-current-state)
                 #"^pf \d+$" (tursas-cmd "Can't calculate perft from empty game-state!"
-                                        display-perft (second (re-seq #"\S+" command)))
+                                        display-perft (Integer/parseInt (s/drop 3 command)))
                 #"^xboard$" (set-protocol! :cecp)
                 #"^quit$" (quit)
                 ? (if (= (get-protocol) :cecp)
