@@ -8,10 +8,10 @@
 
 (deftest state->fen-test
   (testing "State to/from FEN functions"
-    (testing "State to FEN"
+    (testing "FEN to State"
       (is (= (fen->state startpos-fen) startpos-state) "State generation from FEN"))
-    (testing ""
-      (is (= -4 (+ -2 -2))))))
+    (testing "State to FEN"
+      (is (= (startpos-fen (state->fen startpos-state) "Converting state to FEN"))))))
 
 ;; Perft test startpos
 ;; rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
