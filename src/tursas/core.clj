@@ -341,9 +341,9 @@
             "bd - display the board on the screen"
             "fd - display current game state in FEN"
             "lm - print a list of all available moves"
-            "gs - calculates score for the current game state"
-            "es - evaluates current game state"
-            "pf n - calculate perft score to depth of n"
+            ;;"gs - calculates score for the current game state"
+            ;;"es - evaluates current game state"
+            ;;"pf n - calculate perft score to depth of n"
             "xboard - enable CECP mode"
             "quit - quite the Tursas engine")
           (case (get-protocol)
