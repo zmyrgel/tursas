@@ -151,7 +151,7 @@
                  #"^setboard mate$" (fen->state mate-fen)
                  #"^setboard bmate$" (fen->state mate-1-fen)
                  #"^setboard en$" (fen->state en-fen)
-                 ? (let [fen (s/join " " (rest (re-seq #"\S+" s)))]
+                 ? (let [fen (s/drop 9 s)]
                      (if (fen? fen)
                        (fen->state fen)
                        (str "Error (Invalid command): " s))))))
