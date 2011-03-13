@@ -280,6 +280,11 @@
                    true
                    (second pair)))))
 
+(defn- unsupported-command
+  "Utility to return error message for unsupported commands."
+  [cmd]
+  (str "Error (Unsupported command): " cmd))
+
 (defn- process-cecp-command
   "Processes command in cecp mode."
   [cmd]
