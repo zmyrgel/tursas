@@ -302,7 +302,7 @@
                                                                                    user-move (s/drop 9 cmd))
                 #"^[a-h]{1}[1-8]{1}[a-h]{1}[1-8]{1}[rnbq]?+$" (tursas-cmd "Can't make move in a empty board!" user-move cmd)
                 #"^\?$" (unsupported-command cmd) ;; (cecp-move-now)
-                #"^ping \d+$" (str "pong " (Integer/parseInt (s/drop 5 cmd))))
+                #"^ping \d+$" (str "pong " (Integer/parseInt (s/drop 5 cmd)))
                 #"^draw$" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
                 #"^result (1/2-1/2 \{.+\}|1-0 \{.+\}|0-1 \{.+\}|\*)$" nil ;; no-op
                 #"^setboard" (set-game! (s/drop 9 cmd))
