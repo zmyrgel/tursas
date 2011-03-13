@@ -323,6 +323,11 @@
   (game-score [state]
     (end-score state)))
 
+(defn make-state
+  "Constructor for State."
+  [board blacks whites]
+  (State0x88. board blacks whites))
+
 (defn fen->state
   "Convert given FEN to state representation."
   [fen]
