@@ -38,7 +38,7 @@
 (defn- current-game-state
   "Utility to return current game state or nil."
   []
-  (first (@game-state)))
+  (first @game-state))
 
 (defn- set-option!
   "Sets game option of given key to value."
