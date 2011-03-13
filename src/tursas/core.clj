@@ -140,7 +140,8 @@
       move->coord))
 
 (defn- set-game!
-  "Sets game to given FEN state."
+  "Sets game to given FEN state.
+   Command also supports some pre-defined states, mainly for debugging."
   [s]
   (if-let [fen (m/cond-match s
                              #"^startpos$" startpos
@@ -161,7 +162,7 @@
   (set-option! option (not (get-option option))))
 
 (defn- make-ai-move!
-  "Make a n AI move."
+  "Tell engine to make an move in current game state."
   [state]
   (let [depth (get-option :depth-limit)]
     (do (add-game-state! (second (alpha-beta state -inf inf depth)))
