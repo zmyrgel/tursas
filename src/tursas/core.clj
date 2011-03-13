@@ -201,7 +201,7 @@
                   (nthnext @game-state n))))
       nil))
 
-(defn- cecp-print-supported-features
+(defn- list-cecp-supported-features
   "Prints the default features of the engine."
   []
   (for [option (keys cecp-supported-features)]
@@ -285,7 +285,7 @@
   [cmd]
   (m/cond-match cmd
                 #"^protover \d$" (do (set-option! :cecp-protocol-version (Integer/parseInt (s/drop 9 cmd)))
-                                     (cecp-print-supported-features))
+                                     (list-cecp-supported-features))
                 #"^accepted$" nil ;; no-op
                 #"^rejected$" nil ;; no-op
                 #"^random$" nil   ;; no-op
