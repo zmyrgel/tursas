@@ -142,17 +142,18 @@
 (defn- set-game!
   "Sets game to given FEN state."
   [s]
-  (add-game-state!
-   (m/cond-match s
-                 #"^startpos$" (fen->state startpos)
-                 #"^check$" (fen->state check-fen)
-                 #"^cast$" (fen->state cast-fen)
-                 #"^prom$" (fen->state prom-fen)
-                 #"^mate$" (fen->state mate-fen)
-                 #"^bmate$" (fen->state mate-1-fen)
-                 #"^en$" (fen->state en-fen)
-                 #"^[1-8prnbqkPRNBQK/]{15,71}\s[wb]{1}\s[KQkq-]{1,4}\s[a-h1-8-]{1,2}\s\d+\s\d+$" (fen->state s)
-                 ? (str "Error (Invalid setboard command): " s))))
+  (if-let [fen (m/cond-match s
+                             #"^startpos$" startpos
+                             #"^check$" check-fen
+                             #"^cast$" cast-fen
+                             #"^prom$" prom-fen
+                             #"^mate$" mate-fen
+                             #"^bmate$" mate-1-fen
+                             #"^en$" en-fen
+                             #"^[1-8prnbqkPRNBQK/]{15,71}\s[wb]{1}\s[KQkq-]{1,4}\s[a-h1-8-]{1,2}\s\d+\s\d+$" s
+                             ? nil)]
+    (add-game-state! (fen->state fen))
+    (str "Error (Invalid setboard command): " s)))
 
 (defn- toggle-option!
   "Toggles the value of given boolean game option."
