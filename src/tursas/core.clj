@@ -24,9 +24,9 @@
                               :colors 0 :ics 0 :name 0 :pause 0 :nps 0
                               :debug 0 :memory 0 :smp 0 :done 1})
 
-(def protocol (ref :general))
-(def game-state (ref ()))
-(def game-options (ref {:depth-limit 4 :ai-mode false
+(def *protocol* (ref :general))
+(def *game-state* (ref ()))
+(def *game-options* (ref {:depth-limit 4 :ai-mode false
                         :cecp-protocol-version 2 :debug false :ponder false
                         :ponder-output false}))
 
@@ -38,46 +38,47 @@
 (defn- current-game-state
   "Utility to return current game state or nil."
   []
-  (first @game-state))
+  (first @*game-state*))
 
 (defn- set-option!
   "Sets game option of given key to value."
   [k v]
-  (do (dosync (alter game-options assoc k v))
+  (do (dosync (alter *game-options* assoc k v))
       nil))
 
 (defn- get-option
   "Returns value of given game option"
   [option]
-  (@game-options option))
+  (@*game-options* option))
 
 (defn- save-game
   "Saves the current game by writing game-state to file."
   []
   (binding [*out* (java.io.FileWriter. "saved-game.txt")]
-    (prn @game-state)))
+    (prn @*game-state*)))
 
 (defn- load-game
   "Loads the game-state from file to resume the previous game."
   []
   (try
     (let [state (read-string (slurp "saved-game.txt"))]
-      (dosync (ref-set game-state state)))
+      (dosync (ref-set *game-state* state)))
     (catch Exception e nil)))
 
 (defn- get-protocol
   "Returns currently active reader protocol"
   []
-  @protocol)
+  @*protocol*)
 
 (defn- set-protocol!
   "Sets the currently active reader protocol"
   [prot]
-  (dosync (ref-set protocol prot)))
+  (dosync (ref-set *protocol* prot)))
 
 (defn- tursas-cmd
   "Wrapper for commands which use current game state."
   [msg f & args]
+  (println "CMD[msg f args]:" msg f args)
   (if (empty? (current-game-state))
     (str "Error (" msg ")")
     (apply f (current-game-state) args)))
@@ -85,7 +86,7 @@
 (defn- add-game-state!
   "Adds given state to game state."
   [new-state]
-  (do (dosync (alter game-state conj new-state))
+  (do (dosync (alter *game-state* conj new-state))
       nil))
 
 (defn- display-board
@@ -196,10 +197,10 @@
   "Undo last move or if N given, N last moves."
   [& n]
   (do (dosync
-       (ref-set game-state
+       (ref-set *game-state*
                 (if (nil? n)
-                  (rest @game-state)
-                  (nthnext @game-state n))))
+                  (rest @*game-state*)
+                  (nthnext @*game-state* n))))
       nil))
 
 (defn- list-cecp-supported-features
