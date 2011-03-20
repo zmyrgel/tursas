@@ -78,7 +78,6 @@
 (defn- tursas-cmd
   "Wrapper for commands which use current game state."
   [msg f & args]
-  (println "CMD[msg f args]:" msg f args)
   (if (empty? (current-game-state))
     (str "Error (" msg ")")
     (apply f (current-game-state) args)))
