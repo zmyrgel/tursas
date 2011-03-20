@@ -180,9 +180,10 @@
           true))))
 
 (defn- user-move
-  "Helper function to handle user and ai moves."
-  [s]
-  (if (nil? (make-human-move! (current-game-state) s))
+  "Helper function to handle user and ai moves.
+   State arg included to avoid user moves when game is not set."
+  [state s]
+  (if (nil? (make-human-move! state s))
     (str "Illegal move: " s)
     (if (game-end? (current-game-state))
       (result (current-game-state))
