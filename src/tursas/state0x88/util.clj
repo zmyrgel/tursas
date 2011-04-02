@@ -12,14 +12,14 @@
                 (partition 8 score-table))))
 
 (def board-color
-     (make-table [1 0 1 0 1 0 1 0
-                  0 1 0 1 0 1 0 1
-                  1 0 1 0 1 0 1 0
-                  0 1 0 1 0 1 0 1
-                  1 0 1 0 1 0 1 0
-                  0 1 0 1 0 1 0 1
-                  1 0 1 0 1 0 1 0
-                  0 1 0 1 0 1 0 1]))
+     (make-table [BLACK WHITE BLACK WHITE BLACK WHITE BLACK WHITE
+                  WHITE BLACK WHITE BLACK WHITE BLACK WHITE BLACK
+                  BLACK WHITE BLACK WHITE BLACK WHITE BLACK WHITE
+                  WHITE BLACK WHITE BLACK WHITE BLACK WHITE BLACK
+                  BLACK WHITE BLACK WHITE BLACK WHITE BLACK WHITE
+                  WHITE BLACK WHITE BLACK WHITE BLACK WHITE BLACK
+                  BLACK WHITE BLACK WHITE BLACK WHITE BLACK WHITE
+                  WHITE BLACK WHITE BLACK WHITE BLACK WHITE BLACK]))
 
 (defn board-index?
   "Does the given index represent a square on the board?"
