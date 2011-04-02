@@ -42,6 +42,11 @@
             (== (second (first pieces)) king) (ffirst pieces)
             :else (recur (rest pieces))))))
 
+(defn- expand-digits
+  "Expands digits in given string by that many of given chars."
+  [s chr]
+  (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) chr)) s))
+
 (defn- fen-board->0x88board
   "Converts string given in FEN notation to 0x88 board representation."
   [s]
@@ -50,7 +55,7 @@
           (init-game-board)
           (seq/indexed
            (s/map-str #(str % "EEEEEEEE")
-                      (->> (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \E)) s)
+                      (->> (expand-digits s \E)
                            (s/split #"/+")
                            reverse)))))
 
