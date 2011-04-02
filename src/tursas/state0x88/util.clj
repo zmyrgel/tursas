@@ -61,11 +61,16 @@
   [piece]
   (< piece EMPTY))
 
+(defn square-color
+  "Returns the color of given square."
+  [sq]
+  (get board-color sq))
+
 (defn same-color?
   "Check if two squares are same color."
   [sq1 sq2]
-  (== (get board-color sq1)
-      (get board-color sq2)))
+  (== (square-color sq1)
+      (square-color sq2)))
 
 (defn board-occupied?
   "Predicate to check if board index is occupied or not."
