@@ -1,9 +1,8 @@
 (ns tursas.state0x88.util
   (:use (tursas.state0x88 common)))
 
-(def board-indexes (reduce concat
-                           (map #(map (fn [col] (+ col %)) (range 8))
-                                [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
+(def board-indexes (mapcat #(map (fn [col] (+ col %)) (range 8))
+                           [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0]))
 
 (defn make-table
   "Utility to make full 0x88 vector out of smaller vector."
