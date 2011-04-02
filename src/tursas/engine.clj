@@ -125,7 +125,7 @@
       str))
 
 (defn- eval-current-state
-  "Evaluates the current state and prints its score."
+  "Evaluates the current state and returns its score."
   [state]
   (str (evaluate state)))
 
