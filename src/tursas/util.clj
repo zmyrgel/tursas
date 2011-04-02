@@ -45,7 +45,7 @@
   (or (coordinate-string? s)
       (san-string? s)))
 
-(defn print-board
+(defn fen->ascii
   "Return picture of board in ASCII from fen string."
   [fen]
   (let [fen-board (first (re-seq #"\S+" fen))]

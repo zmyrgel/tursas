@@ -90,7 +90,7 @@
 (defn- display-board
   "Displays the current chess board in ASCII."
   [state]
-  (str (print-board (state->fen state))
+  (str (fen->ascii (state->fen state))
        (if (= (turn state) :white) "  WHITE" "  BLACK")
        " TO MOVE"
        (cond (mate? state) (if (= (turn state) :white)
