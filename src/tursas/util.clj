@@ -1,15 +1,14 @@
 (ns tursas.util
   (:require [clojure.contrib.string :as s]
-            [clojure.contrib.seq :as seq]
-            [matchure :as m]))
+            [clojure.contrib.seq :as seq]))
 
 (def promotion-chars "rnbq")
 
 (defn valid-coord?
-  "Predicate to check given coord for valid chess coordinate."
-  [coord]
+  "Checks if given string is valid chess board coordinate."
+  [s]
   (true?
-   (some #(= coord %)
+   (some #(= s %)
          (for [x (range 8) y (range 8)]
            (str (get "abcdefgh" x) (inc y))))))
 
