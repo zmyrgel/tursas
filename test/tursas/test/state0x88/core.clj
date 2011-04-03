@@ -1,6 +1,8 @@
 (ns tursas.test.state0x88.core
   (:use [tursas.state] :reload)
   (:use [tursas.state0x88.core] :reload)
+  (:use [tursas.state0x88.move] :reload)
+  (:use [tursas.state0x88.common])
   (:use [clojure.test]))
 
 (def startpos-fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
@@ -66,3 +68,51 @@
 ;;       ;;(is (= (perft state 5) 3605103))
 ;;       ;;(is (= (perft state 6) 71179139))
 ;;       )))
+
+(deftest castling-value-test
+  (testing "Castling value calculation"
+    (let [f @#'tursas.state0x88.core/calculate-white-castling
+          g @#'tursas.state0x88.core/calculate-black-castling]
+      (is (= (f 15 (coord->move "e2e3")) 15))
+      (is (= (f 15 (coord->move "e1e2")) 3))
+      (is (= (f 15 (coord->move "a1a2")) 11))
+      (is (= (f 15 (coord->move "h1h2")) 7))
+      (is (= (f 15 (coord->move "a2a8")) 14))
+      (is (= (f 15 (coord->move "h2h8")) 13))
+
+      (is (= (g 15 (coord->move "e6e5")) 15))
+      (is (= (g 15 (coord->move "e8e7")) 12))
+      (is (= (g 15 (coord->move "a8a7")) 14))
+      (is (= (g 15 (coord->move "h8h7")) 13))
+      (is (= (g 15 (coord->move "h2h1")) 7))
+      (is (= (g 15 (coord->move "a7a1")) 11)))))
+
+ (deftest en-passant-value-test
+   (testing "En-passant value calculation"
+     (let [f @#'tursas.state0x88.core/calculate-en-passant]
+       (is (= (f WHITE WHITE-PAWN EMPTY EMPTY (coord->move "a2a4")) -1))
+       (is (= (f WHITE WHITE-PAWN WHITE-PAWN EMPTY (coord->move "a2a4")) -1))
+       (is (= (f WHITE WHITE-PAWN BLACK-PAWN EMPTY (coord->move "a2a3")) -1))
+       (is (= (f WHITE WHITE-PAWN BLACK-PAWN EMPTY (coord->move "a2a4")) 0x20))
+       (is (= (f WHITE WHITE-PAWN EMPTY BLACK-PAWN (coord->move "a2a4")) 0x20))
+
+       (is (= (f BLACK BLACK-PAWN EMPTY EMPTY (coord->move "c7c5")) -1))
+       (is (= (f BLACK BLACK-PAWN BLACK-PAWN EMPTY (coord->move "c7c5")) -1))
+       (is (= (f BLACK BLACK-PAWN WHITE-PAWN EMPTY (coord->move "c7c6")) -1))
+       (is (= (f BLACK BLACK-PAWN WHITE-PAWN EMPTY (coord->move "c7c5")) 0x52))
+       (is (= (f BLACK BLACK-PAWN EMPTY WHITE-PAWN (coord->move "c7c5")) 0x52)))))
+
+;; full move counting
+
+;; promotion piece reading
+(deftest promotion-test
+  (testing "promotion piece reading"
+    (let [f @#'tursas.state0x88.core/promotion-piece]
+      (is (= (f WHITE (coord->move "e7e8q")) WHITE-QUEEN))
+      (is (= (f WHITE (coord->move "e7e8n")) WHITE-KNIGHT))
+      (is (= (f WHITE (coord->move "e7e8")) WHITE-QUEEN))
+      (is (= (f BLACK (coord->move "e2e1q")) BLACK-QUEEN))
+      (is (= (f BLACK (coord->move "e2e1n")) BLACK-KNIGHT))
+      (is (= (f BLACK (coord->move "e2e1")) BLACK-QUEEN)))))
+
+;; fide-draw tests
