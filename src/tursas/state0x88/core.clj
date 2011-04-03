@@ -4,10 +4,10 @@
         [clojure.contrib.math :only [abs]]))
 
 (defn- calculate-white-castling
-  "Utility to calculate new castling value for white player.
+  "Utility to calculate new castling value after white players move.
    Castling value is updated if either our king or rook moves
    or opponents rook gets captured.
-   Castling value is kept as single digit and is operated at bit level.
+   Castling value is kept as a number and is operated at bit level.
    Castling value is composesd as: K = 8, Q = 4, k = 2, q = 1"
   [castling move]
   (cond (== (:from move) 0x04) (bit-and castling 3)
@@ -18,10 +18,10 @@
         :else castling))
 
 (defn- calculate-black-castling
-  "Utility to calculate new castling value for black player.
+  "Utility to calculate new castling value after black players move.
    Castling value is updated if either our king or rook moves
    or opponents rook gets captured.
-   Castling value is kept as single digit and is operated at bit level.
+   Castling value is kept as a number and is operated at bit level.
    Castling value is composesd as: K = 8, Q = 4, k = 2, q = 1"
   [castling move]
   (cond (== (:from move) 0x74) (bit-and castling 12)
