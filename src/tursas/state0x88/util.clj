@@ -32,12 +32,14 @@
   (zero? (get board index)))
 
 (defn column
-  "Get the board column of the given square index."
+  "Get the board column of the given square index.
+   Columns start at 0 and go up to 7."
   [index]
   (bit-and index 7))
 
 (defn row
-  "Get the board row of the given square index."
+  "Get the board row of the given square index.
+   Rows start at 0 and they go up to 7."
   [index]
   (bit-shift-right index 4))
 
