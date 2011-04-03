@@ -32,8 +32,8 @@
         :else castling))
 
 (defn- calculate-en-passant
-  "Utility to calculate new en-passant value.
-   If pawn moves two steps next to opponents pawn, place en-passant
+  "Utility to calculate new en-passant index value.
+   If pawn moves two steps next to opponents pawn, return en-passant
    value as board index just behind moved pawn, otherwise -1."
   [player piece west-piece east-piece move]
   (let [opp-pawn (if (== player WHITE) BLACK-PAWN WHITE-PAWN)]
