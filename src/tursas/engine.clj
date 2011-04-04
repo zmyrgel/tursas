@@ -74,6 +74,9 @@
   [prot]
   (dosync (ref-set *protocol* prot)))
 
+(def search-fn (partial alpha-beta -inf inf (get-option :depth-limit) evaluate))
+(def shallow-search-fn (partial alpha-beta -inf inf 2 evaluate))
+
 (defn- tursas-cmd
   "Wrapper for commands which use current game state."
   [msg f & args]
@@ -120,9 +123,9 @@
    to certain depth using alpha-beta algorithm."
   [state]
   (->> state
-      (alpha-beta -inf inf (get-option :depth-limit) evaluate)
-      first
-      str))
+       search-fn
+       first
+       str))
 
 (defn- eval-current-state
   "Evaluates the current state and returns its score."
@@ -133,7 +136,7 @@
   "Evaluates all states and chooses one from top five moves at random."
   [state]
   (-> state
-      (alpha-beta -inf inf 2 evaluate)
+      shallow-search-fn
       second
       last-move
       move->coord))
@@ -163,11 +166,10 @@
 (defn- make-ai-move!
   "Tell engine to make an move in current game state."
   [state]
-  (let [depth (get-option :depth-limit)]
-    (do (add-game-state! (second (alpha-beta -inf inf depth evaluate state)))
-        (str "move " (-> (current-game-state)
-                         last-move
-                         move->coord)))))
+  (do (add-game-state! (second (search-fn state)))
+      (str "move " (-> (current-game-state)
+                       last-move
+                       move->coord))))
 
 (defn- make-human-move!
   "If given string represents chess move, apply it to current game."
