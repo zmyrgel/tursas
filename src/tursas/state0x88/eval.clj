@@ -2,12 +2,12 @@
   (:use (tursas state)
         (tursas.state0x88 common util)))
 
-(def PAWN-VALUE 10)
-(def BISHOP-VALUE 30)
-(def KNIGHT-VALUE 30)
-(def ROOK-VALUE 50)
-(def QUEEN-VALUE 90)
-(def KING-VALUE 99999)
+(def pawn-value 10)
+(def bishop-value 30)
+(def knight-value 30)
+(def rook-value 50)
+(def queen-value 90)
+(def king-value 99999)
 
 ;; Score tables for each piece type
 ;; all tables are from white players point of view.
@@ -111,37 +111,37 @@
      (make-table (reverse king-end-scores)))
 
 (defn- material-value
-  "Gives material value for PIECE."
+  "Gives material value for given piece."
   [piece]
-  (cond (== piece WHITE-PAWN) PAWN-VALUE
-        (== piece WHITE-KNIGHT) KNIGHT-VALUE
-        (== piece WHITE-BISHOP) BISHOP-VALUE
-        (== piece WHITE-ROOK) ROOK-VALUE
-        (== piece WHITE-QUEEN) QUEEN-VALUE
-        (== piece WHITE-KING) KING-VALUE
-        (== piece BLACK-PAWN) PAWN-VALUE
-        (== piece BLACK-KNIGHT) KNIGHT-VALUE
-        (== piece BLACK-BISHOP) BISHOP-VALUE
-        (== piece BLACK-ROOK) ROOK-VALUE
-        (== piece BLACK-QUEEN) QUEEN-VALUE
-        (== piece BLACK-KING) KING-VALUE
+  (cond (== piece white-pawn) pawn-value
+        (== piece white-knight) knight-value
+        (== piece white-bishop) bishop-value
+        (== piece white-rook) rook-value
+        (== piece white-queen) queen-value
+        (== piece white-king) king-value
+        (== piece black-pawn) pawn-value
+        (== piece black-knight) knight-value
+        (== piece black-bishop) bishop-value
+        (== piece black-rook) rook-value
+        (== piece black-queen) queen-value
+        (== piece black-king) king-value
         :else 0))
 
 (defn- index-score
   "Checks piece-specific index score"
   [piece index game-situation]
-  (cond (== piece WHITE-PAWN) (get white-pawn-table index)
-        (== piece BLACK-PAWN) (get black-pawn-table index)
-        (== piece WHITE-KNIGHT) (get white-knight-table index)
-        (== piece BLACK-KNIGHT) (get black-knight-table index)
-        (== piece WHITE-BISHOP) (get white-bishop-table index)
-        (== piece BLACK-BISHOP) (get black-bishop-table index)
-        (== piece WHITE-ROOK) (get white-rook-table index)
-        (== piece BLACK-ROOK) (get black-rook-table index)
-        (== piece WHITE-KING) (if (== game-situation END-GAME)
+  (cond (== piece white-pawn) (get white-pawn-table index)
+        (== piece black-pawn) (get black-pawn-table index)
+        (== piece white-knight) (get white-knight-table index)
+        (== piece black-knight) (get black-knight-table index)
+        (== piece white-bishop) (get white-bishop-table index)
+        (== piece black-bishop) (get black-bishop-table index)
+        (== piece white-rook) (get white-rook-table index)
+        (== piece black-rook) (get black-rook-table index)
+        (== piece white-king) (if (== game-situation end-game)
                                 (get white-king-table-end-game index)
                                 (get white-king-table index))
-        (== piece BLACK-KING) (if (== game-situation END-GAME)
+        (== piece black-king) (if (== game-situation end-game)
                                 (get black-king-table-end-game index)
                                 (get black-king-table index))
         :else 0))
@@ -212,7 +212,7 @@
 (defn heuristic-value
   "Calculates heuristic value for given state."
   [player whites blacks situation]
-  (let [pieces (if (== player WHITE)
+  (let [pieces (if (== player white)
                  (list whites blacks)
                  (list blacks whites))]
     (+ (score (first pieces) situation)
@@ -220,5 +220,5 @@
 
 (defn end-score [state]
   (if (mate? state)
-    (- KING-VALUE)
+    (- king-value)
     0))

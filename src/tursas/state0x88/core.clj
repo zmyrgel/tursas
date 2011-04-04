@@ -36,9 +36,9 @@
    If pawn moves two steps next to opponents pawn, return en-passant
    value as board index just behind moved pawn, otherwise -1."
   [player piece west-piece east-piece move]
-  (let [opp-pawn (if (== player WHITE) BLACK-PAWN WHITE-PAWN)]
-    (if (and (or (== piece WHITE-PAWN)
-                 (== piece BLACK-PAWN))
+  (let [opp-pawn (if (== player white) black-pawn white-pawn)]
+    (if (and (or (== piece white-pawn)
+                 (== piece black-pawn))
              (== (abs (- (:to move) (:from move))) 0x20)
              (or (== opp-pawn west-piece)
                  (== opp-pawn east-piece)))
@@ -51,13 +51,13 @@
    If full moves get to 127 increase multiplier store and reduce full move
    store to 0. This gets full move count to get high enough."
   [board]
-  (let [moves (get board FULL-MOVE-STORE)
-        n-moves (get board FULL-MOVE-N-STORE)]
+  (let [moves (get board full-move-store)
+        n-moves (get board full-move-n-store)]
     (if (== moves 127)
       (-> board
-          (fill-square FULL-MOVE-N-STORE (inc n-moves))
-          (fill-square FULL-MOVE-STORE 0))
-      (fill-square board FULL-MOVE-STORE (inc moves)))))
+          (fill-square full-move-n-store (inc n-moves))
+          (fill-square full-move-store 0))
+      (fill-square board full-move-store (inc moves)))))
 
 (defn- promotion-piece
   "Helper function to return promotion piece value.
@@ -65,15 +65,15 @@
   [player move]
   (let [piece (:promotion move)]
     (if (zero? piece)
-      (if (== player WHITE)
-        WHITE-QUEEN BLACK-QUEEN)
-      (if (== player WHITE)
+      (if (== player white)
+        white-queen black-queen)
+      (if (== player white)
         (- piece) piece))))
 
 (defn- fifty-move-rule?
   "Checks if state is draw according to 50-move rule."
   [state]
-  (>= (get (:board state) HALF-MOVE-STORE) 50))
+  (>= (get (:board state) half-move-store) 50))
 
 (defn- stalemate?
   "Check if given state is in stalemate."
@@ -96,16 +96,16 @@
     (and (<= piece-count 4)
          (or (== piece-count 2)
              (and (== piece-count 3)
-                  (true? (some #(or (== BLACK-KNIGHT %)
-                                    (== BLACK-BISHOP %)
-                                    (== WHITE-KNIGHT %)
-                                    (== WHITE-BISHOP %))
+                  (true? (some #(or (== black-knight %)
+                                    (== black-bishop %)
+                                    (== white-knight %)
+                                    (== white-bishop %))
                                pieces)))
              (and (== piece-count 4)
-                  (or (== (count (filter #(= BLACK-KNIGHT %) pieces)) 2)
-                      (== (count (filter #(= WHITE-KNIGHT %) pieces)) 2)
-                      (let [bishops (filter #(or (= BLACK-BISHOP (get piece-map %))
-                                                 (= WHITE-BISHOP (get piece-map %)))
+                  (or (== (count (filter #(= black-knight %) pieces)) 2)
+                      (== (count (filter #(= white-knight %) pieces)) 2)
+                      (let [bishops (filter #(or (= black-bishop (get piece-map %))
+                                                 (= white-bishop (get piece-map %)))
                                             indexes)]
                         (cond (< (count bishops) 2) false
                               :else (same-color? (first (keys bishops))
@@ -124,16 +124,16 @@
   (when-not (nil? state)
     (assoc state :board
            (-> (:board state)
-               (fill-square PREV-MOVE-FROM (:from move))
-               (fill-square PREV-MOVE-TO (:to move))
-               (fill-square PREV-PIECE (get (:board state) (:from move)))))))
+               (fill-square prev-move-from (:from move))
+               (fill-square prev-move-to (:to move))
+               (fill-square prev-piece (get (:board state) (:from move)))))))
 
 (defn- pawn-or-capture-move?
   "Predicate to see if move was pawn move or a capture"
   [board move]
-  (or (== (get board (:from move)) WHITE-PAWN)
-      (== (get board (:from move)) BLACK-PAWN)
-      (not= (get board (:to move)) EMPTY)))
+  (or (== (get board (:from move)) white-pawn)
+      (== (get board (:from move)) black-pawn)
+      (not= (get board (:to move)) empty-square)))
 
 (defn- update-half-moves
   "Increases half move count on board unless the move
@@ -141,26 +141,26 @@
   [state move]
   (when-not (nil? state)
     (assoc state :board
-           (fill-square (:board state) HALF-MOVE-STORE
+           (fill-square (:board state) half-move-store
                         (if (pawn-or-capture-move? (:board state) move)
                           0
-                          (inc (get (:board state) HALF-MOVE-STORE)))))))
+                          (inc (get (:board state) half-move-store)))))))
 
 (defn- update-board
   "Returns state with new board after applying move to state."
   [state move]
   (when-not (nil? state)
-    (let [player (int (get (:board state) TURN-STORE))
+    (let [player (int (get (:board state) turn-store))
           moving-piece (int (get (:board state) (:from move)))]
       (cond (promotion? moving-piece move) (-> (remove-piece state (:from move))
                                                (add-piece (:to move) (promotion-piece player move)))
             (castling? moving-piece move) (move-castling-pieces player state move
                                                                 (if (== (column (:to move)) 2)
-                                                                  QUEEN-SIDE KING-SIDE))
+                                                                  queen-side king-side))
             (en-passant? (:board state) moving-piece move) (-> (move-piece state move)
                                                                (remove-piece (+ (:to move)
-                                                                                (if (== player WHITE)
-                                                                                  SOUTH NORTH))))
+                                                                                (if (== player white)
+                                                                                  south north))))
             :else (move-piece state move)))))
 
 (defn- update-player-check
@@ -168,7 +168,7 @@
   [state]
   (when-not (nil? state)
     (let [board (:board state)
-          player (get board TURN-STORE)]
+          player (get board turn-store)]
       (when-not (threatened? board (king-index board player) (opponent player))
         state))))
 
@@ -176,12 +176,12 @@
   "Updates states castling value by checking move with current castling value."
   [state move]
   (when-not (nil? state)
-    (let [castling (int (get (:board state) CASTLING-STORE))]
+    (let [castling (int (get (:board state) castling-store))]
       (if (zero? castling)
         state
         (assoc state :board
-               (fill-square (:board state) CASTLING-STORE
-                            (if (== (get (:board state) TURN-STORE) WHITE)
+               (fill-square (:board state) castling-store
+                            (if (== (get (:board state) turn-store) white)
                               (calculate-white-castling castling move)
                               (calculate-black-castling castling move))))))))
 
@@ -190,18 +190,18 @@
   [state move]
   (when-not (nil? state)
     (assoc state :board
-           (fill-square (:board state) EN-PASSANT-STORE
-                        (calculate-en-passant (get (:board state) TURN-STORE)
+           (fill-square (:board state) en-passant-store
+                        (calculate-en-passant (get (:board state) turn-store)
                                               (get (:board state) (:to move) 0)
-                                              (get (:board state) (+ (:to move) WEST) 0)
-                                              (get (:board state) (+ (:to move) EAST) 0)
+                                              (get (:board state) (+ (:to move) west) 0)
+                                              (get (:board state) (+ (:to move) east) 0)
                                               move)))))
 
 (defn- update-full-moves
   "Updates full move count on board."
   [state]
   (when-not (nil? state)
-    (if (== (get (:board state) TURN-STORE) BLACK)
+    (if (== (get (:board state) turn-store) black)
       (assoc state :board (inc-full-moves (:board state)))
       state)))
 
@@ -211,9 +211,9 @@
   [state]
   (when-not (nil? state)
     (let [board (:board state)
-          player (get board TURN-STORE)]
+          player (get board turn-store)]
       (assoc state :board
-             (fill-square board CHECK-STORE
+             (fill-square board check-store
                           (if (threatened? board
                                            (king-index board (opponent player))
                                            player)
@@ -225,8 +225,8 @@
   [state]
   (when-not (nil? state)
     (assoc state :board
-           (fill-square (:board state) TURN-STORE
-                        (opponent (get (:board state) TURN-STORE))))))
+           (fill-square (:board state) turn-store
+                        (opponent (get (:board state) turn-store))))))
 
 (defn- update-state
   "Updates game state to reflect changes from move.
@@ -249,9 +249,9 @@
   [state]
   (let [pieces (merge (:white-pieces state)
                       (:black-pieces state))]
-    (cond (< (count (keys pieces)) 15) END-GAME
-          (> (get (:board state) FULL-MOVE-STORE) 10) MIDDLE-GAME
-          :else OPENING-GAME)))
+    (cond (< (count (keys pieces)) 15) end-game
+          (> (get (:board state) full-move-store) 10) middle-game
+          :else opening-game)))
 
 (defrecord State0x88 [board black-pieces white-pieces]
   State
@@ -260,11 +260,11 @@
   (occupied? [state index]
     (board-occupied? (:board state) index))
   (black? [state index]
-    (occupied-by? (:board state) index BLACK))
+    (occupied-by? (:board state) index black))
   (white? [state index]
-    (occupied-by? (:board state) index WHITE))
+    (occupied-by? (:board state) index white))
   (check? [state]
-    (== (get (:board state) CHECK-STORE) 1))
+    (== (get (:board state) check-store) 1))
   (mate? [state]
     (and (check? state)
          (empty? (legal-states state))))
@@ -278,7 +278,7 @@
           (fide-draw? state) "1/2-1/2 {Draw per FIDE rules}"
           (stalemate? state) "1/2-1/2 {Stalemate}"
           (repetition? state) "1/2-1/2 {Draw by repetition}"
-          (mate? state) (if (== (int (get (:board state) TURN-STORE)) WHITE)
+          (mate? state) (if (== (int (get (:board state) turn-store)) white)
                           "0-1 {Black mates}"
                           "1-0 {White mates}")))
   (state->fen [state]
@@ -288,36 +288,36 @@
       new-state))
   (legal-states [state]
     (keep (partial apply-move state)
-          (pseudo-moves (get (:board state) TURN-STORE) state)))
+          (pseudo-moves (get (:board state) turn-store) state)))
   (legal-moves [state]
     (map last-move (legal-states state)))
   (turn [state]
-    (if (== (get (:board state) TURN-STORE) WHITE)
+    (if (== (get (:board state) turn-store) white)
       :white
       :black))
   (last-move [state]
     (let [board (:board state)
-          prev-piece (int (get board PREV-PIECE))
-          piece (int (get board (int (get board PREV-MOVE-TO))))]
-      (make-move (get board PREV-MOVE-FROM)
-                 (get board PREV-MOVE-TO)
+          prev-piece (int (get board prev-piece))
+          piece (int (get board (int (get board prev-move-to))))]
+      (make-move (get board prev-move-from)
+                 (get board prev-move-to)
                  (if-not (== prev-piece piece)
                    piece
                    0))))
-  (perft [state depth]
+  (perft [state depth] ;; XXX: review perft calculation rules
     (if (zero? depth)
       1
       (apply + (map #(perft % (dec depth))
                     (legal-states state)))))
   (dynamic? [state]
-    (== (get (:board state) DYNAMIC-STORE) 1))
+    (== (get (:board state) dynamic-store) 1))
   (evaluate [state]
-    (heuristic-value (get (:board state) TURN-STORE)
+    (heuristic-value (get (:board state) turn-store)
                      (:white-pieces state)
                      (:black-pieces state)
                      (check-situation state)))
   (full-moves [state]
-    (get (:board state) FULL-MOVE-STORE))
+    (get (:board state) full-move-store))
   (game-end? [state]
     (or (draw? state)
         (mate? state)))

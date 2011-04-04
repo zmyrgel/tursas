@@ -31,12 +31,12 @@
    This is only used when generating state from a fen.
    Otherwise the king index can be queried from the board directly."
   [state player]
-  (let [piece-map (if (== player WHITE)
+  (let [piece-map (if (== player white)
                     (:white-pieces state)
                     (:black-pieces state))
-        king (if (== player WHITE)
-               WHITE-KING
-               BLACK-KING)]
+        king (if (== player white)
+               white-king
+               black-king)]
     (loop [pieces (seq piece-map)]
       (cond (empty? pieces) nil
             (== (second (first pieces)) king) (ffirst pieces)
@@ -95,11 +95,11 @@
   "Adds king indexes to state."
   [state]
   (assoc state :board
-         (let [black-king (find-king-index state BLACK)
-               white-king (find-king-index state WHITE)]
+         (let [black-king (find-king-index state black)
+               white-king (find-king-index state white)]
            (-> (:board state)
-               (update-king-index black-king BLACK)
-               (update-king-index white-king WHITE)))))
+               (update-king-index black-king black)
+               (update-king-index white-king white)))))
 
 (defn- add-full-moves
   "Helper funtion to add full moves to board.
@@ -107,8 +107,8 @@
   [board moves]
   (let [n-moves (int (/ moves 128))]
     (-> board
-        (fill-square FULL-MOVE-N-STORE n-moves)
-        (fill-square FULL-MOVE-STORE (- moves (* n-moves 128))))))
+        (fill-square full-move-n-store n-moves)
+        (fill-square full-move-store (- moves (* n-moves 128))))))
 
 (defn parse-fen
   "Parses information from given FEN and applies it to given state."
@@ -116,13 +116,13 @@
   (when-let [[board turn cast en-pass half full] (re-seq #"\S+" s)]
     (-> (assoc state :board
                (-> (fen-board->0x88board board)
-                   (fill-square TURN-STORE (if (= turn "w")
-                                             WHITE BLACK))
-                   (fill-square CASTLING-STORE (castling->value cast))
-                   (fill-square EN-PASSANT-STORE (if (= en-pass "-")
+                   (fill-square turn-store (if (= turn "w")
+                                             white black))
+                   (fill-square castling-store (castling->value cast))
+                   (fill-square en-passant-store (if (= en-pass "-")
                                                    -1
                                                    (coord->index en-pass)))
-                   (fill-square HALF-MOVE-STORE (Integer/parseInt half))
+                   (fill-square half-move-store (Integer/parseInt half))
                    (add-full-moves (Integer/parseInt full))))
         add-pieces
         add-king-indexes)))
@@ -132,13 +132,13 @@
   [state]
   (let [board (:board state)]
     (s/join " " (list (board->fen-board board)
-                      (if (== (int (get board TURN-STORE)) WHITE) "w" "b")
-                      (castling->str (int (get board CASTLING-STORE)))
-                      (let [en-passant (int (get board EN-PASSANT-STORE))]
+                      (if (== (int (get board turn-store)) white) "w" "b")
+                      (castling->str (int (get board castling-store)))
+                      (let [en-passant (int (get board en-passant-store))]
                         (if (== en-passant -1)
                           "-"
                           (index->coord en-passant)))
-                      (get board HALF-MOVE-STORE)
-                      (+ (* (get board FULL-MOVE-N-STORE) 127)
-                         (get board FULL-MOVE-STORE))))))
+                      (get board half-move-store)
+                      (+ (* (get board full-move-n-store) 127)
+                         (get board full-move-store))))))
 
