@@ -57,8 +57,8 @@
            (when (dynamic? (first tree))
              (map (partial prune 0) (rest tree)))))))
 
-(defn minmax
-  "Evaluates given game state with minmax-algorithm."
+(defn minimax
+  "Evaluates given game state with minimax-algorithm."
   [depth eval-fn state]
   (->> state
        gametree
