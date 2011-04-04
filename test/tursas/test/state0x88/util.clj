@@ -7,8 +7,8 @@
 
 (deftest square-color-test
   (testing "Square colors"
-    (is (= (square-color 0x20) BLACK))
-    (is (= (square-color 0x21) WHITE))
+    (is (= (square-color 0x20) black))
+    (is (= (square-color 0x21) white))
     (is (true? (same-color? 0x20 0x22)))
     (is (false? (same-color? 0x20 0x21)))))
 
@@ -28,25 +28,25 @@
 
 (deftest piece-tests
   (testing "Piece tests"
-    (is (= (piece-value \E) EMPTY))
-    (is (= (piece-value \k) BLACK-KING))
-    (is (= (piece-value \d) EMPTY))
-    (is (= (piece-name WHITE-KING) \K))
-    (is (= (piece-name BLACK-BISHOP) \b))
+    (is (= (piece-value \E) empty-square))
+    (is (= (piece-value \k) black-king))
+    (is (= (piece-value \d) empty-square))
+    (is (= (piece-name white-king) \K))
+    (is (= (piece-name black-bishop) \b))
     (is (= (piece-name 90) \E))))
 
 (deftest opponent-test
   (testing "Opponent utility"
-    (is (= (opponent WHITE) BLACK))
-    (is (= (opponent BLACK) WHITE))))
+    (is (= (opponent white) black))
+    (is (= (opponent black) white))))
 
 (deftest promotion-move-test
   (testing "Promotion move detection"
-    (is (true? (promotion? WHITE-PAWN (coord->move "e7e8q"))))
-    (is (true? (promotion? WHITE-PAWN (coord->move "e7e8"))))
-    (is (false? (promotion? WHITE-PAWN (coord->move "e6e7"))))
-    (is (false? (promotion? WHITE-ROOK (coord->move "e7e8"))))
-    (is (true? (promotion? BLACK-PAWN (coord->move "e2e1q"))))
-    (is (true? (promotion? BLACK-PAWN (coord->move "e2e1"))))
-    (is (false? (promotion? BLACK-PAWN (coord->move "e3e2"))))
-    (is (false? (promotion? BLACK-ROOK (coord->move "e2e1"))))))
+    (is (true? (promotion? white-pawn (coord->move "e7e8q"))))
+    (is (true? (promotion? white-pawn (coord->move "e7e8"))))
+    (is (false? (promotion? white-pawn (coord->move "e6e7"))))
+    (is (false? (promotion? white-rook (coord->move "e7e8"))))
+    (is (true? (promotion? black-pawn (coord->move "e2e1q"))))
+    (is (true? (promotion? black-pawn (coord->move "e2e1"))))
+    (is (false? (promotion? black-pawn (coord->move "e3e2"))))
+    (is (false? (promotion? black-rook (coord->move "e2e1"))))))

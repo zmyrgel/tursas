@@ -90,17 +90,17 @@
  (deftest en-passant-value-test
    (testing "En-passant value calculation"
      (let [f @#'tursas.state0x88.core/calculate-en-passant]
-       (is (= (f WHITE WHITE-PAWN EMPTY EMPTY (coord->move "a2a4")) -1))
-       (is (= (f WHITE WHITE-PAWN WHITE-PAWN EMPTY (coord->move "a2a4")) -1))
-       (is (= (f WHITE WHITE-PAWN BLACK-PAWN EMPTY (coord->move "a2a3")) -1))
-       (is (= (f WHITE WHITE-PAWN BLACK-PAWN EMPTY (coord->move "a2a4")) 0x20))
-       (is (= (f WHITE WHITE-PAWN EMPTY BLACK-PAWN (coord->move "a2a4")) 0x20))
+       (is (= (f white white-pawn empty-square empty-square (coord->move "a2a4")) -1))
+       (is (= (f white white-pawn white-pawn empty-square (coord->move "a2a4")) -1))
+       (is (= (f white white-pawn black-pawn empty-square (coord->move "a2a3")) -1))
+       (is (= (f white white-pawn black-pawn empty-square (coord->move "a2a4")) 0x20))
+       (is (= (f white white-pawn empty-square black-pawn (coord->move "a2a4")) 0x20))
 
-       (is (= (f BLACK BLACK-PAWN EMPTY EMPTY (coord->move "c7c5")) -1))
-       (is (= (f BLACK BLACK-PAWN BLACK-PAWN EMPTY (coord->move "c7c5")) -1))
-       (is (= (f BLACK BLACK-PAWN WHITE-PAWN EMPTY (coord->move "c7c6")) -1))
-       (is (= (f BLACK BLACK-PAWN WHITE-PAWN EMPTY (coord->move "c7c5")) 0x52))
-       (is (= (f BLACK BLACK-PAWN EMPTY WHITE-PAWN (coord->move "c7c5")) 0x52)))))
+       (is (= (f black black-pawn empty-square empty-square (coord->move "c7c5")) -1))
+       (is (= (f black black-pawn black-pawn empty-square (coord->move "c7c5")) -1))
+       (is (= (f black black-pawn white-pawn empty-square (coord->move "c7c6")) -1))
+       (is (= (f black black-pawn white-pawn empty-square (coord->move "c7c5")) 0x52))
+       (is (= (f black black-pawn empty-square white-pawn (coord->move "c7c5")) 0x52)))))
 
 ;; full move counting
 
@@ -108,11 +108,11 @@
 (deftest promotion-test
   (testing "promotion piece reading"
     (let [f @#'tursas.state0x88.core/promotion-piece]
-      (is (= (f WHITE (coord->move "e7e8q")) WHITE-QUEEN))
-      (is (= (f WHITE (coord->move "e7e8n")) WHITE-KNIGHT))
-      (is (= (f WHITE (coord->move "e7e8")) WHITE-QUEEN))
-      (is (= (f BLACK (coord->move "e2e1q")) BLACK-QUEEN))
-      (is (= (f BLACK (coord->move "e2e1n")) BLACK-KNIGHT))
-      (is (= (f BLACK (coord->move "e2e1")) BLACK-QUEEN)))))
+      (is (= (f white (coord->move "e7e8q")) white-queen))
+      (is (= (f white (coord->move "e7e8n")) white-knight))
+      (is (= (f white (coord->move "e7e8")) white-queen))
+      (is (= (f black (coord->move "e2e1q")) black-queen))
+      (is (= (f black (coord->move "e2e1n")) black-knight))
+      (is (= (f black (coord->move "e2e1")) black-queen)))))
 
 ;; fide-draw tests
