@@ -119,8 +119,8 @@
   "Calculates state's score by checking child states
    to certain depth using alpha-beta algorithm."
   [state]
-  (-> state
-      (alpha-beta -inf inf (get-option :depth-limit))
+  (->> state
+      (alpha-beta -inf inf (get-option :depth-limit) evaluate)
       first
       str))
 
@@ -133,7 +133,7 @@
   "Evaluates all states and chooses one from top five moves at random."
   [state]
   (-> state
-      (alpha-beta -inf inf 2)
+      (alpha-beta -inf inf 2 evaluate)
       second
       last-move
       move->coord))
@@ -164,7 +164,7 @@
   "Tell engine to make an move in current game state."
   [state]
   (let [depth (get-option :depth-limit)]
-    (do (add-game-state! (second (alpha-beta state -inf inf depth)))
+    (do (add-game-state! (second (alpha-beta -inf inf depth evaluate state)))
         (str "move " (-> (current-game-state)
                          last-move
                          move->coord)))))
