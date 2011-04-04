@@ -60,7 +60,7 @@
                            reverse)))))
 
 (defn- make-fen-row
-  "Builds single fen row from given BOARD and ROW index."
+  "Builds single fen row from given board and row index."
   [board row]
   (s/map-str #(if (= (get % 0) \E) (count %) %)
              (s/partition #"E+"
@@ -68,7 +68,7 @@
                                      (range 8)))))
 
 (defn- board->fen-board
-  "Convert the given state's BOARD to fen board field."
+  "Convert the given state's board to fen board field."
   [board]
   (s/join "/" (map #(make-fen-row board %)
                    [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0])))
