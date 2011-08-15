@@ -12,28 +12,24 @@
 (def white-pawn-movement (list ne nw north))
 (def knight-movement (list -33 -31 -18 -14 14 18 31 33))
 
-(defn- pmap-add
-  "Add piece to player piece-map store on the board."
-  [state player index piece]
-  (let [[key piece-map] (if (== player white)
-                          [:white-pieces (:white-pieces state)]
-                          [:black-pieces (:black-pieces state)])]
-    (assoc state key (assoc piece-map index piece))))
-
-(defn pmap-remove
-  "Remove piece from player piece-map store on the board."
-  [state player index]
-  (let [[key piece-map] (if (== player white)
-                          [:white-pieces (:white-pieces state)]
-                          [:black-pieces (:black-pieces state)])]
-    (assoc state key (dissoc piece-map index))))
-
 (defn pmap-get
   "Returns the players piece-map from board."
   [state player]
   (if (== player white)
     (:white-pieces state)
     (:black-pieces state)))
+
+(defn- pmap-add
+  "Add piece to player piece-map store on the board."
+  [state player index piece]
+  (assoc state (if (== player white) :white-pieces :black-pieces)
+         (assoc (pmap-get state player) undex piece)))
+
+(defn pmap-remove
+  "Remove piece from player piece-map store on the board."
+  [state player index]
+  (assoc state (if (== player white) :white-pieces :black-pieces)
+         (dissoc (pmap-get state player) index)))
 
 (defn- set-dynamic
   "Sets the states dynamic value, now only set on captures."
