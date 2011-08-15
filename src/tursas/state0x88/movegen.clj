@@ -23,7 +23,7 @@
   "Add piece to player piece-map store on the board."
   [state player index piece]
   (assoc state (if (== player white) :white-pieces :black-pieces)
-         (assoc (pmap-get state player) undex piece)))
+         (assoc (pmap-get state player) index piece)))
 
 (defn pmap-remove
   "Remove piece from player piece-map store on the board."
