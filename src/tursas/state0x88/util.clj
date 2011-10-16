@@ -4,11 +4,16 @@
 (def board-indexes (mapcat #(map (fn [col] (+ col %)) (range 8))
                            [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0]))
 
+(defn abs [n]
+  (cond (not (number? n)) (throw IllegalArgumentException "abs requires a number")
+        (neg? n) (- n)
+        :else n))
+
 (defn make-table
   "Utility to make full 0x88 vector out of smaller vector."
   [score-table]
   (into (vector-of :byte)
-        (mapcat #(concat % (vec (replicate 8 0)))
+        (mapcat #(concat % (vec (repeat 8 0)))
                 (partition 8 score-table))))
 
 (def board-color

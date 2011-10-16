@@ -1,7 +1,6 @@
 (ns tursas.state0x88.movegen
   (:use (tursas state move util)
-        (tursas.state0x88 common util move)
-        [clojure.contrib.math :only [abs]]))
+        (tursas.state0x88 common util move)))
 
 (def rook-directions (list north south east west))
 (def bishop-directions (list nw sw ne se))

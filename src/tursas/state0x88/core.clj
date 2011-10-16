@@ -1,7 +1,6 @@
 (ns tursas.state0x88.core
   (:use (tursas state move util)
-        (tursas.state0x88 eval movegen util common fen move)
-        [clojure.contrib.math :only [abs]]))
+        (tursas.state0x88 eval movegen util common fen move)))
 
 (defn- calculate-white-castling
   "Utility to calculate new castling value after white players move.
