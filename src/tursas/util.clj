@@ -31,6 +31,21 @@
           :else (recur (cons (first items)  result)
                        (rest items)))))
 
+(defn compact-item
+  "Compacts items in coll to digits indicating their amount.
+   Example:"
+  [item coll]
+  (loop [result '()
+         items coll
+         found 0]
+    (cond (empty? items) (if (pos? found)
+                           (reverse (cons found result))
+                           (reverse result))
+          (= (first items) item) (recur result (rest items) (inc found))
+          :else (if (pos? found)
+                  (recur (cons (char (+ 48 found)) result) items 0)
+                  (recur (cons (first items) result) (rest items) found)))))
+
 (defn valid-coord?
   "Checks if given string is valid chess board coordinate."
   [s]
