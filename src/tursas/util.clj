@@ -4,6 +4,16 @@
 
 (def promotion-chars "rnbq")
 
+(defn split-on
+  "Splits given sequence from sep to list of lists."
+  [sep coll]
+  (loop [result '()
+         items coll]
+    (cond (empty? items) (reverse result)
+          :else (let [[head tail] (split-with #(not (= sep %)) items)]
+                  (recur (cons head result)
+                         (rest tail))))))
+
 (defn valid-coord?
   "Checks if given string is valid chess board coordinate."
   [s]
