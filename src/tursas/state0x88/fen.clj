@@ -1,5 +1,6 @@
 (ns tursas.state0x88.fen
-  (:use (tursas.state0x88 common util movegen move))
+  (:use (tursas.state0x88 common util movegen move)
+        (tursas util))
   (:require [clojure.contrib.string :as s]
             [clojure.contrib.seq :as seq]))
 
@@ -42,22 +43,17 @@
             (== (second (first pieces)) king) (ffirst pieces)
             :else (recur (rest pieces))))))
 
-(defn- expand-digits
-  "Expands digits in given string by that many of given chars."
-  [s chr]
-  (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) chr)) s))
-
 (defn- fen-board->0x88board
-  "Converts string given in FEN notation to 0x88 board representation."
+  "Converts FEN notation string to 0x88 board representation."
   [s]
   (reduce (fn [board [index piece]]
             (fill-square board index (piece-value piece)))
           (init-game-board)
-          (seq/indexed
-           (s/map-str #(str % "EEEEEEEE")
-                      (->> (expand-digits s \E)
-                           (s/split #"/+")
-                           reverse)))))
+          (seq (zipmap (iterate inc 0)
+                       (mapcat #(concat % (repeat 8 \E))
+                               (->> (expand-digits \E s)
+                                    (split-on \/)
+                                    reverse))))))
 
 (defn- make-fen-row
   "Builds single fen row from given board and row index."
