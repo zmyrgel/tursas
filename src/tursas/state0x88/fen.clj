@@ -127,14 +127,15 @@
   "Returns FEN representation of given game state."
   [state]
   (let [board (:board state)]
-    (s/join " " (list (board->fen-board board)
-                      (if (== (int (get board turn-store)) white) "w" "b")
-                      (castling->str (int (get board castling-store)))
-                      (let [en-passant (int (get board en-passant-store))]
-                        (if (== en-passant -1)
-                          "-"
-                          (index->coord en-passant)))
-                      (get board half-move-store)
-                      (+ (* (get board full-move-n-store) 127)
-                         (get board full-move-store))))))
+    (apply str
+           (interpose " " (list (board->fen-board board)
+                                (if (== (int (get board turn-store)) white) "w" "b")
+                                (castling->str (int (get board castling-store)))
+                                (let [en-passant (int (get board en-passant-store))]
+                                  (if (== en-passant -1)
+                                    "-"
+                                    (index->coord en-passant)))
+                                (get board half-move-store)
+                                (+ (* (get board full-move-n-store) 127)
+                                   (get board full-move-store)))))))
 
