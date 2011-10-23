@@ -325,7 +325,7 @@
                 #"^memory \d+$" (unsupported-command cmd) ;; (set-option! :memory-limit (Integer/parseInt (apply str (drop 7 cmd))))
                 #"^cores \d+$" (unsupported-command cmd) ;;(set-option! :core-limit (Integer/parseInt (apply str (drop 6 cmd))))
                 #"^egtpath [\w\\/]+$" (unsupported-command cmd) ;;(set-option! :egtpath (apply str (drop 8 cmd)))
-                #"^option \w+$" (cecp-parse-option (apply str (drop 7 cmd)))
+                #"^option\s\w=\".+\"|\d+$" (cecp-parse-option (apply str (drop 7 cmd)))
                 ? (str "Error (Invalid command): " cmd)))
 
 (defn- usage
