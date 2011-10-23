@@ -20,10 +20,17 @@
     (is (false? (move-string? "a6a7i")))
     (is (true? (move-string? "g7g8q")))))
 
-(deftest move-splitting-test
+(deftest splitting-test
   (testing "Move splitting"
     (is (= (split-move "e2e4") (list "e2" "e4")))
-    (is (= (split-move "e7e8q") (list "e7" "e8" "q")))))
+    (is (= (split-move "e7e8q") (list "e7" "e8" "q"))))
+  (testing "Sequence splitting"
+    (is (= (split-on 3 '(1 2 3 4 5 6)) '((1 2) (4 5 6))))
+    (is (= (split-on 3 '(1 2 4 5 6)) '(1 2 4 5 6)))
+    (is (= (split-on 3 '()) '()))
+    (is (= (split-on "3" '(1 2 3 4)) '(1 2 3 4)))
+    (is (= (split-on "3" "abc3de") '("abc" "de")))
+    ))
 
 (deftest board-printing-test
   (testing "Board printing"
@@ -33,3 +40,15 @@
               result2 "8| r - - - k - - -\n7| p p P q p p p r\n6| n - p p b n - p\n5| - - - - - - - -\n4| - - B - - - - -\n3| B P - Q - P - N\n2| - - P - P - P P\n1| R N - - K - - R\n------------------\n | a b c d e f g h\n"]
           (= (fen->ascii fen1) result1)
           (= (fen->ascii fen2) result2)))))
+
+(deftest char-digit-test
+  (testing "Character digit predicate"
+    (is (true? (char-digit? \9)))
+    (is (true? (char-digit? \0)))
+    (is (true? (char-digit? \1)))
+    (is (false? (char-digit? \a)))))
+
+(deftest expand-compress-item-test
+  (testing "Sequence compacting and expansion"
+    (is (= (expand-digits \E "eee22d3a#") '(\e \e \e \E \E \E \E \d \E \E \E \a \#)))
+    (is (= (compact-item \E "eeeEEEEEee") '(\e \e \e \5 \e \e)))))
