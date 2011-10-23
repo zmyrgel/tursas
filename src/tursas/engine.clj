@@ -266,11 +266,11 @@
 (defn- cecp-parse-option
   "Wrapper to parse options from string and set them."
   [option]
-  (let [pair (s/split #"=" option)]
-    (set-option! (keyword (first pair))
-                 (if (== (count pair) 1)
+  (let [[key value] (.split #"=" option)]
+    (set-option! (keyword key)
+                 (if (nil? value)
                    true
-                   (second pair)))))
+                   value))))
 
 (defn- unsupported-command
   "Utility to return error message for unsupported commands."
