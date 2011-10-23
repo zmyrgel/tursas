@@ -1,7 +1,7 @@
 (ns tursas.util)
 
 (defn split-on
-  "Splits given sequence from sep to list of lists."
+  "Splits given sequence from sep to list of lists, not containing the the separator."
   [sep coll]
   (loop [result '()
          items coll]
