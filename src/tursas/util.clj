@@ -24,14 +24,13 @@
    coordinate notation."
   [s]
   (let [parts (split-move s)]
-    (or (= s "0000") ;; null move
-        (and (or (== (count parts) 2)
-                 (== (count parts) 3))
-             (valid-coord? (first parts))
-             (valid-coord? (second parts))
-             (if (== (count parts) 3)
-               (s/substring? (first (nthnext parts 2)) promotion-chars)
-               true)))))
+    (and (or (== (count parts) 2)
+             (== (count parts) 3))
+         (valid-coord? (first parts))
+         (valid-coord? (second parts))
+         (if (== (count parts) 3)
+           (s/substring? (first (nthnext parts 2)) promotion-chars)
+           true))))
 
 (defn san-string?
   "Predicate to see if given string represents chess move in SAN notation."
