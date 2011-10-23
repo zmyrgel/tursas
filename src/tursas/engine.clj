@@ -25,8 +25,8 @@
 (def *protocol* (ref :general))
 (def *game-state* (ref ()))
 (def *game-options* (ref {:depth-limit 4 :ai-mode false
-                        :cecp-protocol-version 2 :debug false :ponder false
-                        :ponder-output false}))
+                          :cecp-protocol-version 2 :debug false :ponder false
+                          :ponder-output false}))
 
 (defn- quit
   "Function to handle closing the engine."
