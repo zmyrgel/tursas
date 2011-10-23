@@ -208,7 +208,7 @@
   []
   (for [option (keys cecp-supported-features)]
     (format "feature %s=%s"
-            (s/as-str option)
+            (apply str (drop 1 (str option)))
             (cecp-supported-features option))))
 
 (def cecp-usage '(""
