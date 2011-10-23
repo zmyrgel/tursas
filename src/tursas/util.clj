@@ -19,6 +19,18 @@
   [chr]
   (< -1 (Character/getNumericValue chr) 10))
 
+(defn expand-digits
+  "Expands digits in given character sequence by that many of given chars."
+  [item coll]
+  (loop [result '()
+         items coll]
+    (cond (empty? items) (reverse result)
+          (char-digit? (first items))
+          (recur (concat (repeat (Character/getNumericValue (first items)) item) result)
+                 (rest items))
+          :else (recur (cons (first items)  result)
+                       (rest items)))))
+
 (defn valid-coord?
   "Checks if given string is valid chess board coordinate."
   [s]
