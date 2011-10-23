@@ -14,6 +14,11 @@
                   (recur (cons head result)
                          (rest tail))))))
 
+(defn char-digit?
+  "Returns true if given character is a digit."
+  [chr]
+  (< -1 (Character/getNumericValue chr) 10))
+
 (defn valid-coord?
   "Checks if given string is valid chess board coordinate."
   [s]
