@@ -29,7 +29,7 @@
          (valid-coord? (first parts))
          (valid-coord? (second parts))
          (if (== (count parts) 3)
-           (s/substring? (first (nthnext parts 2)) promotion-chars)
+           (.contains promotion-chars (first (nthnext parts 2)))
            true))))
 
 (defn san-string?
