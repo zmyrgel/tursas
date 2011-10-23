@@ -1,7 +1,5 @@
 (ns tursas.util)
 
-(def promotion-chars "rnbq")
-
 (defn split-on
   "Splits given sequence from sep to list of lists."
   [sep coll]
@@ -69,7 +67,7 @@
          (valid-coord? (first parts))
          (valid-coord? (second parts))
          (if (== (count parts) 3)
-           (.contains promotion-chars (first (nthnext parts 2)))
+           (.contains "rnbq" (first (nthnext parts 2)))
            true))))
 
 (defn san-string?
