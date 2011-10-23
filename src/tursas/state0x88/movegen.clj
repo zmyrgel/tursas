@@ -1,7 +1,6 @@
 (ns tursas.state0x88.movegen
   (:use (tursas state move util)
-        (tursas.state0x88 common util move)
-        [clojure.contrib.math :only [abs]]))
+        (tursas.state0x88 common util move)))
 
 (def rook-directions (list north south east west))
 (def bishop-directions (list nw sw ne se))
@@ -97,8 +96,9 @@
   [piece move]
   (and (or (== piece white-king)
            (== piece black-king))
-       (== 2 (abs (- (:to move)
-                     (:from move))))))
+       (let [distance (- (:to move) (:from move))]
+         (or (== distance -2)
+             (== distance 2)))))
 
 (defn en-passant?
   "Is the given move an en-passant move"
