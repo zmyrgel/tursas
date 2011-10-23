@@ -1,8 +1,6 @@
 (ns tursas.state0x88.fen
   (:use (tursas.state0x88 common util movegen move)
-        (tursas util))
-  (:require [clojure.contrib.string :as s]
-            [clojure.contrib.seq :as seq]))
+        (tursas util)))
 
 (def castling-values (list [8 \K] [4 \Q] [2 \k] [1 \q]))
 
