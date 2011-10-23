@@ -21,11 +21,11 @@
                               :colors 0 :ics 0 :name 0 :pause 0 :nps 0
                               :debug 0 :memory 0 :smp 0 :done 1})
 
-(def *protocol* (ref :general))
-(def *game-state* (ref ()))
-(def *game-options* (ref {:depth-limit 4 :ai-mode false
-                          :cecp-protocol-version 2 :debug false :ponder false
-                          :ponder-output false}))
+(def ^:dynamic *protocol* (ref :general))
+(def ^:dynamic *game-state* (ref ()))
+(def ^:dynamic *game-options* (ref {:depth-limit 4 :ai-mode false
+                                    :cecp-protocol-version 2 :debug false :ponder false
+                                    :ponder-output false}))
 
 (defn- quit
   "Function to handle closing the engine."
