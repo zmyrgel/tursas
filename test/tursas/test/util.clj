@@ -27,6 +27,9 @@
 
 (deftest board-printing-test
   (testing "Board printing"
-    (is (let [fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-              res "8| r n b q k b n r\n7| p p p p p p p p\n6| - - - - - - - -\n5| - - - - - - - -\n4| - - - - - - - -\n3| - - - - - - - -\n2| P P P P P P P P\n1| R N B Q K B N R\n------------------\n | a b c d e f g h\n"]
-          (= (fen->ascii fen) res)))))
+    (is (let [fen1 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+              result1 "8| r n b q k b n r\n7| p p p p p p p p\n6| - - - - - - - -\n5| - - - - - - - -\n4| - - - - - - - -\n3| - - - - - - - -\n2| P P P P P P P P\n1| R N B Q K B N R\n------------------\n | a b c d e f g h\n"
+              fen2 "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7"
+              result2 "8| r - - - k - - -\n7| p p P q p p p r\n6| n - p p b n - p\n5| - - - - - - - -\n4| - - B - - - - -\n3| B P - Q - P - N\n2| - - P - P - P P\n1| R N - - K - - R\n------------------\n | a b c d e f g h\n"]
+          (= (fen->ascii fen1) result1)
+          (= (fen->ascii fen2) result2)))))
