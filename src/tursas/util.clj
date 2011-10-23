@@ -16,8 +16,8 @@
   "Partitions chess move given in coordinate notation to pair of coordinates
    and possible promotion character."
   [algebraic]
-  (filter (complement empty?)
-          (s/partition #"[a-h0-8]{2}" algebraic)))
+  (map #(apply str %1)
+       (partition 2 2 "" algebraic)))
 
 (defn coordinate-string?
   "Predicate to detect valid move strings in
