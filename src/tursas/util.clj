@@ -88,13 +88,15 @@
 (defn fen->ascii
   "Return picture of board in ASCII from fen string."
   [fen]
-  (let [fen-board (first (re-seq #"\S+" fen))]
-    (str (apply str (map (fn [[index piece]]
-                           (str (- 8 index) "|" piece "\n"))
-                         (seq/indexed (->> fen-board
-                                           (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                           (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                           (s/split #"/+")))))
-         "------------------\n"
-         " | a b c d e f g h\n")))
+  (str (apply str (map (fn [[index piece]]
+                         (str (- 8 index) "|" piece "\n"))
+                       (zipmap (iterate inc 0)
+                               (->> fen
+                                    (re-seq #"\S+")
+                                    first
+                                    (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
+                                    (s/replace-by #"[\p{Alpha}-]" #(str \space %))
+                                    (s/split #"/+")))))
+       "------------------\n"
+       " | a b c d e f g h\n"))
 
