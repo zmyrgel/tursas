@@ -1,6 +1,5 @@
 (ns tursas.util
-  (:require [clojure.contrib.string :as s]
-            [clojure.contrib.seq :as seq]))
+  (:require [clojure.contrib.string :as s]))
 
 (def promotion-chars "rnbq")
 
