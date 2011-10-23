@@ -84,18 +84,35 @@
   (or (coordinate-string? s)
       (san-string? s)))
 
-(defn fen->ascii
-  "Return picture of board in ASCII from fen string."
+(defn- parse-fen-board
+  "Parses fen string and returns character sequence for the board part."
   [fen]
-  (str (apply str (map (fn [[index piece]]
-                         (str (- 8 index) "|" piece "\n"))
-                       (zipmap (iterate inc 0)
-                               (->> fen
-                                    (re-seq #"\S+")
-                                    first
-                                    (s/replace-by #"\d" #(str (s/repeat (Integer/parseInt %) \-)))
-                                    (s/replace-by #"[\p{Alpha}-]" #(str \space %))
-                                    (s/split #"/+")))))
-       "------------------\n"
-       " | a b c d e f g h\n"))
+  (first (split-on \space fen)))
+
+(defn fen->ascii
+  "Return printable string for the board from fen string.
+
+ 8| r n b q k b n r
+ 7| p p p p p p p p
+ 6| - - - - - - - -
+ 5| - - - - - - - -
+ 4| - - - - - - - -
+ 3| - - - - - - - -
+ 2| P P P P P P P P
+ 1| R N B Q K B N R
+ -+----------------
+  | a b c d e f g h"
+  [fen]
+  (apply str
+         (let [rows (map #(cons (first %) (interpose \space (cons \| (rest %))))
+                         (concat (map #(cons %1 %2)
+                                      (iterate dec 8)
+                                      (->> (parse-fen-board fen)
+                                           (expand-digits \-)
+                                           (split-on \/)))
+                                 (list (cons \space (seq "abcdefgh")))))]
+           (mapcat #(concat % '(\newline))
+                   (concat (butlast rows) (cons (repeat 18 \-) (list (last rows))))))))
+
+
 
