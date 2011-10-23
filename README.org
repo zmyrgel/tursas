@@ -128,7 +128,9 @@
 
 * Known issues
 
-  None at the moment
+  None for certain, perft calculation seems to be incorrect.  Also, noticed that
+  the option command didn't work as intended. Need to verify earlier fix more
+  throughly.
 
 * License
 
