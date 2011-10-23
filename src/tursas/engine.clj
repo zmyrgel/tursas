@@ -190,7 +190,7 @@
       (when (get-option :ai-mode)
         (let [move (make-ai-move! (current-game-state))]
           (if (game-end? (current-game-state))
-            (s/join "\n" [move (result (current-game-state))])
+            (apply str (interpose "\n" [move (result (current-game-state))]))
             move))))))
 
 (defn- undo-move!
