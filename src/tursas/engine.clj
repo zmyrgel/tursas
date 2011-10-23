@@ -1,6 +1,5 @@
 (ns tursas.engine
-  (:require [clojure.contrib.string :as s]
-            [matchure :as m])
+  (:require [matchure :as m])
   (:use (tursas search state move util)
         (tursas.state0x88 core move)))
 
