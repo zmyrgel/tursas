@@ -8,13 +8,13 @@
 (defn- castling->str
   "Converts internal castling representation to string."
   [castling]
-  (let [result (s/map-str (fn [[value letter]]
-                            (when (pos? (bit-and castling value))
-                              letter))
-                          castling-values)]
+  (let [result (keep (fn [[value letter]]
+                       (when (pos? (bit-and castling value))
+                         letter))
+                     castling-values)]
     (if (empty? result)
       "-"
-      result)))
+      (apply str result))))
 
 (defn- castling->value
   "Convers string representing castling to
