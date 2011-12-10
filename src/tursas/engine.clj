@@ -1,7 +1,5 @@
 (ns tursas.engine
-  (:require [clojure.contrib.string :as s]
-            [clojure.contrib.seq :as seq]
-            [matchure :as m])
+  (:require [matchure :as m])
   (:use (tursas search state move util)
         (tursas.state0x88 core move)))
 
@@ -23,11 +21,11 @@
                               :colors 0 :ics 0 :name 0 :pause 0 :nps 0
                               :debug 0 :memory 0 :smp 0 :done 1})
 
-(def *protocol* (ref :general))
-(def *game-state* (ref ()))
-(def *game-options* (ref {:depth-limit 4 :ai-mode false
-                        :cecp-protocol-version 2 :debug false :ponder false
-                        :ponder-output false}))
+(def ^:dynamic *protocol* (ref :general))
+(def ^:dynamic *game-state* (ref ()))
+(def ^:dynamic *game-options* (ref {:depth-limit 4 :ai-mode false
+                                    :cecp-protocol-version 2 :debug false :ponder false
+                                    :ponder-output false}))
 
 (defn- quit
   "Function to handle closing the engine."
@@ -191,7 +189,7 @@
       (when (get-option :ai-mode)
         (let [move (make-ai-move! (current-game-state))]
           (if (game-end? (current-game-state))
-            (s/join "\n" [move (result (current-game-state))])
+            (apply str (interpose "\n" [move (result (current-game-state))]))
             move))))))
 
 (defn- undo-move!
@@ -209,7 +207,7 @@
   []
   (for [option (keys cecp-supported-features)]
     (format "feature %s=%s"
-            (s/as-str option)
+            (apply str (drop 1 (str option)))
             (cecp-supported-features option))))
 
 (def cecp-usage '(""
@@ -267,11 +265,11 @@
 (defn- cecp-parse-option
   "Wrapper to parse options from string and set them."
   [option]
-  (let [pair (s/split #"=" option)]
-    (set-option! (keyword (first pair))
-                 (if (== (count pair) 1)
+  (let [[key value] (.split #"=" option)]
+    (set-option! (keyword key)
+                 (if (nil? value)
                    true
-                   (second pair)))))
+                   value))))
 
 (defn- unsupported-command
   "Utility to return error message for unsupported commands."
@@ -282,32 +280,32 @@
   "Processes command in cecp mode."
   [cmd]
   (m/cond-match cmd
-                #"^protover \d$" (do (set-option! :cecp-protocol-version (Integer/parseInt (s/drop 9 cmd)))
+                #"^protover \d$" (do (set-option! :cecp-protocol-version (Integer/parseInt (apply str (drop 9 cmd))))
                                      (list-cecp-supported-features))
                 #"^accepted$" nil ;; no-op
                 #"^rejected$" nil ;; no-op
                 #"^random$" nil   ;; no-op
                 #"^new$" (do (set-game! "startpos")
                              (set-option! :ai-mode true))
-                #"^variant normal$" (set-option! :variant (s/drop 8 cmd))
-                #"^variant \w+$" (str "Error (unsupported variant given): " (s/drop 8 cmd))
+                #"^variant normal$" (set-option! :variant (apply str (drop 8 cmd)))
+                #"^variant \w+$" (str "Error (unsupported variant given): " (apply str (drop 8 cmd)))
                 #"^force$" (set-option! :ai-mode false)
                 #"^go$" (set-option! :ai-mode true)
                 #"^playother$" (unsupported-command cmd) ;; (cecp-playother)
-                #"^level \d+ [0-9:]+ \d+$" (unsupported-command cmd) ;; (set-option! :level (s/drop 6 cmd))
-                #"^st \d+$" (unsupported-command cmd) ;; (set-option! :time (Integer/parseInt (s/drop 3 cmd)))
-                #"^sd \d+$" (set-option! :depth-limit (s/drop 3 cmd))
-                #"^nps \d+$" (unsupported-command cmd) ;; (set-option! :nps (Integer/parseInt (s/drop 4 cmd)))
-                #"^time \d+$" (unsupported-command cmd) ;; (set-option! :engine-clock (Integer/parseInt (s/drop 5 cmd)))
-                #"^otim \d+$" (unsupported-command cmd) ;; (set-option! :opponent-clock (Integer/parseInt (s/drop 5 cmd)))
+                #"^level \d+ [0-9:]+ \d+$" (unsupported-command cmd) ;; (set-option! :level (apply str (drop 6 cmd)))
+                #"^st \d+$" (unsupported-command cmd) ;; (set-option! :time (Integer/parseInt (apply str (drop 3 cmd))))
+                #"^sd \d+$" (set-option! :depth-limit (apply str (drop 3 cmd)))
+                #"^nps \d+$" (unsupported-command cmd) ;; (set-option! :nps (Integer/parseInt (apply str (drop 4 cmd))))
+                #"^time \d+$" (unsupported-command cmd) ;; (set-option! :engine-clock (Integer/parseInt (apply str (drop 5 cmd))))
+                #"^otim \d+$" (unsupported-command cmd) ;; (set-option! :opponent-clock (Integer/parseInt (apply str (drop 5 cmd))))
                 #"^usermove [a-h]{1}[1-8]{1}[a-h]{1}[1-8]{1}[rnbq]?+$" (tursas-cmd "Can't make move in a empty board!"
-                                                                                   user-move (s/drop 9 cmd))
+                                                                                   user-move (apply str (drop 9 cmd)))
                 #"^[a-h]{1}[1-8]{1}[a-h]{1}[1-8]{1}[rnbq]?+$" (tursas-cmd "Can't make move in a empty board!" user-move cmd)
                 #"^\?$" (unsupported-command cmd) ;; (cecp-move-now)
-                #"^ping \d+$" (str "pong " (Integer/parseInt (s/drop 5 cmd)))
+                #"^ping \d+$" (str "pong " (Integer/parseInt (apply str (drop 5 cmd))))
                 #"^draw$" (tursas-cmd "Can't offer draw to empty board!" cecp-draw)
                 #"^result (1/2-1/2 \{.+\}|1-0 \{.+\}|0-1 \{.+\}|\*)$" nil ;; no-op
-                #"^setboard" (set-game! (s/drop 9 cmd))
+                #"^setboard" (set-game! (apply str (drop 9 cmd)))
                 #"^hint$" (tursas-cmd "Can't print hint from a empty board!" get-hint)
                 #"^bk$" (unsupported-command cmd) ;; (cecp-bk)
                 #"^undo$" (undo-move!)
@@ -317,16 +315,16 @@
                 #"^post$" (unsupported-command cmd) ;; (set-option! :ponder-output true)
                 #"^nopost" (unsupported-command cmd) ;; (set-option! :ponder-output false)
                 #"^analyse$" (unsupported-command cmd) ;; (cecp-analyse-mode)
-                #"^name \w+$" (set-option! :opponent-name (s/drop 5 cmd))
+                #"^name \w+$" (set-option! :opponent-name (apply str (drop 5 cmd)))
                 #"^rating$" "100"
                 #"^ics$" (unsupported-command cmd) ;; (cecp-ics)
                 #"^computer$" (set-option! :opponent :cpu)
                 #"^pause$" (unsupported-command cmd) ;;(cecp-pause)
                 #"^resume$" (unsupported-command cmd) ;; (cecp-resume)
-                #"^memory \d+$" (unsupported-command cmd) ;; (set-option! :memory-limit (Integer/parseInt (s/drop 7 cmd)))
-                #"^cores \d+$" (unsupported-command cmd) ;;(set-option! :core-limit (Integer/parseInt (s/drop 6 cmd)))
-                #"^egtpath [\w\\/]+$" (unsupported-command cmd) ;;(set-option! :egtpath (s/drop 8 cmd))
-                #"^option \w+$" (cecp-parse-option (s/drop 7 cmd))
+                #"^memory \d+$" (unsupported-command cmd) ;; (set-option! :memory-limit (Integer/parseInt (apply str (drop 7 cmd))))
+                #"^cores \d+$" (unsupported-command cmd) ;;(set-option! :core-limit (Integer/parseInt (apply str (drop 6 cmd))))
+                #"^egtpath [\w\\/]+$" (unsupported-command cmd) ;;(set-option! :egtpath (apply str (drop 8 cmd)))
+                #"^option\s\w=\".+\"|\d+$" (cecp-parse-option (apply str (drop 7 cmd)))
                 ? (str "Error (Invalid command): " cmd)))
 
 (defn- usage
@@ -363,7 +361,7 @@
                             (tursas-cmd "Can't print empty board!" display-board))
                 #"^es$" (tursas-cmd "Can't eval empty game state!" eval-current-state)
                 #"^pf \d+$" (tursas-cmd "Can't calculate perft from empty game-state!"
-                                        display-perft (Integer/parseInt (s/drop 3 command)))
+                                        display-perft (Integer/parseInt (apply str (drop 3 command))))
                 #"^xboard$" (set-protocol! :cecp)
                 #"^quit$" (quit)
                 ? (if (= (get-protocol) :cecp)

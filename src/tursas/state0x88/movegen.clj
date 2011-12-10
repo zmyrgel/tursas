@@ -96,8 +96,9 @@
   [piece move]
   (and (or (== piece white-king)
            (== piece black-king))
-       (== 2 (abs (- (:to move)
-                     (:from move))))))
+       (let [distance (- (:to move) (:from move))]
+         (or (== distance -2)
+             (== distance 2)))))
 
 (defn en-passant?
   "Is the given move an en-passant move"

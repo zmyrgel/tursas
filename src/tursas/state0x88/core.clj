@@ -38,7 +38,9 @@
   (let [opp-pawn (if (== player white) black-pawn white-pawn)]
     (if (and (or (== piece white-pawn)
                  (== piece black-pawn))
-             (== (abs (- (:to move) (:from move))) 0x20)
+             (let [distance (- (:to move) (:from move))]
+               (or (== distance -0x20)
+                   (== distance 0x20)))
              (or (== opp-pawn west-piece)
                  (== opp-pawn east-piece)))
       (/ (+ (:to move) (:from move)) 2)
