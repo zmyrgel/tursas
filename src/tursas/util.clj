@@ -110,6 +110,3 @@
                                  (list (cons \space (seq "abcdefgh")))))]
            (mapcat #(concat % '(\newline))
                    (concat (butlast rows) (cons (repeat 18 \-) (list (last rows))))))))
-
-
-
