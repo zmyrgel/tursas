@@ -1,8 +1,9 @@
-(ns tursas
+(ns tursas.tursas
   (:gen-class)
   (:require [matchure :as m])
   (:use (tursas search state move util)
-        (tursas.state0x88 core move))))
+        (tursas.state0x88 core move)))
+
 (def inf Integer/MAX_VALUE)
 (def -inf (+ Integer/MIN_VALUE 1))
 
