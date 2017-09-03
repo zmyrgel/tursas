@@ -5,7 +5,7 @@
                            [0x70 0x60 0x50 0x40 0x30 0x20 0x10 0x0]))
 
 (defn abs [n]
-  (cond (not (number? n)) (throw IllegalArgumentException "abs requires a number")
+  (cond (not (number? n)) (throw (IllegalArgumentException. (str "abs requires a number")))
         (neg? n) (- n)
         :else n))
 
@@ -173,6 +173,3 @@
                  white-king-store
                  black-king-store)
                index))
-
-
-
