@@ -1,16 +1,8 @@
-(ns tursas.engine
+(ns tursas
+  (:gen-class)
   (:require [matchure :as m])
   (:use (tursas search state move util)
-        (tursas.state0x88 core move)))
-
-(def startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-(def check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5")
-(def cast-fen "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7")
-(def prom-fen "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7")
-(def mate-fen "3brr2/7b/8/2pN3Q/2p2k2/5P2/4P1KR/2N2RB1 b - - 1 18")
-(def mate-1-fen "3brr2/2N4b/8/2p4Q/2p2k2/5P2/4P1KR/2N2RB1 w - - 1 17")
-(def en-fen "rnbqkb1r/pppppppp/7n/P7/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 2")
-
+        (tursas.state0x88 core move))))
 (def inf Integer/MAX_VALUE)
 (def -inf (+ Integer/MIN_VALUE 1))
 
@@ -143,18 +135,25 @@
   "Sets game to given FEN state.
    Command also supports some pre-defined states, mainly for debugging."
   [s]
-  (if-let [fen (m/cond-match s
-                             #"^startpos$" startpos
-                             #"^check$" check-fen
-                             #"^cast$" cast-fen
-                             #"^prom$" prom-fen
-                             #"^mate$" mate-fen
-                             #"^bmate$" mate-1-fen
-                             #"^en$" en-fen
-                             #"^[1-8prnbqkPRNBQK/]{15,71}\s[wb]{1}\s[KQkq-]{1,4}\s[a-h1-8-]{1,2}\s\d+\s\d+$" s
-                             ? nil)]
-    (add-game-state! (fen->state fen))
-    (str "Error (Invalid setboard command): " s)))
+  (let [startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        check-fen "r1bqkbnr/ppp1ppp1/n6p/1Q1p4/8/2P5/PP1PPPPP/RNB1KBNR b KQkq - 0 5"
+        cast-fen "r3k3/pp1qpppr/n1ppbn1p/8/2B5/BP1Q1P1N/P1P1P1PP/RN2K2R w KQq - 4 7"
+        prom-fen "r3k3/ppPqpppr/n1ppbn1p/8/2B5/BP1Q1P1N/2P1P1PP/RN2K2R w KQq - 4 7"
+        mate-fen "3brr2/7b/8/2pN3Q/2p2k2/5P2/4P1KR/2N2RB1 b - - 1 18"
+        mate-1-fen "3brr2/2N4b/8/2p4Q/2p2k2/5P2/4P1KR/2N2RB1 w - - 1 17"
+        en-fen "rnbqkb1r/pppppppp/7n/P7/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 2"]
+    (if-let [fen (m/cond-match s
+                               #"^startpos$" startpos
+                               #"^check$" check-fen
+                               #"^cast$" cast-fen
+                               #"^prom$" prom-fen
+                               #"^mate$" mate-fen
+                               #"^bmate$" mate-1-fen
+                               #"^en$" en-fen
+                               #"^[1-8prnbqkPRNBQK/]{15,71}\s[wb]{1}\s[KQkq-]{1,4}\s[a-h1-8-]{1,2}\s\d+\s\d+$" s
+                               ? nil)]
+      (add-game-state! (fen->state fen))
+      (str "Error (Invalid setboard command): " s))))
 
 (defn- toggle-option!
   "Toggles the value of given boolean game option."
@@ -367,3 +366,23 @@
                 ? (if (= (get-protocol) :cecp)
                     (process-cecp-command command)
                     (str "Error (Invalid command): " command))))
+
+(defn- game-print
+  "Prints prompt and responses to user."
+  [output]
+  (cond (seq? output)
+        (doseq [line output]
+          (println line))
+        (string? output)
+        (println output)))
+
+(defn -main
+  "Starts the engine repl for input handling."
+  [& args]
+  (println "# Welcome to Tursas Chess Engine!")
+  (println "# Type 'help' to get list of supported commands")
+  (loop []
+    (-> (read-line)
+        process-command
+        game-print)
+    (recur)))
