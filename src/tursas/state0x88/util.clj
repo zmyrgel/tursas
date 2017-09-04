@@ -111,7 +111,7 @@
    and places chess piece representation to it."
   []
   (into (vector-of :byte)
-        (vec (replicate 128 empty-square))))
+        (vec (repeat 128 empty-square))))
 
 (defn fill-square
   "Return new board with given value added to given board's index."
