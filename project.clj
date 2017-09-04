@@ -5,5 +5,5 @@
             :distribution :repo}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [matchure "0.10.1"]]
-  :main tursas.tursas
-  :aot [tursas.tursas])
+  :main tursas.core
+  :aot [tursas.core])

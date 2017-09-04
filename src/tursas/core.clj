@@ -1,4 +1,4 @@
-(ns tursas.tursas
+(ns tursas.core
   (:gen-class)
   (:require [matchure :as m])
   (:use (tursas search state move util)
