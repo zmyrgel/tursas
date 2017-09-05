@@ -136,4 +136,3 @@
                                 (get board half-move-store)
                                 (+ (* (get board full-move-n-store) 127)
                                    (get board full-move-store)))))))
-
