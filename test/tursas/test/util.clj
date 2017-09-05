@@ -26,10 +26,10 @@
     (is (= (split-move "e7e8q") (list "e7" "e8" "q"))))
   (testing "Sequence splitting"
     (is (= (split-on 3 '(1 2 3 4 5 6)) '((1 2) (4 5 6))))
-    (is (= (split-on 3 '(1 2 4 5 6)) '(1 2 4 5 6)))
+    (is (= (split-on 3 '(1 2 4 5 6)) '((1 2 4 5 6))))
     (is (= (split-on 3 '()) '()))
-    (is (= (split-on "3" '(1 2 3 4)) '(1 2 3 4)))
-    (is (= (split-on "3" "abc3de") '("abc" "de")))
+    (is (= (split-on "3" '(1 2 3 4)) '((1 2 3 4))))
+    (is (= (split-on \3 "abc3de") '((\a \b \c) (\d \e))))
     ))
 
 (deftest board-printing-test
